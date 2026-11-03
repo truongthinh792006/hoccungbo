@@ -18,6 +18,7 @@ export const StudentStudyView: React.FC = () => {
     setTodayLessonId, 
     isTodayLesson,
     openSyllabus,
+    openQuizModal,
     completedLessonIds
   } = useApp();
 
@@ -199,10 +200,22 @@ export const StudentStudyView: React.FC = () => {
           {rightTab === 'socratic' ? (
             <SocraticTutor lesson={currentLesson} />
           ) : (
-            <DrillQuiz
-              lessonId={currentLesson.id}
-              questions={currentLesson.diagnosticQuiz || []}
-            />
+            <div className="space-y-3">
+              <button
+                onClick={openQuizModal}
+                className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs shadow-sm shadow-emerald-600/20 transition-all active:scale-98"
+              >
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-amber-300" />
+                  <span>Mở bảng luyện tập Micro-Quiz (Sliding Panel)</span>
+                </div>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              <DrillQuiz
+                lessonId={currentLesson.id}
+                questions={currentLesson.diagnosticQuiz || []}
+              />
+            </div>
           )}
         </div>
       </div>

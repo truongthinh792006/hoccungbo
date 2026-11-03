@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { TodayLearningRecap } from './TodayLearningRecap';
 import { MasteryCard } from './MasteryCard';
 import { ConversationPrompts } from './ConversationPrompts';
 import { SyllabusTimeline } from './SyllabusTimeline';
@@ -23,7 +24,7 @@ export const ParentDashboardView: React.FC = () => {
             </h1>
             <p className="text-xs sm:text-sm text-indigo-100 leading-relaxed">
               Giúp cha mẹ nắm rõ tiến độ làm chủ kiến thức của con, nhận diện nhanh các điểm con còn lúng túng, 
-              và gợi ý câu hỏi tự nhiên không tạo áp lực học hành.
+              và gợi ý câu hỏi tự nhiên không tạo áp lực học hành (Mã PIN bảo mật: 1234).
             </p>
           </div>
 
@@ -37,13 +38,16 @@ export const ParentDashboardView: React.FC = () => {
         </div>
       </div>
 
-      {/* 1. Overview Stat Cards */}
-      <MasteryCard />
+      {/* 1. Today's Learning Recap for Lesson 3 (Time spent, competencies checked off) */}
+      <TodayLearningRecap />
 
-      {/* 2. Family Engagement Widget */}
+      {/* 2. Three Dinner-table Questions for Parents with Concise Answers */}
       <ConversationPrompts />
 
-      {/* 3. Syllabus Tracker Timeline */}
+      {/* 3. Overview Mastery & Weak Concept Alert Cards */}
+      <MasteryCard />
+
+      {/* 4. Syllabus Tracker Timeline */}
       <SyllabusTimeline />
     </div>
   );

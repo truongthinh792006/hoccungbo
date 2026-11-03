@@ -20,6 +20,7 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
       const html = katex.renderToString(math, {
         displayMode: block,
         throwOnError: false,
+        output: 'html'
       });
       return (
         <span
@@ -44,7 +45,11 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
       if (part.startsWith('$$') && part.endsWith('$$')) {
         const formula = part.slice(2, -2);
         try {
-          const html = katex.renderToString(formula, { displayMode: true, throwOnError: false });
+          const html = katex.renderToString(formula, { 
+            displayMode: true, 
+            throwOnError: false,
+            output: 'html'
+          });
           return <div key={index} className="my-2 overflow-x-auto text-center" dangerouslySetInnerHTML={{ __html: html }} />;
         } catch {
           return <pre key={index}>{formula}</pre>;
@@ -52,7 +57,11 @@ export const MathRenderer: React.FC<MathRendererProps> = ({
       } else if (part.startsWith('$') && part.endsWith('$')) {
         const formula = part.slice(1, -1);
         try {
-          const html = katex.renderToString(formula, { displayMode: false, throwOnError: false });
+          const html = katex.renderToString(formula, { 
+            displayMode: false, 
+            throwOnError: false,
+            output: 'html'
+          });
           return <span key={index} className="inline-block px-0.5" dangerouslySetInnerHTML={{ __html: html }} />;
         } catch {
           return <code key={index}>{formula}</code>;

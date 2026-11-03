@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
-import { ShieldCheck, Lock, X, Delete } from 'lucide-react';
+import { ShieldCheck, Lock, X, Delete, Check } from 'lucide-react';
 
 export const PinModal: React.FC = () => {
   const { isPinModalOpen, closePinModal, verifyPin } = useApp();
@@ -8,7 +8,20 @@ export const PinModal: React.FC = () => {
   const [errorShake, setErrorShake] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  if (!isPinModalOpen) return null;
+  const submitCheck = useCallback((pinCandidate: string) => {
+    const ok = verifyPin(pinCandidate);
+    if (!ok) {
+      setErrorShake(true);
+      setErrorMessage('Mã PIN không đúng. Vui lòng nhập: 1234');
+      setTimeout(() => {
+        setErrorShake(false);
+        setPin('');
+      }, 500);
+    } else {
+      setPin('');
+      setErrorMessage('');
+    }
+  }, [verifyPin]);
 
   const handleKeyPress = (digit: string) => {
     if (pin.length < 4) {
@@ -17,18 +30,7 @@ export const PinModal: React.FC = () => {
       setErrorMessage('');
 
       if (nextPin.length === 4) {
-        // Attempt verification
-        const ok = verifyPin(nextPin);
-        if (!ok) {
-          setErrorShake(true);
-          setErrorMessage('Mã PIN không đúng. Thử lại (Mặc định: 1234)');
-          setTimeout(() => {
-            setErrorShake(false);
-            setPin('');
-          }, 600);
-        } else {
-          setPin('');
-        }
+        submitCheck(nextPin);
       }
     }
   };
@@ -43,6 +45,39 @@ export const PinModal: React.FC = () => {
     setErrorMessage('');
     closePinModal();
   };
+
+  const handleAutoFill = () => {
+    setPin('1234');
+    setErrorMessage('');
+    submitCheck('1234');
+  };
+
+  // Keyboard navigation support
+  useEffect(() => {
+    if (!isPinModalOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key >= '0' && e.key <= '9') {
+        handleKeyPress(e.key);
+      } else if (e.key === 'Backspace') {
+        handleBackspace();
+      } else if (e.key === 'Escape') {
+        handleClose();
+      } else if (e.key === 'Enter') {
+        if (pin.length === 4) {
+          submitCheck(pin);
+        } else {
+          // If empty and hit Enter, autofill 1234
+          handleAutoFill();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isPinModalOpen, pin, submitCheck]);
+
+  if (!isPinModalOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
@@ -91,7 +126,16 @@ export const PinModal: React.FC = () => {
           {errorMessage ? (
             <p className="text-xs text-rose-600 font-semibold mt-2">{errorMessage}</p>
           ) : (
-            <p className="text-[11px] text-slate-400 mt-2">Mã PIN mặc định: <strong>1234</strong></p>
+            <div className="flex items-center justify-center gap-1.5 mt-2">
+              <span className="text-xs text-slate-500">Mã PIN mặc định:</span>
+              <button
+                onClick={handleAutoFill}
+                className="px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold font-mono text-xs hover:bg-indigo-100 transition-colors"
+                title="Bấm để tự điền 1234"
+              >
+                1234
+              </button>
+            </div>
           )}
         </div>
 
@@ -107,11 +151,12 @@ export const PinModal: React.FC = () => {
             </button>
           ))}
           <button
-            onClick={() => handleKeyPress('1234')}
-            className="h-12 rounded-2xl bg-indigo-50 text-[11px] font-bold text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition-all flex items-center justify-center p-1 leading-tight text-center"
-            title="Tự động điền 1234"
+            onClick={handleAutoFill}
+            className="h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-sm active:scale-95"
+            title="Mở nhanh với mã 1234"
           >
-            Điền 1234
+            <Check className="w-3.5 h-3.5" />
+            <span>Mở (1234)</span>
           </button>
           <button
             onClick={() => handleKeyPress('0')}
@@ -130,7 +175,7 @@ export const PinModal: React.FC = () => {
         {/* Footer Note */}
         <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] text-slate-500">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Bảo mật chống xao nhãng cho học sinh</span>
+          <span>Bảo mật chống xao nhãng cho học sinh (PIN: 1234)</span>
         </div>
       </div>
     </div>

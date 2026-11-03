@@ -4,6 +4,7 @@ import { PinModal } from './components/common/PinModal';
 import { StudentStudyView } from './components/student/StudentStudyView';
 import { ParentDashboardView } from './components/parent/ParentDashboardView';
 import { SyllabusNavigator } from './components/curriculum/SyllabusNavigator';
+import { QuizSlidingPanel } from './components/student/QuizSlidingPanel';
 
 function MainAppContent() {
   const { role } = useApp();
@@ -27,6 +28,9 @@ function MainAppContent() {
 
       {/* Syllabus Navigator Slide-Over Drawer */}
       <SyllabusNavigator />
+
+      {/* Interactive Micro-Quiz Sliding Panel */}
+      <QuizSlidingPanel />
 
       {/* Footer */}
       <footer className="mt-8 border-t border-slate-200/80 bg-white/70 py-5 text-center text-xs text-slate-500">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Math7Lesson } from '../../types/curriculum';
+import { useApp } from '../../context/AppContext';
 import { MathText } from '../common/MathText';
 import { NumberLineDemo } from './NumberLineDemo';
 import { Target, BookOpen, AlertTriangle, Lightbulb, CheckCircle2, Circle, ChevronDown, ChevronUp } from 'lucide-react';
@@ -9,23 +10,15 @@ interface LessonTheoryProps {
 }
 
 export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
-  const [checkedTargets, setCheckedTargets] = useState<Record<string, boolean>>(() => {
-    const initial: Record<string, boolean> = {};
-    lesson.learningTargets.forEach(t => {
-      initial[t.id] = t.mastered || false;
-    });
-    return initial;
-  });
+  const { isCompetencyMastered, toggleCompetency } = useApp();
 
   const [expandedConceptId, setExpandedConceptId] = useState<string | null>(
     lesson.coreConcepts[0]?.id || null
   );
 
-  const toggleTarget = (id: string) => {
-    setCheckedTargets(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const completedCount = Object.values(checkedTargets).filter(Boolean).length;
+  const completedCount = lesson.learningTargets.filter(t => 
+    isCompetencyMastered(t.id) || isCompetencyMastered(t.code)
+  ).length;
 
   return (
     <div className="space-y-6">
@@ -58,18 +51,18 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
               <Target className="w-4 h-4 text-emerald-600" />
               <span>Yêu Cầu Cần Đạt (Mục Tiêu Năng Lực Chuẩn GDPT 2018)</span>
             </span>
-            <span className="text-xs font-bold text-emerald-700">
-              {completedCount} / {lesson.learningTargets.length} năng lực
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              {completedCount} / {lesson.learningTargets.length} năng lực đã đạt
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {lesson.learningTargets.map(target => {
-              const isChecked = checkedTargets[target.id] || false;
+              const isChecked = isCompetencyMastered(target.id) || isCompetencyMastered(target.code);
               return (
                 <button
                   key={target.id}
-                  onClick={() => toggleTarget(target.id)}
+                  onClick={() => toggleCompetency(target.id)}
                   className={`flex items-start gap-2.5 p-3 rounded-2xl border text-left transition-all ${
                     isChecked
                       ? 'bg-emerald-50/70 border-emerald-300 text-emerald-950 shadow-xs'
@@ -84,8 +77,17 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
                     )}
                   </div>
                   <div className="text-xs space-y-0.5 leading-relaxed">
-                    <span className="font-bold text-slate-900 mr-1">[{target.code}]</span>
-                    <MathText>{target.description}</MathText>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-bold text-slate-900">[{target.code}]</span>
+                      {isChecked && (
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded">
+                          Đã làm chủ
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-slate-600">
+                      <MathText>{target.description}</MathText>
+                    </div>
                   </div>
                 </button>
               );

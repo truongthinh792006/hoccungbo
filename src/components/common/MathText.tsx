@@ -19,7 +19,8 @@ export const MathText: React.FC<MathTextProps> = ({
     try {
       const html = katex.renderToString(formula, {
         displayMode: block,
-        throwOnError: false
+        throwOnError: false,
+        output: 'html'
       });
       return (
         <span
@@ -43,7 +44,11 @@ export const MathText: React.FC<MathTextProps> = ({
       if (part.startsWith('$$') && part.endsWith('$$')) {
         const raw = part.slice(2, -2);
         try {
-          const html = katex.renderToString(raw, { displayMode: true, throwOnError: false });
+          const html = katex.renderToString(raw, { 
+            displayMode: true, 
+            throwOnError: false,
+            output: 'html'
+          });
           return (
             <div
               key={index}
@@ -57,11 +62,15 @@ export const MathText: React.FC<MathTextProps> = ({
       } else if (part.startsWith('$') && part.endsWith('$')) {
         const raw = part.slice(1, -1);
         try {
-          const html = katex.renderToString(raw, { displayMode: false, throwOnError: false });
+          const html = katex.renderToString(raw, { 
+            displayMode: false, 
+            throwOnError: false,
+            output: 'html'
+          });
           return (
             <span
               key={index}
-              className="inline-block px-0.5"
+              className="inline-block px-0.5 align-baseline"
               dangerouslySetInnerHTML={{ __html: html }}
             />
           );

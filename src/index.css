@@ -9,10 +9,20 @@
   }
 }
 
+/* Ensure KaTeX MathML is completely hidden so browsers never double-render */
+.katex-mathml {
+  display: none !important;
+}
+
 /* KaTeX custom sizing and styling tweaks */
-.katex-render {
+.katex-render, .katex-math {
   font-size: 1.05em;
   line-height: 1.2;
+}
+
+.katex {
+  font-size: 1.05em;
+  text-rendering: auto;
 }
 
 .katex-display {

@@ -17,6 +17,16 @@ interface AppContextType {
   openSyllabus: () => void;
   closeSyllabus: () => void;
   toggleSyllabus: () => void;
+  isQuizModalOpen: boolean;
+  openQuizModal: () => void;
+  closeQuizModal: () => void;
+  toggleQuizModal: () => void;
+  masteredCompetencies: Record<string, boolean>;
+  markCompetencyMastered: (codeOrId: string, mastered?: boolean) => void;
+  toggleCompetency: (codeOrId: string) => void;
+  isCompetencyMastered: (codeOrId: string) => boolean;
+  todayStudyTimeMinutes: number;
+  setTodayStudyTimeMinutes: (minutes: number) => void;
   xp: number;
   streak: number;
   weakTags: string[];
@@ -43,6 +53,8 @@ const STORAGE_KEYS = {
   ROLE: 'math7_user_role',
   CURRENT_LESSON: 'math7_current_lesson',
   TODAY_LESSON: 'math7_today_lesson',
+  MASTERED_COMPETENCIES: 'math7_mastered_competencies',
+  STUDY_TIME: 'math7_today_study_time',
   XP: 'math7_user_xp',
   STREAK: 'math7_user_streak',
   QUIZ_SUBMISSIONS: 'math7_quiz_submissions',
@@ -65,56 +77,98 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentLessonId, setCurrentLessonIdState] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_LESSON);
-      return saved || math7CurriculumLessons[0].id;
+      return saved || 'bai_3_luy_thua_so_mu_tu_nhien';
     } catch {
-      return math7CurriculumLessons[0].id;
+      return 'bai_3_luy_thua_so_mu_tu_nhien';
     }
   });
 
   const [todayLessonId, setTodayLessonIdState] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.TODAY_LESSON);
-      return saved || math7CurriculumLessons[0].id;
+      return saved || 'bai_3_luy_thua_so_mu_tu_nhien';
     } catch {
-      return math7CurriculumLessons[0].id;
+      return 'bai_3_luy_thua_so_mu_tu_nhien';
     }
   });
 
   const [isSyllabusOpen, setIsSyllabusOpen] = useState(false);
+  const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
+
+  // Mastered competencies map
+  const [masteredCompetencies, setMasteredCompetencies] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.MASTERED_COMPETENCIES);
+      if (saved) return JSON.parse(saved);
+      // Pre-seed Lesson 1 & Lesson 3 targets
+      return {
+        'lt-1-1': true,
+        'KNTT-T01-01': true,
+        'lt-1-2': true,
+        'KNTT-T01-02': true,
+        'lt-1-3': true,
+        'KNTT-T01-03': true,
+        'lt-3-1': true,
+        'KNTT-T03-01': true,
+        'lt-3-2': true,
+        'KNTT-T03-02': true,
+        'lt-3-3': false,
+        'KNTT-T03-03': false
+      };
+    } catch {
+      return {
+        'lt-1-1': true,
+        'KNTT-T01-01': true,
+        'lt-1-2': true,
+        'KNTT-T01-02': true,
+        'lt-3-1': true,
+        'KNTT-T03-01': true
+      };
+    }
+  });
+
+  const [todayStudyTimeMinutes, setTodayStudyTimeMinutesState] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.STUDY_TIME);
+      return saved ? parseInt(saved, 10) : 45;
+    } catch {
+      return 45;
+    }
+  });
 
   const [xp, setXp] = useState<number>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.XP);
-      return saved ? parseInt(saved, 10) : 120;
+      return saved ? parseInt(saved, 10) : 180;
     } catch {
-      return 120;
+      return 180;
     }
   });
 
   const [streak] = useState<number>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.STREAK);
-      return saved ? parseInt(saved, 10) : 3;
+      return saved ? parseInt(saved, 10) : 4;
     } catch {
-      return 3;
+      return 4;
     }
   });
 
   const [weakTags, setWeakTags] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.WEAK_TAGS);
-      return saved ? JSON.parse(saved) : ['So sánh số hữu tỉ âm', 'Điều kiện mẫu số khác 0'];
+      return saved ? JSON.parse(saved) : ['Số âm mang số mũ chẵn vs lẻ', 'Lũy thừa tầng (nhân số mũ)'];
     } catch {
-      return ['So sánh số hữu tỉ âm', 'Điều kiện mẫu số khác 0'];
+      return ['Số âm mang số mũ chẵn vs lẻ', 'Lũy thừa tầng (nhân số mũ)'];
     }
   });
 
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.COMPLETED_LESSONS);
-      return saved ? JSON.parse(saved) : ['bai_1_tap_hop_cac_so_huu_ti'];
+      return saved ? JSON.parse(saved) : ['bai_1_tap_hop_cac_so_huu_ti', 'bai_2_cong_tru_nhan_chia_so_huu_ti'];
     } catch {
-      return ['bai_1_tap_hop_cac_so_huu_ti'];
+      return ['bai_1_tap_hop_cac_so_huu_ti', 'bai_2_cong_tru_nhan_chia_so_huu_ti'];
     }
   });
 
@@ -122,17 +176,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.QUIZ_SUBMISSIONS);
       if (saved) return JSON.parse(saved);
-      // Pre-seed an initial attempt for Bài 1
+      // Pre-seed an initial attempt for Lesson 3
       return {
         bai_1_tap_hop_cac_so_huu_ti: {
           lessonId: 'bai_1_tap_hop_cac_so_huu_ti',
-          timestamp: 'Hôm nay, 19:45',
+          timestamp: 'Hôm qua, 19:45',
           score: 30,
           totalPoints: 30,
           percentage: 100,
           answers: { 'q-b1-1': 'b1-opt-1c', 'q-b1-2': 'b1-opt-2a', 'q-b1-3': 'b1-opt-3a' },
           isCorrect: { 'q-b1-1': true, 'q-b1-2': true, 'q-b1-3': true },
           hintsUsedCount: { 'q-b1-1': 0, 'q-b1-2': 1, 'q-b1-3': 1 }
+        },
+        bai_3_luy_thua_so_mu_tu_nhien: {
+          lessonId: 'bai_3_luy_thua_so_mu_tu_nhien',
+          timestamp: 'Hôm nay, 20:15',
+          score: 30,
+          totalPoints: 40,
+          percentage: 75,
+          answers: { 'q-b3-1': 'b3-opt-1a', 'q-b3-2': 'b3-opt-2a', 'q-b3-3': 'b3-opt-3a' },
+          isCorrect: { 'q-b3-1': true, 'q-b3-2': true, 'q-b3-3': true, 'q-b3-4': false },
+          hintsUsedCount: { 'q-b3-1': 0, 'q-b3-2': 0, 'q-b3-3': 1, 'q-b3-4': 2 }
         }
       };
     } catch {
@@ -160,6 +224,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem(STORAGE_KEYS.TODAY_LESSON, todayLessonId);
     } catch {}
   }, [todayLessonId]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.MASTERED_COMPETENCIES, JSON.stringify(masteredCompetencies));
+    } catch {}
+  }, [masteredCompetencies]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.STUDY_TIME, todayStudyTimeMinutes.toString());
+    } catch {}
+  }, [todayStudyTimeMinutes]);
 
   useEffect(() => {
     try {
@@ -221,6 +297,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const openSyllabus = () => setIsSyllabusOpen(true);
   const closeSyllabus = () => setIsSyllabusOpen(false);
   const toggleSyllabus = () => setIsSyllabusOpen(prev => !prev);
+
+  const openQuizModal = () => setIsQuizModalOpen(true);
+  const closeQuizModal = () => setIsQuizModalOpen(false);
+  const toggleQuizModal = () => setIsQuizModalOpen(prev => !prev);
+
+  // Competency management helpers
+  const markCompetencyMastered = (codeOrId: string, mastered: boolean = true) => {
+    setMasteredCompetencies(prev => {
+      const updated = { ...prev, [codeOrId]: mastered };
+      // Also sync matching lesson target if found
+      math7CurriculumLessons.forEach(lesson => {
+        lesson.learningTargets.forEach(target => {
+          if (target.id === codeOrId || target.code === codeOrId) {
+            updated[target.id] = mastered;
+            updated[target.code] = mastered;
+          }
+        });
+      });
+      return updated;
+    });
+  };
+
+  const toggleCompetency = (codeOrId: string) => {
+    const current = masteredCompetencies[codeOrId] || false;
+    markCompetencyMastered(codeOrId, !current);
+  };
+
+  const isCompetencyMastered = (codeOrId: string): boolean => {
+    return Boolean(masteredCompetencies[codeOrId]);
+  };
+
+  const setTodayStudyTimeMinutes = (minutes: number) => {
+    setTodayStudyTimeMinutesState(minutes);
+  };
 
   const submitQuiz = (
     lessonId: string,
@@ -291,6 +401,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         openSyllabus,
         closeSyllabus,
         toggleSyllabus,
+        isQuizModalOpen,
+        openQuizModal,
+        closeQuizModal,
+        toggleQuizModal,
+        masteredCompetencies,
+        markCompetencyMastered,
+        toggleCompetency,
+        isCompetencyMastered,
+        todayStudyTimeMinutes,
+        setTodayStudyTimeMinutes,
         xp,
         streak,
         weakTags,
