@@ -3,7 +3,8 @@ import { Math7Lesson } from '../../types/curriculum';
 import { useApp } from '../../context/AppContext';
 import { MathText } from '../common/MathText';
 import { NumberLineDemo } from './NumberLineDemo';
-import { Target, BookOpen, AlertTriangle, Lightbulb, CheckCircle2, Circle, ChevronDown, ChevronUp } from 'lucide-react';
+import { NumberLineExplorer } from './NumberLineExplorer';
+import { Target, BookOpen, AlertTriangle, Lightbulb, CheckCircle2, Circle, ChevronDown, ChevronUp, FlaskConical } from 'lucide-react';
 
 interface LessonTheoryProps {
   lesson: Math7Lesson;
@@ -15,6 +16,9 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
   const [expandedConceptId, setExpandedConceptId] = useState<string | null>(
     lesson.coreConcepts[0]?.id || null
   );
+  const [isSimulationOpen, setIsSimulationOpen] = useState<boolean>(true);
+
+  const isChapter1 = lesson.chapterId === 'chuong_1_so_huu_ti' || lesson.chapterId?.includes('1');
 
   const completedCount = lesson.learningTargets.filter(t => 
     isCompetencyMastered(t.id) || isCompetencyMastered(t.code)
@@ -96,8 +100,46 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
         </div>
       </div>
 
-      {/* 2. Interactive Number Line Component */}
-      {lesson.numberLinePoints && lesson.numberLinePoints.length > 0 && (
+      {/* 2. Collapsible Visual Simulation: Mô phỏng trực quan */}
+      {isChapter1 && (
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden transition-all">
+          <button
+            onClick={() => setIsSimulationOpen(!isSimulationOpen)}
+            className="w-full flex items-center justify-between p-4 sm:p-5 text-left hover:bg-slate-50/80 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 flex items-center justify-center shrink-0">
+                <FlaskConical className="w-4 h-4 text-indigo-600" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
+                    🔬 Mô phỏng trực quan
+                  </h3>
+                  <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
+                    SVG Tương tác
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Khám phá quy tắc chia vạch đơn vị, biểu diễn phân số và tìm số đối
+                </p>
+              </div>
+            </div>
+            <div className="text-slate-400">
+              {isSimulationOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </div>
+          </button>
+
+          {isSimulationOpen && (
+            <div className="p-4 sm:p-6 pt-0 border-t border-slate-100 bg-slate-50/30">
+              <NumberLineExplorer />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Legacy Number Line points if provided and not in Chapter 1 */}
+      {!isChapter1 && lesson.numberLinePoints && lesson.numberLinePoints.length > 0 && (
         <NumberLineDemo points={lesson.numberLinePoints} />
       )}
 
