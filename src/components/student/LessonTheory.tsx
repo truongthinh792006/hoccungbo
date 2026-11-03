@@ -6,6 +6,7 @@ import { NumberLineDemo } from './NumberLineDemo';
 import { NumberLineExplorer } from './NumberLineExplorer';
 import { ParallelLinesExplorer } from './ParallelLinesExplorer';
 import { TriangleCongruenceExplorer } from './TriangleCongruenceExplorer';
+import { TriangleCentersExplorer } from './TriangleCentersExplorer';
 import { Target, BookOpen, AlertTriangle, Lightbulb, CheckCircle2, Circle, ChevronDown, ChevronUp, FlaskConical } from 'lucide-react';
 
 interface LessonTheoryProps {
@@ -30,6 +31,13 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
     lesson.id === 'bai_14_truong_hop_bang_nhau_thu_hai_cgc' ||
     lesson.id === 'bai_15_truong_hop_bang_nhau_thu_ba_gcg' ||
     lesson.chapterId === 'chuong_4_tam_giac_bang_nhau';
+  const isTriangleCentersLesson =
+    lesson.id === 'bai_31_quan_he_giua_goc_va_canh_doi_dien' ||
+    lesson.id === 'bai_32_quan_he_giua_duong_vuong_goc_va_duong_xien' ||
+    lesson.id === 'bai_33_quan_he_giua_ba_canh_cua_tam_giac' ||
+    lesson.id === 'bai_34_su_dong_quy_cua_ba_duong_trung_tuyen_phan_giac' ||
+    lesson.id === 'bai_35_su_dong_quy_cua_ba_duong_trung_truc_duong_cao' ||
+    lesson.chapterId === 'chuong_9_quan_he_cac_yeu_to_tam_giac';
 
   const completedCount = lesson.learningTargets.filter(t => 
     isCompetencyMastered(t.id) || isCompetencyMastered(t.code)
@@ -225,8 +233,46 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
         </div>
       )}
 
-      {/* Legacy Number Line points if provided and not in Chapter 1, 3 or 4 */}
-      {!isChapter1 && !isParallelLinesLesson && !isTriangleCongruenceLesson && lesson.numberLinePoints && lesson.numberLinePoints.length > 0 && (
+      {/* 2d. Visual Simulation for Chapter 9: 4 Đường đồng quy trong tam giác */}
+      {isTriangleCentersLesson && (
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden transition-all">
+          <button
+            onClick={() => setIsSimulationOpen(!isSimulationOpen)}
+            className="w-full flex items-center justify-between p-4 sm:p-5 text-left hover:bg-slate-50/80 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-violet-50 border border-violet-200 text-violet-700 flex items-center justify-center shrink-0">
+                <FlaskConical className="w-4 h-4 text-violet-600" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
+                    🔬 Mô phỏng trực quan: 4 Điểm kì diệu trong tam giác (G, H, O, I)
+                  </h3>
+                  <span className="text-[10px] font-bold text-violet-800 bg-violet-50 border border-violet-200 px-2 py-0.5 rounded-full">
+                    Hình học tương tác
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Kéo thả đỉnh A để quan sát Trọng tâm G, Trực tâm H nhảy ra ngoài, Tâm ngoại tiếp O và Tâm nội tiếp I
+                </p>
+              </div>
+            </div>
+            <div className="text-slate-400">
+              {isSimulationOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </div>
+          </button>
+
+          {isSimulationOpen && (
+            <div className="p-4 sm:p-6 pt-0 border-t border-slate-100 bg-slate-50/30">
+              <TriangleCentersExplorer />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Legacy Number Line points if provided and not in Chapter 1, 3, 4 or 9 */}
+      {!isChapter1 && !isParallelLinesLesson && !isTriangleCongruenceLesson && !isTriangleCentersLesson && lesson.numberLinePoints && lesson.numberLinePoints.length > 0 && (
         <NumberLineDemo points={lesson.numberLinePoints} />
       )}
 
