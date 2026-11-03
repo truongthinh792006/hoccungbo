@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { LessonTheory } from './LessonTheory';
 import { SocraticTutor } from './SocraticTutor';
 import { DrillQuiz } from './DrillQuiz';
+import { FocusTimerWidget } from './FocusTimerWidget';
 import { math7Chapters, getNextLesson, getPrevLesson } from '../../data/math7_curriculum';
 import { 
   Bot, Award, Bookmark, ChevronLeft, 
@@ -119,6 +120,9 @@ export const StudentStudyView: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* Pomodoro Focus Timer with Dinner-Talk Transition */}
+      <FocusTimerWidget />
 
       {/* Main Dual-Pane Layout: 60% Left / 40% Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

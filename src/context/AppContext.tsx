@@ -1,6 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UserRole, Math7Lesson, QuizSubmissionRecord, StreakState, Badge, FamilyRewardContract } from '../types/curriculum';
+import { 
+  UserRole, 
+  Math7Lesson, 
+  QuizSubmissionRecord, 
+  StreakState, 
+  Badge, 
+  FamilyRewardContract,
+  FocusTimerState
+} from '../types/curriculum';
 import { math7CurriculumLessons } from '../data/math7_curriculum';
+import { SoundEffects } from '../utils/soundEffects';
 
 interface AppContextType {
   role: UserRole;
@@ -54,6 +63,18 @@ interface AppContextType {
   verifyPin: (pin: string) => boolean;
   masteryPercentage: number;
   completedLessonIds: string[];
+  // Pomodoro Focus Timer
+  timerState: FocusTimerState;
+  startFocusTimer: () => void;
+  pauseFocusTimer: () => void;
+  resetFocusTimer: (minutes?: number) => void;
+  setFocusDuration: (minutes: number) => void;
+  toggleFocusSound: () => void;
+  toggleTickSound: () => void;
+  isDinnerTalkModalOpen: boolean;
+  openDinnerTalkModal: () => void;
+  closeDinnerTalkModal: () => void;
+  claimDinnerTalkReward: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -71,7 +92,8 @@ const STORAGE_KEYS = {
   BADGES: 'math7_badges',
   QUIZ_SUBMISSIONS: 'math7_quiz_submissions',
   WEAK_TAGS: 'math7_weak_tags',
-  COMPLETED_LESSONS: 'math7_completed_lessons'
+  COMPLETED_LESSONS: 'math7_completed_lessons',
+  FOCUS_TIMER: 'math7_focus_timer_state'
 };
 
 const PARENT_PIN = '1234';
@@ -327,6 +349,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
 
+  // Focus Timer Pomodoro State
+  const [timerState, setTimerState] = useState<FocusTimerState>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.FOCUS_TIMER);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return { ...parsed, isRunning: false };
+      }
+    } catch {}
+    return {
+      mode: 'FOCUS',
+      durationMinutes: 25,
+      timeLeftSeconds: 25 * 60,
+      isRunning: false,
+      soundEnabled: true,
+      tickSoundEnabled: false,
+      completedSessionsToday: 0
+    };
+  });
+
+  const [isDinnerTalkModalOpen, setIsDinnerTalkModalOpen] = useState(false);
+
   // Sync state to LocalStorage
   useEffect(() => {
     try {
@@ -400,6 +444,136 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem(STORAGE_KEYS.BADGES, JSON.stringify(badges));
     } catch {}
   }, [badges]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.FOCUS_TIMER, JSON.stringify(timerState));
+    } catch {}
+  }, [timerState]);
+
+  // Pomodoro Focus Ticker Interval
+  useEffect(() => {
+    if (!timerState.isRunning) return;
+
+    const interval = setInterval(() => {
+      setTimerState(prev => {
+        if (!prev.isRunning) return prev;
+
+        // Soft tick sound if enabled
+        if (prev.tickSoundEnabled && prev.soundEnabled) {
+          SoundEffects.playTick();
+        }
+
+        // Timer reaches zero
+        if (prev.timeLeftSeconds <= 1) {
+          if (prev.soundEnabled) {
+            SoundEffects.playCompletionChime();
+          }
+
+          if (prev.mode === 'FOCUS') {
+            // Sync accumulated focus minutes to todayStudyTimeMinutes
+            setTodayStudyTimeMinutesState(t => {
+              const updated = t + prev.durationMinutes;
+              try {
+                localStorage.setItem(STORAGE_KEYS.STUDY_TIME, updated.toString());
+              } catch {}
+              return updated;
+            });
+
+            // Automatically open dinner-table conversation modal
+            setIsDinnerTalkModalOpen(true);
+
+            // Switch to 5-minute break
+            return {
+              ...prev,
+              mode: 'BREAK',
+              durationMinutes: 5,
+              timeLeftSeconds: 5 * 60,
+              isRunning: false,
+              completedSessionsToday: prev.completedSessionsToday + 1
+            };
+          } else {
+            // Break finished -> reset to 25-minute deep focus
+            return {
+              ...prev,
+              mode: 'FOCUS',
+              durationMinutes: 25,
+              timeLeftSeconds: 25 * 60,
+              isRunning: false
+            };
+          }
+        }
+
+        return {
+          ...prev,
+          timeLeftSeconds: prev.timeLeftSeconds - 1
+        };
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timerState.isRunning]);
+
+  const startFocusTimer = () => {
+    setTimerState(prev => ({ ...prev, isRunning: true }));
+  };
+
+  const pauseFocusTimer = () => {
+    setTimerState(prev => ({ ...prev, isRunning: false }));
+  };
+
+  const resetFocusTimer = (minutes?: number) => {
+    setTimerState(prev => {
+      const dur = minutes ?? prev.durationMinutes;
+      return {
+        ...prev,
+        durationMinutes: dur,
+        timeLeftSeconds: dur * 60,
+        isRunning: false
+      };
+    });
+  };
+
+  const setFocusDuration = (minutes: number) => {
+    setTimerState(prev => ({
+      ...prev,
+      mode: 'FOCUS',
+      durationMinutes: minutes,
+      timeLeftSeconds: minutes * 60,
+      isRunning: false
+    }));
+  };
+
+  const toggleFocusSound = () => {
+    setTimerState(prev => ({ ...prev, soundEnabled: !prev.soundEnabled }));
+  };
+
+  const toggleTickSound = () => {
+    setTimerState(prev => ({ ...prev, tickSoundEnabled: !prev.tickSoundEnabled }));
+  };
+
+  const claimDinnerTalkReward = () => {
+    setXp(prev => {
+      const updated = prev + 20;
+      try {
+        localStorage.setItem(STORAGE_KEYS.XP, updated.toString());
+      } catch {}
+      return updated;
+    });
+
+    setBadges(prev => prev.map(b => {
+      if (b.id === 'badge-family-teamwork') {
+        return {
+          ...b,
+          unlockedAt: b.unlockedAt || new Date().toISOString().split('T')[0],
+          progress: 100
+        };
+      }
+      return b;
+    }));
+
+    setIsDinnerTalkModalOpen(false);
+  };
 
   const setRole = (newRole: UserRole) => {
     setRoleState(newRole);
@@ -615,7 +789,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         closePinModal: () => setIsPinModalOpen(false),
         verifyPin,
         masteryPercentage,
-        completedLessonIds
+        completedLessonIds,
+        timerState,
+        startFocusTimer,
+        pauseFocusTimer,
+        resetFocusTimer,
+        setFocusDuration,
+        toggleFocusSound,
+        toggleTickSound,
+        isDinnerTalkModalOpen,
+        openDinnerTalkModal: () => setIsDinnerTalkModalOpen(true),
+        closeDinnerTalkModal: () => setIsDinnerTalkModalOpen(false),
+        claimDinnerTalkReward
       }}
     >
       {children}

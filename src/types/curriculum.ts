@@ -229,3 +229,15 @@ export interface FamilyRewardContract {
   rewardName: string;             // Phần thưởng do bố nhập (VD: "Đi bơi cùng bố cuối tuần")
   isClaimed: boolean;             // Trạng thái nhận thưởng
 }
+
+export type FocusTimerMode = 'FOCUS' | 'BREAK';
+
+export interface FocusTimerState {
+  mode: FocusTimerMode;
+  durationMinutes: number;        // 15, 25, 45 (FOCUS) hoặc 5 (BREAK)
+  timeLeftSeconds: number;        // Số giây còn lại
+  isRunning: boolean;
+  soundEnabled: boolean;          // Bật/tắt chuông hoàn thành (Web Audio API)
+  tickSoundEnabled: boolean;      // Bật/tắt âm tích tắc nhẹ khi đang đếm
+  completedSessionsToday: number; // Số phiên Pomodoro đã hoàn thành hôm nay
+}
