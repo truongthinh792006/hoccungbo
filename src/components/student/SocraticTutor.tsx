@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Math7Lesson } from '../../types/curriculum';
 import { MathText } from '../common/MathText';
-import { Bot, User, Send, RefreshCw, Lightbulb, ChevronRight } from 'lucide-react';
+import { SocraticTutorEngine } from '../../services/socraticTutor';
+import { Bot, User, Send, RefreshCw, Lightbulb, ChevronRight, Sparkles } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -10,6 +11,8 @@ interface ChatMessage {
   formula?: string;
   timestamp: string;
   hintLevel?: 1 | 2 | 3;
+  modelBadge?: string;
+  isLocalFallback?: boolean;
 }
 
 interface SocraticTutorProps {
@@ -21,82 +24,105 @@ export const SocraticTutor: React.FC<SocraticTutorProps> = ({ lesson }) => {
     {
       id: 'welcome',
       sender: 'ai',
-      text: `Chào em! Thầy/cô là Gia sư Socratic môn Toán 7. 🎯\nThầy/cô ở đây để đồng hành cùng em khám phá **"${lesson.title}"**.\n\nThầy/cô sẽ không làm hộ hay đưa đáp án giải sẵn, mà sẽ đặt các câu hỏi định hướng để chính em tự suy luận ra kết quả. Em đang băn khoăn ở phần nào?`,
+      text: `Chào em! Thầy/cô là Gia sư Socratic môn Toán 7. 🎯\nThầy/cô ở đây để đồng hành cùng em khám phá bài **"${lesson.title}"**.\n\nThầy/cô sẽ không giải hộ hay đọc ngay đáp án, mà sẽ gợi mở từng bước để em tự tìm ra chân lý toán học! Em đang băn khoăn ở phần nào?`,
       formula: '\\mathbb{Q} = \\frac{a}{b} \\quad (b \\neq 0)',
       timestamp: 'Vừa xong',
-      hintLevel: 1
+      hintLevel: 1,
+      modelBadge: 'Socratic AI'
     }
   ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Auto-scroll on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
   const presetChips = [
-    'Gợi ý bước tiếp theo',
-    'Giải thích vì sao mẫu số khác 0',
-    'Thử giải câu tương tự',
-    'Phân số âm trên trục số'
+    'Thầy/Cô gợi ý bước tiếp theo cho em',
+    'Vì sao mẫu số bắt buộc phải khác 0?',
+    'Làm sao để so sánh hai số hữu tỉ âm?',
+    'Thử thách em một câu hỏi tương tự!'
   ];
 
-  const handleSendMessage = (textToSend?: string) => {
+  // Graceful fallback to local Socratic heuristics
+  const triggerLocalFallback = (query: string) => {
+    const fallback = SocraticTutorEngine.generateResponse(query, lesson as any);
+    const aiMsg: ChatMessage = {
+      id: `ai-${Date.now()}`,
+      sender: 'ai',
+      text: fallback.message,
+      formula: fallback.mathFormula,
+      timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      hintLevel: fallback.hintLevel,
+      modelBadge: 'Gợi ý chuẩn SGK',
+      isLocalFallback: true
+    };
+    setMessages(prev => [...prev, aiMsg]);
+  };
+
+  const handleSendMessage = async (textToSend?: string) => {
     const query = textToSend || inputText;
-    if (!query.trim()) return;
+    if (!query.trim() || isTyping) return;
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
       sender: 'user',
-      text: query,
+      text: query.trim(),
       timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
     };
 
-    setMessages(prev => [...prev, userMsg]);
+    // Update conversation state with user message
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInputText('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      let replyText = '';
-      let replyFormula = '';
-      let hintLevel: 1 | 2 | 3 = 1;
+    try {
+      // Send message to secure serverless endpoint
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lessonTitle: lesson.title,
+          competencies: lesson.learningTargets.map(t => ({
+            code: t.code,
+            description: t.description
+          })),
+          chatHistory: updatedMessages.map(m => ({
+            role: m.sender === 'ai' ? 'assistant' : 'user',
+            content: m.text
+          })),
+          studentMessage: query.trim()
+        })
+      });
 
-      const q = query.toLowerCase();
-
-      if (q.includes('mẫu số khác 0') || q.includes('mẫu') || q.includes('5/0')) {
-        replyText = `Câu hỏi then chốt của bài học! 💡\n\nTrong toán học từ tiểu học đến nay, em đã từng gặp phép tính chia cho số 0 bao giờ chưa? Nếu có 5 cái kẹo mà chia cho 0 bạn, liệu việc chia đó có thực hiện được không?\n\nChính vì phép chia cho 0 không xác định, nên phân số $\\frac{a}{b}$ bắt buộc mẫu số $b$ phải khác 0!`;
-        replyFormula = 'b \\neq 0 \\implies \\frac{5}{0} \\notin \\mathbb{Q}';
-        hintLevel = 1;
-      } else if (q.includes('gợi ý bước tiếp theo') || q.includes('bước tiếp theo')) {
-        replyText = `Thầy/cô gợi ý cho em nhé:\n\n1. Bước 1: Hãy xác định xem các số cần so sánh hoặc tính toán đã ở cùng dạng phân số có mẫu dương chưa.\n2. Bước 2: Với hai số hữu tỉ âm, số nào có khoảng cách đến điểm 0 ngắn hơn thì số đó lớn hơn! Em thử kiểm tra lại nháp xem sao nhé?`;
-        replyFormula = '-9 > -10 \\implies -\\frac{9}{12} > -\\frac{10}{12}';
-        hintLevel = 2;
-      } else if (q.includes('tương tự') || q.includes('thử giải')) {
-        replyText = `Thầy/cô thử thách em một câu hỏi tương tự để kiểm tra độ hiểu sâu nhé:\n\nTrong các số sau: $-1\\frac{2}{5}, \\; 0,75, \\; \\frac{-7}{0}, \\; -4$. Số nào vi phạm định nghĩa số hữu tỉ?`;
-        replyFormula = '\\text{Xét các mẫu số: } 5, \\; 100, \\; 0, \\; 1';
-        hintLevel = 1;
-      } else if (q.includes('trục số') || q.includes('phân số âm')) {
-        replyText = `Rất trực quan! Trên trục số nằm ngang:\n- Điểm gốc là số 0.\n- Tất cả các số âm luôn nằm ở bên **trái** điểm 0.\n- Hai số đối nhau sẽ nằm đối xứng nhau qua gốc 0 và có khoảng cách bằng nhau. Ví dụ $-\\frac{3}{4}$ và $\\frac{3}{4}$.`;
-        replyFormula = '-\\frac{3}{4} \\text{ (bên trái)} \\longleftrightarrow \\frac{3}{4} \\text{ (bên phải)}';
-        hintLevel = 2;
-      } else {
-        replyText = `Ý kiến của em rất đáng chú ý! Để cùng làm sáng tỏ vấn đề này:\n\nEm đã thử nháp bước đầu tiên chưa? Hãy chia sẻ cách em đang bắt đầu suy nghĩ, thầy/cô sẽ chỉ ra điểm then chốt cho em nhé!`;
-        hintLevel = 2;
+      if (response.ok) {
+        const data = await response.json();
+        if (data.reply) {
+          const aiMsg: ChatMessage = {
+            id: `ai-${Date.now()}`,
+            sender: 'ai',
+            text: data.reply,
+            timestamp: data.timestamp || new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            hintLevel: data.hintLevel || 2,
+            modelBadge: data.model ? `Gemini (${data.model.replace('gemini-', '')})` : 'Gemini Live'
+          };
+          setMessages(prev => [...prev, aiMsg]);
+          return;
+        }
       }
 
-      const aiMsg: ChatMessage = {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: replyText,
-        formula: replyFormula,
-        timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-        hintLevel
-      };
-
-      setMessages(prev => [...prev, aiMsg]);
+      // If server returned non-200 or missing reply (e.g. API key not set or quota limit)
+      triggerLocalFallback(query);
+    } catch {
+      // Seamless network fallback
+      triggerLocalFallback(query);
+    } finally {
       setIsTyping(false);
-    }, 600);
+    }
   };
 
   const handleReset = () => {
@@ -104,35 +130,37 @@ export const SocraticTutor: React.FC<SocraticTutorProps> = ({ lesson }) => {
       {
         id: 'welcome-reset',
         sender: 'ai',
-        text: `Chào em! Thầy/cô đã sẵn sàng. Em hãy đặt câu hỏi hoặc bấm vào các nút gợi ý bên dưới để bắt đầu nhé!`,
+        text: `Chào em! Thầy/cô đã sẵn sàng tiếp tục đồng hành cùng em trong bài **"${lesson.title}"**.\n\nHãy đặt bất kỳ câu hỏi nào em muốn, hoặc bấm vào các nút gợi ý bên dưới nhé!`,
         timestamp: 'Vừa xong',
-        hintLevel: 1
+        hintLevel: 1,
+        modelBadge: 'Socratic AI'
       }
     ]);
   };
 
   return (
-    <div className="flex flex-col h-[520px] bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
+    <div className="flex flex-col h-[540px] bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
       {/* Tutor Header */}
-      <div className="px-5 py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white flex items-center justify-between">
+      <div className="px-5 py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-amber-300">
+          <div className="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-amber-300 shadow-xs">
             <Bot className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
               <h4 className="font-bold text-xs sm:text-sm">Trợ Lý Socratic AI</h4>
-              <span className="text-[10px] bg-emerald-400/25 px-1.5 py-0.2 rounded font-semibold text-emerald-100 border border-emerald-300/30">
-                Gợi mở
+              <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-400/25 px-2 py-0.5 rounded-full font-semibold text-emerald-100 border border-emerald-300/30">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
+                <span>Live Socratic</span>
               </span>
             </div>
-            <p className="text-[10px] text-emerald-100">Kiên nhẫn dẫn dắt • Không giải hộ</p>
+            <p className="text-[10px] text-emerald-100">Kiên nhẫn gợi mở • Chuẩn SGK Kết nối tri thức</p>
           </div>
         </div>
 
         <button
           onClick={handleReset}
-          className="text-emerald-100 hover:text-white p-1 rounded-lg hover:bg-white/10 text-xs flex items-center gap-1"
+          className="text-emerald-100 hover:text-white p-1.5 rounded-lg hover:bg-white/10 text-xs flex items-center gap-1 transition-colors"
           title="Làm mới cuộc trò chuyện"
         >
           <RefreshCw className="w-3.5 h-3.5" />
@@ -176,17 +204,26 @@ export const SocraticTutor: React.FC<SocraticTutorProps> = ({ lesson }) => {
                     : 'bg-emerald-600 text-white'
                 }`}
               >
-                <div className="flex items-center justify-between text-[10px] opacity-70 border-b border-current/10 pb-1">
-                  <span>{isAi ? 'Thầy/Cô Socratic' : 'Em'}</span>
-                  <span>{msg.timestamp}</span>
+                <div className="flex items-center justify-between text-[10px] opacity-75 border-b border-current/10 pb-1 gap-2">
+                  <span className="font-semibold">{isAi ? 'Thầy/Cô Socratic' : 'Em'}</span>
+                  <div className="flex items-center gap-1.5">
+                    {msg.modelBadge && (
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-mono">
+                        {msg.modelBadge}
+                      </span>
+                    )}
+                    <span>{msg.timestamp}</span>
+                  </div>
                 </div>
 
+                {/* KaTeX Markdown Text */}
                 <div className="text-xs leading-relaxed whitespace-pre-line">
                   <MathText>{msg.text}</MathText>
                 </div>
 
+                {/* Centered Formula Display if provided */}
                 {msg.formula && isAi && (
-                  <div className="bg-slate-900 text-emerald-300 rounded-xl p-2 text-center text-xs font-mono">
+                  <div className="bg-slate-900 text-emerald-300 rounded-xl p-2.5 text-center text-xs font-mono shadow-xs">
                     <MathText formula={msg.formula} block={true} />
                   </div>
                 )}
@@ -208,10 +245,20 @@ export const SocraticTutor: React.FC<SocraticTutorProps> = ({ lesson }) => {
           );
         })}
 
+        {/* Animated Typing Indicator */}
         {isTyping && (
-          <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 p-2.5 rounded-2xl w-fit">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-            <span>Thầy/cô đang suy nghĩ gợi ý phản biện...</span>
+          <div className="flex items-center gap-2.5 text-xs text-slate-600 bg-white border border-slate-200/90 p-3 rounded-2xl w-fit shadow-xs animate-fadeIn">
+            <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+              <Sparkles className="w-3.5 h-3.5 animate-spin" />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span>Thầy/Cô đang suy nghĩ câu hỏi gợi mở...</span>
+              <div className="flex gap-1 items-center ml-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+            </div>
           </div>
         )}
 
@@ -231,12 +278,13 @@ export const SocraticTutor: React.FC<SocraticTutorProps> = ({ lesson }) => {
           value={inputText}
           onChange={e => setInputText(e.target.value)}
           placeholder="Nhập câu hỏi của em (ví dụ: 'Tại sao số 0 là số hữu tỉ?')..."
-          className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+          disabled={isTyping}
+          className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all disabled:opacity-50"
         />
         <button
           type="submit"
-          disabled={!inputText.trim()}
-          className="p-2 sm:px-3 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-1"
+          disabled={!inputText.trim() || isTyping}
+          className="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-1.5 active:scale-95"
         >
           <Send className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Hỏi</span>
