@@ -1,9 +1,22 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Flame, Sparkles, User, ShieldCheck, ChevronRight, BookOpen, Layers } from 'lucide-react';
+import { Flame, Sparkles, User, ShieldCheck, ChevronRight, BookOpen, Layers, Bookmark } from 'lucide-react';
 
 export const RoleSwitcher: React.FC = () => {
-  const { role, switchRoleWithPinCheck, setRole, currentLesson, streak, xp } = useApp();
+  const { 
+    role, 
+    switchRoleWithPinCheck, 
+    setRole, 
+    currentLesson, 
+    streak, 
+    xp, 
+    openSyllabus, 
+    todayLessonId, 
+    allLessons,
+    setCurrentLessonId 
+  } = useApp();
+
+  const todayLesson = allLessons.find(l => l.id === todayLessonId) || currentLesson;
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all">
@@ -11,12 +24,16 @@ export const RoleSwitcher: React.FC = () => {
         <div className="flex items-center justify-between h-16 gap-3">
           {/* Left: Subject Tag & Breadcrumb */}
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 shrink-0">
+            <button
+              onClick={openSyllabus}
+              className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 shrink-0 transition-transform active:scale-95"
+              title="Nhấn để mở Mục lục 4 Chương"
+            >
               <BookOpen className="w-5 h-5" />
-            </div>
+            </button>
 
             <div className="min-w-0">
-              {/* Subject Tag */}
+              {/* Subject Tag & Syllabus Trigger */}
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight">
                   Toán 7
@@ -25,19 +42,48 @@ export const RoleSwitcher: React.FC = () => {
                   <Layers className="w-3 h-3" />
                   <span>Kết nối tri thức</span>
                 </span>
+
+                <button
+                  onClick={openSyllabus}
+                  className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200 transition-colors"
+                >
+                  <BookOpen className="w-3 h-3 text-emerald-600" />
+                  <span>Mục lục SGK (19 bài)</span>
+                </button>
               </div>
 
               {/* Breadcrumb */}
               <div className="flex items-center gap-1.5 text-xs text-slate-500 truncate mt-0.5">
-                <span className="hidden sm:inline font-medium text-slate-600">{currentLesson.chapterTitle}</span>
+                <span className="hidden sm:inline font-medium text-slate-600">{currentLesson.chapterTitle.split(':')[0]}</span>
                 <ChevronRight className="w-3 h-3 text-slate-400 hidden sm:inline shrink-0" />
-                <span className="font-semibold text-emerald-800 truncate">{currentLesson.title}</span>
+                <button
+                  onClick={openSyllabus}
+                  className="font-semibold text-emerald-800 hover:underline truncate text-left"
+                >
+                  {currentLesson.title}
+                </button>
               </div>
             </div>
           </div>
 
           {/* Right: Gamification & Role Switcher */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Quick Bookmark Badge: "Bài học hôm nay" */}
+            <button
+              onClick={() => {
+                if (currentLesson.id !== todayLesson.id) {
+                  setCurrentLessonId(todayLesson.id);
+                } else {
+                  openSyllabus();
+                }
+              }}
+              className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100/70 text-amber-900 text-xs font-bold transition-all"
+              title="Nhấn để nhảy nhanh đến bài học hôm nay tại trường"
+            >
+              <Bookmark className="w-3.5 h-3.5 fill-current text-amber-600" />
+              <span>Hôm nay: B.{todayLesson.order}</span>
+            </button>
+
             {/* Streak Flame */}
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold shadow-xs">
               <Flame className="w-4 h-4 text-amber-500 fill-amber-500 animate-bounce" />

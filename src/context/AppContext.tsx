@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserRole, Math7Lesson, QuizSubmissionRecord } from '../types/curriculum';
-import { math7Chapter1Lessons } from '../data/math7_chapter1';
+import { math7CurriculumLessons } from '../data/math7_curriculum';
 
 interface AppContextType {
   role: UserRole;
@@ -10,6 +10,13 @@ interface AppContextType {
   setCurrentLessonId: (id: string) => void;
   currentLesson: Math7Lesson;
   allLessons: Math7Lesson[];
+  todayLessonId: string;
+  setTodayLessonId: (id: string) => void;
+  isTodayLesson: (id: string) => boolean;
+  isSyllabusOpen: boolean;
+  openSyllabus: () => void;
+  closeSyllabus: () => void;
+  toggleSyllabus: () => void;
   xp: number;
   streak: number;
   weakTags: string[];
@@ -35,6 +42,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 const STORAGE_KEYS = {
   ROLE: 'math7_user_role',
   CURRENT_LESSON: 'math7_current_lesson',
+  TODAY_LESSON: 'math7_today_lesson',
   XP: 'math7_user_xp',
   STREAK: 'math7_user_streak',
   QUIZ_SUBMISSIONS: 'math7_quiz_submissions',
@@ -57,11 +65,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentLessonId, setCurrentLessonIdState] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_LESSON);
-      return saved || math7Chapter1Lessons[0].id;
+      return saved || math7CurriculumLessons[0].id;
     } catch {
-      return math7Chapter1Lessons[0].id;
+      return math7CurriculumLessons[0].id;
     }
   });
+
+  const [todayLessonId, setTodayLessonIdState] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.TODAY_LESSON);
+      return saved || math7CurriculumLessons[0].id;
+    } catch {
+      return math7CurriculumLessons[0].id;
+    }
+  });
+
+  const [isSyllabusOpen, setIsSyllabusOpen] = useState(false);
 
   const [xp, setXp] = useState<number>(() => {
     try {
@@ -111,9 +130,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           score: 30,
           totalPoints: 30,
           percentage: 100,
-          answers: { 'q1-nb': 'opt-1c', 'q2-th': 'opt-2a', 'q3-vd': 'opt-3a' },
-          isCorrect: { 'q1-nb': true, 'q2-th': true, 'q3-vd': true },
-          hintsUsedCount: { 'q1-nb': 0, 'q2-th': 1, 'q3-vd': 1 }
+          answers: { 'q-b1-1': 'b1-opt-1c', 'q-b1-2': 'b1-opt-2a', 'q-b1-3': 'b1-opt-3a' },
+          isCorrect: { 'q-b1-1': true, 'q-b1-2': true, 'q-b1-3': true },
+          hintsUsedCount: { 'q-b1-1': 0, 'q-b1-2': 1, 'q-b1-3': 1 }
         }
       };
     } catch {
@@ -135,6 +154,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem(STORAGE_KEYS.CURRENT_LESSON, currentLessonId);
     } catch {}
   }, [currentLessonId]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.TODAY_LESSON, todayLessonId);
+    } catch {}
+  }, [todayLessonId]);
 
   useEffect(() => {
     try {
@@ -185,6 +210,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCurrentLessonIdState(id);
   };
 
+  const setTodayLessonId = (id: string) => {
+    setTodayLessonIdState(id);
+  };
+
+  const isTodayLesson = (id: string) => {
+    return todayLessonId === id;
+  };
+
+  const openSyllabus = () => setIsSyllabusOpen(true);
+  const closeSyllabus = () => setIsSyllabusOpen(false);
+  const toggleSyllabus = () => setIsSyllabusOpen(prev => !prev);
+
   const submitQuiz = (
     lessonId: string,
     answers: Record<string, string>,
@@ -216,8 +253,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const newWeak: string[] = [];
     Object.keys(isCorrect).forEach(qId => {
       if (!isCorrect[qId]) {
-        if (qId.includes('vd')) newWeak.push('So sánh số hữu tỉ âm (cần củng cố)');
-        if (qId.includes('nb')) newWeak.push('Điều kiện mẫu số b khác 0');
+        if (qId.includes('vd')) newWeak.push('Vận dụng kiến thức bài học (cần củng cố)');
+        if (qId.includes('th')) newWeak.push('Thông hiểu công thức và định lí');
+        if (qId.includes('nb')) newWeak.push('Nhận biết định nghĩa cơ bản');
       }
     });
 
@@ -227,7 +265,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const currentLesson =
-    math7Chapter1Lessons.find(l => l.id === currentLessonId) || math7Chapter1Lessons[0];
+    math7CurriculumLessons.find(l => l.id === currentLessonId) || math7CurriculumLessons[0];
 
   // Calculate overall mastery index
   const attempts = Object.values(quizSubmissions);
@@ -245,7 +283,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         currentLessonId,
         setCurrentLessonId,
         currentLesson,
-        allLessons: math7Chapter1Lessons,
+        allLessons: math7CurriculumLessons,
+        todayLessonId,
+        setTodayLessonId,
+        isTodayLesson,
+        isSyllabusOpen,
+        openSyllabus,
+        closeSyllabus,
+        toggleSyllabus,
         xp,
         streak,
         weakTags,

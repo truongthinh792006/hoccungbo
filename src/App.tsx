@@ -3,6 +3,7 @@ import { RoleSwitcher } from './components/common/RoleSwitcher';
 import { PinModal } from './components/common/PinModal';
 import { StudentStudyView } from './components/student/StudentStudyView';
 import { ParentDashboardView } from './components/parent/ParentDashboardView';
+import { SyllabusNavigator } from './components/curriculum/SyllabusNavigator';
 
 function MainAppContent() {
   const { role } = useApp();
@@ -23,6 +24,9 @@ function MainAppContent() {
 
       {/* Parental PIN Modal Gate */}
       <PinModal />
+
+      {/* Syllabus Navigator Slide-Over Drawer */}
+      <SyllabusNavigator />
 
       {/* Footer */}
       <footer className="mt-8 border-t border-slate-200/80 bg-white/70 py-5 text-center text-xs text-slate-500">

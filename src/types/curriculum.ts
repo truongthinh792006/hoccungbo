@@ -174,6 +174,23 @@ export interface Math7Lesson {
   numberLinePoints?: NumberLinePoint[];
   diagnosticQuiz: QuizQuestionItem[];
   dinnerPrompts: DinnerPrompt[];
+  // Convenience aliases matching deliverable specs
+  unit?: string;
+  competencies?: TargetCompetency[];
+  keyTakeaways?: CoreConcept[];
+  parentCheatsheet?: DinnerPrompt[];
+  quiz?: QuizQuestionItem[];
+}
+
+export interface ChapterMeta {
+  id: string;
+  order: number;
+  title: string;
+  shortTitle: string;
+  description: string;
+  lessonIds: string[];
+  themeColor: string;
+  iconName?: string;
 }
 
 export interface QuizSubmissionRecord {
