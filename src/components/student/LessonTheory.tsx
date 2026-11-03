@@ -7,6 +7,7 @@ import { NumberLineExplorer } from './NumberLineExplorer';
 import { ParallelLinesExplorer } from './ParallelLinesExplorer';
 import { TriangleCongruenceExplorer } from './TriangleCongruenceExplorer';
 import { TriangleCentersExplorer } from './TriangleCentersExplorer';
+import { ProbabilitySpinnerExplorer } from './ProbabilitySpinnerExplorer';
 import { Target, BookOpen, AlertTriangle, Lightbulb, CheckCircle2, Circle, ChevronDown, ChevronUp, FlaskConical } from 'lucide-react';
 
 interface LessonTheoryProps {
@@ -38,6 +39,10 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
     lesson.id === 'bai_34_su_dong_quy_cua_ba_duong_trung_tuyen_phan_giac' ||
     lesson.id === 'bai_35_su_dong_quy_cua_ba_duong_trung_truc_duong_cao' ||
     lesson.chapterId === 'chuong_9_quan_he_cac_yeu_to_tam_giac';
+  const isProbabilityLesson =
+    lesson.id === 'bai_29_lam_quen_voi_bien_co' ||
+    lesson.id === 'bai_30_xac_suat_cua_bien_co' ||
+    lesson.chapterId === 'chuong_8_bien_co_va_xac_suat';
 
   const completedCount = lesson.learningTargets.filter(t => 
     isCompetencyMastered(t.id) || isCompetencyMastered(t.code)
@@ -271,8 +276,46 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
         </div>
       )}
 
-      {/* Legacy Number Line points if provided and not in Chapter 1, 3, 4 or 9 */}
-      {!isChapter1 && !isParallelLinesLesson && !isTriangleCongruenceLesson && !isTriangleCentersLesson && lesson.numberLinePoints && lesson.numberLinePoints.length > 0 && (
+      {/* 2e. Visual Simulation for Chapter 8: Biến cố & Xác suất thực nghiệm */}
+      {isProbabilityLesson && (
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden transition-all">
+          <button
+            onClick={() => setIsSimulationOpen(!isSimulationOpen)}
+            className="w-full flex items-center justify-between p-4 sm:p-5 text-left hover:bg-slate-50/80 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 flex items-center justify-center shrink-0">
+                <FlaskConical className="w-4 h-4 text-rose-600" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
+                    🔬 Mô phỏng trực quan: Vòng quay Xác suất & Luật số lớn
+                  </h3>
+                  <span className="text-[10px] font-bold text-rose-800 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
+                    Thực nghiệm xác suất
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Thử nghiệm quay vòng may mắn, tung đồng xu và xúc xắc để so sánh tần số thực nghiệm với xác suất lý thuyết
+                </p>
+              </div>
+            </div>
+            <div className="text-slate-400">
+              {isSimulationOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </div>
+          </button>
+
+          {isSimulationOpen && (
+            <div className="p-4 sm:p-6 pt-0 border-t border-slate-100 bg-slate-50/30">
+              <ProbabilitySpinnerExplorer />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Legacy Number Line points if provided and not in Chapter 1, 3, 4, 8 or 9 */}
+      {!isChapter1 && !isParallelLinesLesson && !isTriangleCongruenceLesson && !isTriangleCentersLesson && !isProbabilityLesson && lesson.numberLinePoints && lesson.numberLinePoints.length > 0 && (
         <NumberLineDemo points={lesson.numberLinePoints} />
       )}
 
