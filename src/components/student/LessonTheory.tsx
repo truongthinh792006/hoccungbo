@@ -8,6 +8,7 @@ import { ParallelLinesExplorer } from './ParallelLinesExplorer';
 import { TriangleCongruenceExplorer } from './TriangleCongruenceExplorer';
 import { TriangleCentersExplorer } from './TriangleCentersExplorer';
 import { ProbabilitySpinnerExplorer } from './ProbabilitySpinnerExplorer';
+import { PieChartInteractiveBuilder } from './PieChartInteractiveBuilder';
 import { Target, BookOpen, AlertTriangle, Lightbulb, CheckCircle2, Circle, ChevronDown, ChevronUp, FlaskConical } from 'lucide-react';
 
 interface LessonTheoryProps {
@@ -43,6 +44,10 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
     lesson.id === 'bai_29_lam_quen_voi_bien_co' ||
     lesson.id === 'bai_30_xac_suat_cua_bien_co' ||
     lesson.chapterId === 'chuong_8_bien_co_va_xac_suat';
+  const isPieChartLesson =
+    lesson.id === 'bai_18_bieu_do_hinh_quat_tron' ||
+    lesson.id === 'bai_19_bieu_do_doan_thang' ||
+    lesson.chapterId === 'chuong_5_thu_thap_va_bieu_dien_du_lieu';
 
   const completedCount = lesson.learningTargets.filter(t => 
     isCompetencyMastered(t.id) || isCompetencyMastered(t.code)
@@ -314,8 +319,46 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
         </div>
       )}
 
-      {/* Legacy Number Line points if provided and not in Chapter 1, 3, 4, 8 or 9 */}
-      {!isChapter1 && !isParallelLinesLesson && !isTriangleCongruenceLesson && !isTriangleCentersLesson && !isProbabilityLesson && lesson.numberLinePoints && lesson.numberLinePoints.length > 0 && (
+      {/* 2f. Visual Simulation for Chapter 5: Biểu đồ hình quạt tròn & Cơ cấu */}
+      {isPieChartLesson && (
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden transition-all">
+          <button
+            onClick={() => setIsSimulationOpen(!isSimulationOpen)}
+            className="w-full flex items-center justify-between p-4 sm:p-5 text-left hover:bg-slate-50/80 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center shrink-0">
+                <FlaskConical className="w-4 h-4 text-blue-600" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
+                    🔬 Mô phỏng trực quan: Biểu đồ hình quạt tròn & Góc ở tâm
+                  </h3>
+                  <span className="text-[10px] font-bold text-blue-800 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+                    Thống kê trực quan
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Khám phá công thức đổi tỉ lệ phần trăm sang góc ở tâm (α = p × 3,6°), chạm tách lát bánh và tự chỉnh số liệu
+                </p>
+              </div>
+            </div>
+            <div className="text-slate-400">
+              {isSimulationOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </div>
+          </button>
+
+          {isSimulationOpen && (
+            <div className="p-4 sm:p-6 pt-0 border-t border-slate-100 bg-slate-50/30">
+              <PieChartInteractiveBuilder />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Legacy Number Line points if provided and not in Chapter 1, 3, 4, 5, 8 or 9 */}
+      {!isChapter1 && !isParallelLinesLesson && !isTriangleCongruenceLesson && !isTriangleCentersLesson && !isProbabilityLesson && !isPieChartLesson && lesson.numberLinePoints && lesson.numberLinePoints.length > 0 && (
         <NumberLineDemo points={lesson.numberLinePoints} />
       )}
 
