@@ -5,6 +5,7 @@ import { MathText } from '../common/MathText';
 import { NumberLineDemo } from './NumberLineDemo';
 import { NumberLineExplorer } from './NumberLineExplorer';
 import { ParallelLinesExplorer } from './ParallelLinesExplorer';
+import { TriangleCongruenceExplorer } from './TriangleCongruenceExplorer';
 import { Target, BookOpen, AlertTriangle, Lightbulb, CheckCircle2, Circle, ChevronDown, ChevronUp, FlaskConical } from 'lucide-react';
 
 interface LessonTheoryProps {
@@ -24,6 +25,11 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
     lesson.id === 'bai_8_goc_o_vi_tri_dac_biet_tia_phan_giac' ||
     lesson.id === 'bai_9_hai_duong_thang_song_song_dau_hieu_nhan_biet' ||
     lesson.chapterId === 'chuong_3_goc_duong_thang_song_song';
+  const isTriangleCongruenceLesson =
+    lesson.id === 'bai_13_hai_tam_giac_bang_nhau_truong_hop_ccc' ||
+    lesson.id === 'bai_14_truong_hop_bang_nhau_thu_hai_cgc' ||
+    lesson.id === 'bai_15_truong_hop_bang_nhau_thu_ba_gcg' ||
+    lesson.chapterId === 'chuong_4_tam_giac_bang_nhau';
 
   const completedCount = lesson.learningTargets.filter(t => 
     isCompetencyMastered(t.id) || isCompetencyMastered(t.code)
@@ -181,8 +187,46 @@ export const LessonTheory: React.FC<LessonTheoryProps> = ({ lesson }) => {
         </div>
       )}
 
-      {/* Legacy Number Line points if provided and not in Chapter 1 or 3 */}
-      {!isChapter1 && !isParallelLinesLesson && lesson.numberLinePoints && lesson.numberLinePoints.length > 0 && (
+      {/* 2c. Visual Simulation for Chapter 4: Các trường hợp bằng nhau của tam giác */}
+      {isTriangleCongruenceLesson && (
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden transition-all">
+          <button
+            onClick={() => setIsSimulationOpen(!isSimulationOpen)}
+            className="w-full flex items-center justify-between p-4 sm:p-5 text-left hover:bg-slate-50/80 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center shrink-0">
+                <FlaskConical className="w-4 h-4 text-purple-600" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
+                    🔬 Mô phỏng trực quan: Tam giác bằng nhau (c-c-c, c-g-c, g-c-g)
+                  </h3>
+                  <span className="text-[10px] font-bold text-purple-800 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">
+                    Chồng khít hình
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Khám phá 3 trường hợp bằng nhau và thử nghiệm kéo hình chồng khít hoàn toàn
+                </p>
+              </div>
+            </div>
+            <div className="text-slate-400">
+              {isSimulationOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </div>
+          </button>
+
+          {isSimulationOpen && (
+            <div className="p-4 sm:p-6 pt-0 border-t border-slate-100 bg-slate-50/30">
+              <TriangleCongruenceExplorer />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Legacy Number Line points if provided and not in Chapter 1, 3 or 4 */}
+      {!isChapter1 && !isParallelLinesLesson && !isTriangleCongruenceLesson && lesson.numberLinePoints && lesson.numberLinePoints.length > 0 && (
         <NumberLineDemo points={lesson.numberLinePoints} />
       )}
 
