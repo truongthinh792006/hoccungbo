@@ -229,7 +229,7 @@ export const chapter1Lessons: Math7Lesson[] = [
         title: 'Cộng và trừ số hữu tỉ',
         summary: 'Muốn cộng hoặc trừ hai số hữu tỉ, ta viết chúng dưới dạng phân số có cùng một mẫu số dương rồi áp dụng quy tắc cộng, trừ phân số.',
         latexFormula: '\\frac{a}{m} + \\frac{b}{m} = \\frac{a+b}{m}; \\quad \\frac{a}{m} - \\frac{b}{m} = \\frac{a-b}{m} \\quad (m > 0)',
-        exampleSnippet: '-\\frac{2}{3} + \\frac{5}{6} = -\\frac{4}{6} + \\frac{5}{6} = \\frac{-4+5}{6} = \\frac{1}{6}.',
+        exampleSnippet: '$-\\frac{2}{3} + \\frac{5}{6} = -\\frac{4}{6} + \\frac{5}{6} = \\frac{-4+5}{6} = \\frac{1}{6}.$',
         pitfallWarning: 'Nếu mẫu số có dấu âm, bắt buộc phải đưa dấu âm lên tử số trước khi tìm mẫu chung!',
         realLifeApplication: 'Tính toán tài chính cá nhân: chi tiêu $-\\frac{1}{4}$ số tiền lương, tiết kiệm $\\frac{1}{2}$ số tiền lương.'
       },
@@ -238,7 +238,7 @@ export const chapter1Lessons: Math7Lesson[] = [
         title: 'Nhân, chia số hữu tỉ & Số nghịch đảo',
         summary: 'Tích của hai số hữu tỉ bằng tích các tử chia cho tích các mẫu. Phép chia thực hiện bằng cách nhân với số nghịch đảo của số chia.',
         latexFormula: '\\frac{a}{b} \\cdot \\frac{c}{d} = \\frac{a \\cdot c}{b \\cdot d}; \\quad \\frac{a}{b} : \\frac{c}{d} = \\frac{a}{b} \\cdot \\frac{d}{c} \\quad (c, d \\neq 0)',
-        exampleSnippet: 'Số nghịch đảo của -\\frac{3}{5} là -\\frac{5}{3} vì \\left(-\\frac{3}{5}\\right) \\cdot \\left(-\\frac{5}{3}\\right) = 1.',
+        exampleSnippet: 'Số nghịch đảo của $-\\frac{3}{5}$ là $-\\frac{5}{3}$ vì $\\left(-\\frac{3}{5}\\right) \\cdot \\left(-\\frac{5}{3}\\right) = 1.$',
         pitfallWarning: 'Số nghịch đảo của số âm vẫn là số ÂM (giữ nguyên dấu, đảo vị trí tử và mẫu). Không được đổi dấu thành số dương!',
         realLifeApplication: 'Chia đều $2\\frac{1}{2}$ lít nước cam vào các chai nhỏ có dung tích $\\frac{1}{4}$ lít: $2,5 : 0,25 = 10$ chai.'
       },
@@ -247,7 +247,7 @@ export const chapter1Lessons: Math7Lesson[] = [
         title: 'Tính chất tính nhanh và hợp lí',
         summary: 'Các phép toán trên Q thừa hưởng toàn bộ tính chất: giao hoán, kết hợp, nhân với số 1, và tính chất phân phối của phép nhân đối với phép cộng.',
         latexFormula: 'a \\cdot (b + c) = a \\cdot b + a \\cdot c; \\quad a \\cdot b + a \\cdot c = a \\cdot (b + c)',
-        exampleSnippet: '\\frac{3}{7} \\cdot \\frac{5}{11} + \\frac{3}{7} \\cdot \\frac{6}{11} = \\frac{3}{7} \\cdot \\left(\\frac{5}{11} + \\frac{6}{11}\\right) = \\frac{3}{7} \\cdot 1 = \\frac{3}{7}.',
+        exampleSnippet: '$\\frac{3}{7} \\cdot \\frac{5}{11} + \\frac{3}{7} \\cdot \\frac{6}{11} = \\frac{3}{7} \\cdot \\left(\\frac{5}{11} + \\frac{6}{11}\\right) = \\frac{3}{7} \\cdot 1 = \\frac{3}{7}.$',
         pitfallWarning: 'Chú ý nhóm các hạng tử có cùng mẫu hoặc tổng/tích ra số tròn (0, 1) để tính nhanh.',
         realLifeApplication: 'Tính diện tích hai mảnh vườn liền kề có cùng chiều rộng bằng cách đặt chiều rộng làm thừa số chung.'
       }
@@ -401,7 +401,7 @@ export const chapter1Lessons: Math7Lesson[] = [
         title: 'Định nghĩa lũy thừa bậc n',
         summary: 'Lũy thừa bậc n của số hữu tỉ x là tích của n thừa số bằng nhau, mỗi thừa số bằng x. Quy ước $x^0 = 1$ với mọi $x \\neq 0$.',
         latexFormula: 'x^n = \\underbrace{x \\cdot x \\dots x}_{n \\text{ thừa số}} \\quad (x \\in \\mathbb{Q}, n \\in \\mathbb{N}^*); \\quad x^0 = 1 \\ (x \\neq 0)',
-        exampleSnippet: '\\left(-\\frac{2}{3}\\right)^3 = \\left(-\\frac{2}{3}\\right) \\cdot \\left(-\\frac{2}{3}\\right) \\cdot \\left(-\\frac{2}{3}\\right) = -\\frac{8}{27}; \\quad (-5)^0 = 1.',
+        exampleSnippet: '$\\left(-\\frac{2}{3}\\right)^3 = \\left(-\\frac{2}{3}\\right) \\cdot \\left(-\\frac{2}{3}\\right) \\cdot \\left(-\\frac{2}{3}\\right) = -\\frac{8}{27}; \\quad (-5)^0 = 1.$',
         pitfallWarning: 'Cực kì lưu ý dấu ngoặc: $(-3)^2 = 9$ (dương vì bình phương cả dấu âm), nhưng $-3^2 = -(3^2) = -9$ (chỉ bình phương số 3)!',
         realLifeApplication: 'Sự tăng trưởng vi khuẩn: 1 tế bào phân đôi sau mỗi 20 phút. Sau 3 chu kỳ có $2^3 = 8$ tế bào.'
       },
@@ -410,7 +410,7 @@ export const chapter1Lessons: Math7Lesson[] = [
         title: 'Quy tắc nhân, chia cùng cơ số & Lũy thừa tầng',
         summary: 'Khi nhân hai lũy thừa cùng cơ số thì giữ nguyên cơ số và cộng các số mũ. Khi chia thì trừ các số mũ. Lũy thừa của lũy thừa thì nhân các số mũ.',
         latexFormula: 'x^m \\cdot x^n = x^{m+n}; \\quad x^m : x^n = x^{m-n} \\ (x \\neq 0, m \\ge n); \\quad (x^m)^n = x^{m \\cdot n}',
-        exampleSnippet: '2^3 \\cdot 2^4 = 2^{3+4} = 2^7 = 128; \\quad (0,5^2)^3 = 0,5^{2 \\cdot 3} = 0,5^6.',
+        exampleSnippet: '$2^3 \\cdot 2^4 = 2^{3+4} = 2^7 = 128; \\quad (0,5^2)^3 = 0,5^{2 \\cdot 3} = 0,5^6.$',
         pitfallWarning: 'Đừng nhầm $(x^m)^n$ với $x^m \\cdot x^n$. Lũy thừa tầng là phép NHÂN số mũ, không phải phép cộng!',
         realLifeApplication: 'Bộ nhớ máy tính đo bằng byte: $1\\text{ KB} = 2^{10}\\text{ bytes}$, $1\\text{ MB} = 2^{20}\\text{ bytes}$, $1\\text{ GB} = 2^{30}\\text{ bytes}$.'
       },
@@ -419,7 +419,7 @@ export const chapter1Lessons: Math7Lesson[] = [
         title: 'Lũy thừa của một tích và một thương',
         summary: 'Lũy thừa của một tích bằng tích các lũy thừa. Lũy thừa của một thương bằng thương các lũy thừa.',
         latexFormula: '(x \\cdot y)^n = x^n \\cdot y^n; \\quad \\left(\\frac{x}{y}\\right)^n = \\frac{x^n}{y^n} \\quad (y \\neq 0)',
-        exampleSnippet: '(2 \\cdot 5)^3 = 2^3 \\cdot 5^3 = 8 \\cdot 125 = 1000; \\quad \\left(-\\frac{3}{4}\\right)^2 = \\frac{(-3)^2}{4^2} = \\frac{9}{16}.',
+        exampleSnippet: '$(2 \\cdot 5)^3 = 2^3 \\cdot 5^3 = 8 \\cdot 125 = 1000; \\quad \\left(-\\frac{3}{4}\\right)^2 = \\frac{(-3)^2}{4^2} = \\frac{9}{16}.$',
         pitfallWarning: 'Không có công thức cho $(x + y)^n = x^n + y^n$. Phép cộng không được phân phối lũy thừa!',
         realLifeApplication: 'Tính thể tích khối lập phương kích thước gấp đôi: $V = (2a)^3 = 8a^3$ (thể tích tăng 8 lần).'
       }
@@ -573,7 +573,7 @@ export const chapter1Lessons: Math7Lesson[] = [
         title: 'Thứ tự thực hiện các phép tính',
         summary: 'Với biểu thức không có dấu ngoặc: Lũy thừa trước -> Nhân và chia -> Cộng và trừ. Với biểu thức có dấu ngoặc: Ngoặc tròn ( ) trước -> Ngoặc vuông [ ] -> Ngoặc nhọn { }.',
         latexFormula: '\\text{Thứ tự: } x^n \\longrightarrow (\\cdot, :) \\longrightarrow (+, -); \\qquad () \\longrightarrow [] \\longrightarrow \\{\\}',
-        exampleSnippet: 'A = 50 - [30 - (6 - 2)^2] = 50 - [30 - 4^2] = 50 - [30 - 16] = 50 - 14 = 36.',
+        exampleSnippet: '$A = 50 - [30 - (6 - 2)^2] = 50 - [30 - 4^2] = 50 - [30 - 16] = 50 - 14 = 36.$',
         pitfallWarning: 'Nếu biểu thức chỉ có phép cộng/trừ hoặc chỉ có nhân/chia thì thực hiện lần lượt TỪ TRÁI SANG PHẢI, không được tự ý tính phép sau trước!',
         realLifeApplication: 'Lập trình máy tính hoặc bảng tính Excel luôn tuân thủ nghiêm ngặt quy tắc thứ tự thực hiện phép tính này.'
       },
@@ -582,7 +582,7 @@ export const chapter1Lessons: Math7Lesson[] = [
         title: 'Quy tắc chuyển vế (Chuyển vế đổi dấu)',
         summary: 'Khi chuyển một số hạng từ vế này sang vế kia của một đẳng thức, ta phải đổi dấu số hạng đó: dấu cộng đổi thành dấu trừ, dấu trừ đổi thành dấu cộng.',
         latexFormula: 'A + B = C \\iff A = C - B; \\qquad A - B = C \\iff A = C + B',
-        exampleSnippet: 'Tìm x: x + \\frac{1}{3} = \\frac{4}{5} \\implies x = \\frac{4}{5} - \\frac{1}{3} = \\frac{12 - 5}{15} = \\frac{7}{15}.',
+        exampleSnippet: 'Tìm x: $x + \\frac{1}{3} = \\frac{4}{5} \\implies x = \\frac{4}{5} - \\frac{1}{3} = \\frac{12 - 5}{15} = \\frac{7}{15}.$',
         pitfallWarning: 'Bẫy kinh điển: Chuyển số hạng sang vế kia nhưng quên đổi dấu (giữ nguyên dấu cũ) dẫn đến sai toàn bài!',
         realLifeApplication: 'Cân đĩa thăng bằng: Lấy đi một vật 2 kg ở đĩa bên trái thì phải bớt đi 2 kg ở đĩa bên phải để cân vẫn thăng bằng.'
       }
@@ -736,7 +736,7 @@ export const chapter1Lessons: Math7Lesson[] = [
         title: 'Kỹ thuật đổi đồng nhất về phân số',
         summary: 'Khi một biểu thức vừa có số thập phân, hỗn số và phân số, cách an toàn nhất là chuyển đổi tất cả về phân số tối giản trước khi tính toán.',
         latexFormula: '1\\frac{1}{2} = \\frac{3}{2}; \\quad 0,75 = \\frac{3}{4}; \\quad -0,2 = -\\frac{1}{5}',
-        exampleSnippet: '0,75 - 1\\frac{1}{2} : \\frac{3}{4} = \\frac{3}{4} - \\frac{3}{2} \\cdot \\frac{4}{3} = \\frac{3}{4} - 2 = -\\frac{5}{4}.',
+        exampleSnippet: '$0,75 - 1\\frac{1}{2} : \\frac{3}{4} = \\frac{3}{4} - \\frac{3}{2} \\cdot \\frac{4}{3} = \\frac{3}{4} - 2 = -\\frac{5}{4}.$',
         pitfallWarning: 'Tránh vội vàng bấm máy tính bỏ túi mà không viết các bước chuyển đổi trung gian, dễ mất điểm trình bày trong bài kiểm tra.',
         realLifeApplication: 'Đổi các đơn vị đo hỗn hợp: 1 giờ 15 phút = $1\\frac{1}{4}$ giờ = 1,25 giờ khi tính vận tốc chuyển động.'
       },
@@ -745,7 +745,7 @@ export const chapter1Lessons: Math7Lesson[] = [
         title: 'Tìm x chứa lũy thừa hoặc tích bằng 0',
         summary: 'Dạng 1: $x^n = a^n$. Dạng 2: $A \\cdot B = 0 \\iff A = 0$ hoặc $B = 0$.',
         latexFormula: 'A \\cdot B = 0 \\iff \\left[ \\begin{matrix} A = 0 \\\\ B = 0 \\end{matrix} \\right.; \\qquad x^2 = a^2 \\iff x = a \\text{ hoặc } x = -a',
-        exampleSnippet: '(x - 1/2)(x + 3/4) = 0 suy ra x - 1/2 = 0 (x = 1/2) hoặc x + 3/4 = 0 (x = -3/4).',
+        exampleSnippet: '$(x - 1/2)(x + 3/4) = 0 \\implies x - 1/2 = 0 \\ (x = 1/2)$ hoặc $x + 3/4 = 0 \\ (x = -3/4).$',
         pitfallWarning: 'Với phương trình có lũy thừa bậc chẵn như $x^2 = 4$, luôn có HAI nghiệm đối nhau ($x = 2$ hoặc $x = -2$). Đừng bỏ quên nghiệm âm!',
         realLifeApplication: 'Bài toán quỹ đạo parabol trong vật lý hoặc tính độ dài cạnh hình vuông biết diện tích.'
       }

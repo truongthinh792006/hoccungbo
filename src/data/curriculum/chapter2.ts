@@ -392,7 +392,7 @@ export const chapter2Lessons: Math7Lesson[] = [
         title: 'Giá trị tuyệt đối của một số thực',
         summary: 'Giá trị tuyệt đối của số thực x là khoảng cách từ điểm x đến điểm 0 trên trục số, kí hiệu là |x|. Giá trị tuyệt đối của số dương là chính nó, của số âm là số đối của nó, của số 0 là 0.',
         latexFormula: '|x| = \\begin{cases} x & \\text{nếu } x \\ge 0 \\\\ -x & \\text{nếu } x < 0 \\end{cases}; \\qquad |x| \\ge 0, \\; |-x| = |x|',
-        exampleSnippet: '|3,5| = 3,5; \\quad |-1,8| = 1,8; \\quad |-\\sqrt{2}| = \\sqrt{2}; \\quad |0| = 0.',
+        exampleSnippet: '$|3,5| = 3,5; \\quad |-1,8| = 1,8; \\quad |-\\sqrt{2}| = \\sqrt{2}; \\quad |0| = 0.$',
         pitfallWarning: 'Giá trị tuyệt đối của mọi số thực LUÔN LUÔN KHÔNG ÂM ($|x| \\ge 0$). Phương trình $|x| = -3$ là VÔ NGHIỆM vì khoảng cách không thể âm!',
         realLifeApplication: 'Đo sai số kỹ thuật trong sản xuất: $|d - d_{\\text{chuẩn}}| \\le 0,05 \\text{ mm}$.'
       }

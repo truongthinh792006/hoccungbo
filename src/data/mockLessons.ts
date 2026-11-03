@@ -50,7 +50,7 @@ export const lessonToanKNTTBai1: Lesson = {
       title: 'Định nghĩa số hữu tỉ',
       summary: 'Số hữu tỉ là số viết được dưới dạng phân số \\frac{a}{b} với a, b \\in \\mathbb{Z} và b \\neq 0. Tập hợp các số hữu tỉ ký hiệu là \\mathbb{Q}.',
       mathFormula: '\\mathbb{Q} = \\left\\{ \\frac{a}{b} \\;\\middle|\\; a, b \\in \\mathbb{Z},\\; b \\neq 0 \\right\\}',
-      exampleSnippet: 'Ví dụ: -0,6 = \\frac{-6}{10} = \\frac{-3}{5}; \\quad 1\\frac{1}{3} = \\frac{4}{3}; \\quad 0 = \\frac{0}{1}; \\quad -3 = \\frac{-3}{1}. Mọi số nguyên, hỗn số, số thập phân đều là số hữu tỉ.',
+      exampleSnippet: 'Ví dụ: $-0,6 = \\frac{-6}{10} = \\frac{-3}{5}; \\quad 1\\frac{1}{3} = \\frac{4}{3}; \\quad 0 = \\frac{0}{1}; \\quad -3 = \\frac{-3}{1}$. Mọi số nguyên, hỗn số, số thập phân đều là số hữu tỉ.',
       pitfallWarning: 'Lưu ý điều kiện quan trọng: Mẫu số b bắt buộc phải khác 0. Ví dụ số \\frac{5}{0} KHÔNG PHẢI là số hữu tỉ vì phép chia cho 0 không xác định!',
       realLifeApplication: 'Khi chia đều 4 chiếc bánh cho 3 bạn, mỗi bạn được \\frac{4}{3} chiếc bánh (hỗn số 1\\frac{1}{3}), đó là một số hữu tỉ.'
     },
@@ -59,7 +59,7 @@ export const lessonToanKNTTBai1: Lesson = {
       title: 'Biểu diễn trên trục số & Số đối',
       summary: 'Mỗi số hữu tỉ được biểu diễn bởi một điểm trên trục số. Các số hữu tỉ âm nằm về bên trái điểm 0, các số hữu tỉ dương nằm về bên phải điểm 0. Hai số hữu tỉ cách đều điểm 0 và nằm ở hai phía là hai số đối nhau.',
       mathFormula: '-\\left(-\\frac{a}{b}\\right) = \\frac{a}{b}; \\quad x + (-x) = 0',
-      exampleSnippet: 'Điểm biểu diễn phân số -\\frac{3}{4} nằm ở bên trái điểm 0 (giữa 0 và -1). Số đối của -\\frac{3}{4} là \\frac{3}{4}.',
+      exampleSnippet: 'Điểm biểu diễn phân số $-\\frac{3}{4}$ nằm ở bên trái điểm 0 (giữa 0 và -1). Số đối của $-\\frac{3}{4}$ là $\\frac{3}{4}$.',
       pitfallWarning: 'Khi biểu diễn phân số có mẫu âm (ví dụ \\frac{3}{-4}), ta cần chuyển dấu trừ lên tử số: \\frac{-3}{4} để xác định đúng chiều trên trục số.',
       realLifeApplication: 'Mực nước biển quy ước là mốc 0. Đỉnh núi cao +1.200 m, rãnh biển sâu -800 m. Hai độ cao cách đều mốc 0 là hai đại lượng đối nhau.'
     }
@@ -198,7 +198,7 @@ export const lessonToanKNTTBai2: Lesson = {
       title: 'Cộng và trừ số hữu tỉ',
       summary: 'Để cộng, trừ hai số hữu tỉ viết dưới dạng phân số, ta quy đồng mẫu số về cùng một mẫu số dương rồi cộng hoặc trừ tử số và giữ nguyên mẫu số.',
       mathFormula: '\\frac{a}{m} + \\frac{b}{m} = \\frac{a+b}{m}; \\quad \\frac{a}{m} - \\frac{b}{m} = \\frac{a-b}{m}',
-      exampleSnippet: 'Tính: -\\frac{2}{3} + \\frac{5}{6} = -\\frac{4}{6} + \\frac{5}{6} = \\frac{-4+5}{6} = \\frac{1}{6}.',
+      exampleSnippet: 'Tính: $-\\frac{2}{3} + \\frac{5}{6} = -\\frac{4}{6} + \\frac{5}{6} = \\frac{-4+5}{6} = \\frac{1}{6}.',
       pitfallWarning: 'Luôn đưa mẫu số về số nguyên dương trước khi tìm mẫu số chung!',
       realLifeApplication: 'Khi tính toán chi tiêu: thu nhập (+ tiền lương) cộng với các khoản chi phí (- tiền mua sắm).'
     },
@@ -207,7 +207,7 @@ export const lessonToanKNTTBai2: Lesson = {
       title: 'Nhân, chia số hữu tỉ & Số nghịch đảo',
       summary: 'Muốn nhân hai số hữu tỉ, ta nhân các tử số với nhau và nhân các mẫu số với nhau. Muốn chia, ta lấy số bị chia nhân với số nghịch đảo của số chia.',
       mathFormula: '\\frac{a}{b} \\cdot \\frac{c}{d} = \\frac{a \\cdot c}{b \\cdot d}; \\quad \\frac{a}{b} : \\frac{c}{d} = \\frac{a}{b} \\cdot \\frac{d}{c} \\quad (c \\neq 0)',
-      exampleSnippet: 'Số nghịch đảo của -\\frac{3}{5} là -\\frac{5}{3} vì \\left(-\\frac{3}{5}\\right) \\cdot \\left(-\\frac{5}{3}\\right) = 1.',
+      exampleSnippet: 'Số nghịch đảo của $-\\frac{3}{5}$ là $-\\frac{5}{3}$ vì $\\left(-\\frac{3}{5}\\right) \\cdot \\left(-\\frac{5}{3}\\right) = 1.$',
       pitfallWarning: 'Số 0 không có số nghịch đảo! Đừng nhầm số nghịch đảo với số đối: Số đối đổi dấu, còn số nghịch đảo đảo ngược tử và mẫu.',
       realLifeApplication: 'Chia đều quãng đường hoặc tính vận tốc $v = s : t$ khi đại lượng là phân số.'
     }
@@ -346,7 +346,7 @@ export const lessonToanKNTTBai3: Lesson = {
       title: 'Định nghĩa & Quy ước lũy thừa',
       summary: 'Lũy thừa bậc n của số hữu tỉ x (kí hiệu x^n) là tích của n thừa số x. Với x khác 0, quy ước x^0 = 1 và x^1 = x.',
       mathFormula: 'x^n = \\underbrace{x \\cdot x \\cdots x}_{n \\text{ thừa số}} \\quad (x \\in \\mathbb{Q},\\; n \\in \\mathbb{N}^*); \\quad x^0 = 1',
-      exampleSnippet: '\\left(-\\frac{1}{2}\\right)^3 = \\left(-\\frac{1}{2}\\right) \\cdot \\left(-\\frac{1}{2}\\right) \\cdot \\left(-\\frac{1}{2}\\right) = -\\frac{1}{8}; \\quad \\left(-\\frac{1}{2}\\right)^2 = \\frac{1}{4}.',
+      exampleSnippet: '$\\left(-\\frac{1}{2}\\right)^3 = \\left(-\\frac{1}{2}\\right) \\cdot \\left(-\\frac{1}{2}\\right) \\cdot \\left(-\\frac{1}{2}\\right) = -\\frac{1}{8}; \\quad \\left(-\\frac{1}{2}\\right)^2 = \\frac{1}{4}.$',
       pitfallWarning: 'Quy tắc dấu: Lũy thừa bậc chẵn của số âm luôn ra số DƯƠNG. Lũy thừa bậc lẻ của số âm luôn ra số ÂM!',
       realLifeApplication: 'Kích thước của tế bào, khoảng cách vũ trụ hay diện tích hình vuông cạnh x (S = x^2), thể tích hình lập phương (V = x^3).'
     },
@@ -355,7 +355,7 @@ export const lessonToanKNTTBai3: Lesson = {
       title: 'Các quy tắc nhân, chia và lũy thừa của lũy thừa',
       summary: 'Khi nhân hai lũy thừa cùng cơ số, giữ nguyên cơ số và cộng số mũ. Khi chia, trừ số mũ. Lũy thừa của lũy thừa thì nhân hai số mũ.',
       mathFormula: 'x^m \\cdot x^n = x^{m+n}; \\quad x^m : x^n = x^{m-n}; \\quad (x^m)^n = x^{m \\cdot n}',
-      exampleSnippet: '(2^3)^2 = 2^{3 \\cdot 2} = 2^6 = 64; \\quad \\left(\\frac{1}{3}\\right)^5 : \\left(\\frac{1}{3}\\right)^3 = \\left(\\frac{1}{3}\\right)^2 = \\frac{1}{9}.',
+      exampleSnippet: '$(2^3)^2 = 2^{3 \\cdot 2} = 2^6 = 64; \\quad \\left(\\frac{1}{3}\\right)^5 : \\left(\\frac{1}{3}\\right)^3 = \\left(\\frac{1}{3}\\right)^2 = \\frac{1}{9}.$',
       pitfallWarning: 'Đừng nhầm lẫn giữa (x^m)^n = x^(m*n) và x^m * x^n = x^(m+n)!',
       realLifeApplication: 'Trong công nghệ thông tin: 1 KB = 2^10 Bytes = 1024 Bytes, 1 MB = 2^20 Bytes.'
     }
@@ -494,7 +494,7 @@ export const lessonToanKNTTBai4: Lesson = {
       title: 'Thứ tự thực hiện các phép tính',
       summary: 'Với biểu thức không có ngoặc: Lũy thừa -> Nhân và chia -> Cộng và trừ. Với biểu thức có ngoặc: Ngoặc tròn () -> Ngoặc vuông [] -> Ngoặc nhọn {}.',
       mathFormula: '() \\longrightarrow [] \\longrightarrow \\{\\} \\quad | \\quad x^n \\longrightarrow (\\times, \\div) \\longrightarrow (+, -)',
-      exampleSnippet: 'Tính: 2 \\cdot \\left(-\\frac{1}{2}\\right)^2 + \\frac{1}{4} = 2 \\cdot \\frac{1}{4} + \\frac{1}{4} = \\frac{1}{2} + \\frac{1}{4} = \\frac{3}{4}.',
+      exampleSnippet: 'Tính: $2 \\cdot \\left(-\\frac{1}{2}\\right)^2 + \\frac{1}{4} = 2 \\cdot \\frac{1}{4} + \\frac{1}{4} = \\frac{1}{2} + \\frac{1}{4} = \\frac{3}{4}.$',
       pitfallWarning: 'Không được thực hiện phép cộng trừ trước phép nhân chia khi không có dấu ngoặc!',
       realLifeApplication: 'Thứ tự tính toán khi lập công thức bảng tính Excel trong máy tính.'
     },
@@ -503,7 +503,7 @@ export const lessonToanKNTTBai4: Lesson = {
       title: 'Quy tắc chuyển vế',
       summary: 'Khi chuyển một số hạng từ vế này sang vế kia của một đẳng thức, ta phải đổi dấu số hạng đó: dấu cộng (+) đổi thành dấu trừ (-), và dấu trừ (-) đổi thành dấu cộng (+).',
       mathFormula: 'A + B = C \\iff A = C - B; \\quad A - B = C \\iff A = C + B',
-      exampleSnippet: 'Tìm x: x + \\frac{1}{3} = \\frac{4}{5} \\implies x = \\frac{4}{5} - \\frac{1}{3} = \\frac{12-5}{15} = \\frac{7}{15}.',
+      exampleSnippet: 'Tìm x: $x + \\frac{1}{3} = \\frac{4}{5} \\implies x = \\frac{4}{5} - \\frac{1}{3} = \\frac{12-5}{15} = \\frac{7}{15}.$',
       pitfallWarning: 'Bẫy kinh điển: Chuyển vế mà quên đổi dấu! "Chuyển vế thì phải đổi dấu".',
       realLifeApplication: 'Mô hình chiếc cân thăng bằng: Lấy một vật ở đĩa bên này thì phải trừ bớt ở đĩa bên kia.'
     }

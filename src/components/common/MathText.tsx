@@ -33,12 +33,26 @@ export const MathText: React.FC<MathTextProps> = ({
     }
   }
 
-  // Parse embedded $...$ and $$...$$
+  // Parse embedded $...$ and $$...$$ with auto-recovery for raw LaTeX
   const parsedNodes = useMemo(() => {
     if (!children) return null;
 
+    let text = children;
+
+    // Resilient fallback: If no $ is present but raw LaTeX syntax exists
+    if (!text.includes('$') && (text.includes('\\') || text.includes('^'))) {
+      const hasVietnamese = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(text);
+      if (!hasVietnamese) {
+        // Pure formula without $ -> wrap entire string
+        text = `$${text.trim()}$`;
+      } else {
+        // Mixed text: auto-wrap any LaTeX segment starting with \ or -\
+        text = text.replace(/((?:-)?\\(?:frac|left|right|cdot|quad|sqrt|neq|in|mathbb|implies|times)[^ \n,.)]+)/g, '$$$1$$');
+      }
+    }
+
     const regex = /(\$\$[\s\S]*?\$\$|\$[^\$]+?\$)/g;
-    const parts = children.split(regex);
+    const parts = text.split(regex);
 
     return parts.map((part, index) => {
       if (part.startsWith('$$') && part.endsWith('$$')) {
