@@ -172,16 +172,23 @@ export default async function handler(req: any, res?: any) {
       });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'API key not configured' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
     try {
       const body = await req.json();
+      const apiKey =
+        req.headers.get('x-gemini-api-key') ||
+        body?.customApiKey ||
+        process.env.GEMINI_API_KEY;
+
+      if (!apiKey) {
+        return new Response(
+          JSON.stringify({ error: 'API key not configured' }),
+          {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
       const result = await processSocraticChat(body, apiKey);
       return new Response(JSON.stringify(result), {
         status: 200,
@@ -203,13 +210,17 @@ export default async function handler(req: any, res?: any) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'API key not configured' });
-  }
-
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const apiKey =
+      req.headers?.['x-gemini-api-key'] ||
+      body?.customApiKey ||
+      process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      return res.status(500).json({ error: 'API key not configured' });
+    }
+
     const result = await processSocraticChat(body, apiKey);
     return res.status(200).json(result);
   } catch (err: any) {

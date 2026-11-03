@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Math7Lesson } from '../../types/curriculum';
 import { MathText } from '../common/MathText';
 import { SocraticTutorEngine } from '../../services/socraticTutor';
-import { Bot, User, Send, RefreshCw, Lightbulb, ChevronRight, Sparkles } from 'lucide-react';
+import { askSocraticTutor, getCustomApiKey } from '../../services/aiService';
+import { Bot, User, Send, RefreshCw, Lightbulb, ChevronRight, Sparkles, KeyRound } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -33,7 +34,12 @@ export const SocraticTutor: React.FC<SocraticTutorProps> = ({ lesson }) => {
   ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [hasCustomKey, setHasCustomKey] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setHasCustomKey(Boolean(getCustomApiKey()));
+  }, []);
 
   // Auto-scroll on new messages
   useEffect(() => {
@@ -81,11 +87,8 @@ export const SocraticTutor: React.FC<SocraticTutorProps> = ({ lesson }) => {
     setIsTyping(true);
 
     try {
-      // Send message to secure serverless endpoint
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const result = await askSocraticTutor(
+        {
           lessonTitle: lesson.title,
           competencies: lesson.learningTargets.map(t => ({
             code: t.code,
@@ -96,29 +99,22 @@ export const SocraticTutor: React.FC<SocraticTutorProps> = ({ lesson }) => {
             content: m.text
           })),
           studentMessage: query.trim()
-        })
-      });
+        },
+        lesson
+      );
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.reply) {
-          const aiMsg: ChatMessage = {
-            id: `ai-${Date.now()}`,
-            sender: 'ai',
-            text: data.reply,
-            timestamp: data.timestamp || new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-            hintLevel: data.hintLevel || 2,
-            modelBadge: data.model ? `Gemini (${data.model.replace('gemini-', '')})` : 'Gemini Live'
-          };
-          setMessages(prev => [...prev, aiMsg]);
-          return;
-        }
-      }
-
-      // If server returned non-200 or missing reply (e.g. API key not set or quota limit)
-      triggerLocalFallback(query);
+      const aiMsg: ChatMessage = {
+        id: `ai-${Date.now()}`,
+        sender: 'ai',
+        text: result.reply,
+        formula: result.formula,
+        timestamp: result.timestamp,
+        hintLevel: result.hintLevel || 2,
+        modelBadge: result.model,
+        isLocalFallback: result.source === 'local'
+      };
+      setMessages(prev => [...prev, aiMsg]);
     } catch {
-      // Seamless network fallback
       triggerLocalFallback(query);
     } finally {
       setIsTyping(false);
@@ -147,12 +143,19 @@ export const SocraticTutor: React.FC<SocraticTutorProps> = ({ lesson }) => {
             <Bot className="w-4 h-4" />
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <h4 className="font-bold text-xs sm:text-sm">Trợ Lý Socratic AI</h4>
-              <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-400/25 px-2 py-0.5 rounded-full font-semibold text-emerald-100 border border-emerald-300/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-                <span>Live Socratic</span>
-              </span>
+              {hasCustomKey ? (
+                <span className="inline-flex items-center gap-1 text-[10px] bg-amber-400/30 px-2 py-0.5 rounded-full font-semibold text-amber-100 border border-amber-300/40">
+                  <KeyRound className="w-2.5 h-2.5 text-amber-200" />
+                  <span>Key gia đình</span>
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-400/25 px-2 py-0.5 rounded-full font-semibold text-emerald-100 border border-emerald-300/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
+                  <span>Live Socratic</span>
+                </span>
+              )}
             </div>
             <p className="text-[10px] text-emerald-100">Kiên nhẫn gợi mở • Chuẩn SGK Kết nối tri thức</p>
           </div>
