@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { TodayLearningRecap } from './TodayLearningRecap';
 import { MasteryCard } from './MasteryCard';
 import { ConversationPrompts } from './ConversationPrompts';
+import { FamilyRewardContractCard } from './FamilyRewardContractCard';
 import { SyllabusTimeline } from './SyllabusTimeline';
 import { AiKeySettingsCard } from './AiKeySettingsCard';
 import { HeartHandshake, User } from 'lucide-react';
@@ -45,13 +46,16 @@ export const ParentDashboardView: React.FC = () => {
       {/* 2. Three Dinner-table Questions for Parents with Concise Answers */}
       <ConversationPrompts />
 
-      {/* 3. Hybrid BYOK Setting: Cài đặt Trợ lý AI (Gemini API) */}
+      {/* 3. Family Reward Contract & Badges Hub */}
+      <FamilyRewardContractCard />
+
+      {/* 4. Hybrid BYOK Setting: Cài đặt Trợ lý AI (Gemini API) */}
       <AiKeySettingsCard />
 
-      {/* 4. Overview Mastery & Weak Concept Alert Cards */}
+      {/* 5. Overview Mastery & Weak Concept Alert Cards */}
       <MasteryCard />
 
-      {/* 5. Syllabus Tracker Timeline */}
+      {/* 6. Syllabus Tracker Timeline */}
       <SyllabusTimeline />
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UserRole, Math7Lesson, QuizSubmissionRecord } from '../types/curriculum';
+import { UserRole, Math7Lesson, QuizSubmissionRecord, StreakState, Badge, FamilyRewardContract } from '../types/curriculum';
 import { math7CurriculumLessons } from '../data/math7_curriculum';
 
 interface AppContextType {
@@ -29,6 +29,15 @@ interface AppContextType {
   setTodayStudyTimeMinutes: (minutes: number) => void;
   xp: number;
   streak: number;
+  streakState: StreakState;
+  setStreakState: React.Dispatch<React.SetStateAction<StreakState>>;
+  completeTodayStreak: () => void;
+  familyContracts: FamilyRewardContract[];
+  addFamilyContract: (targetXp: number, rewardName: string) => void;
+  toggleClaimContract: (id: string) => void;
+  deleteFamilyContract: (id: string) => void;
+  badges: Badge[];
+  unlockBadge: (badgeId: string) => void;
   weakTags: string[];
   quizSubmissions: Record<string, QuizSubmissionRecord>;
   submitQuiz: (
@@ -57,6 +66,9 @@ const STORAGE_KEYS = {
   STUDY_TIME: 'math7_today_study_time',
   XP: 'math7_user_xp',
   STREAK: 'math7_user_streak',
+  STREAK_STATE: 'math7_streak_state',
+  FAMILY_CONTRACTS: 'math7_family_contracts',
+  BADGES: 'math7_badges',
   QUIZ_SUBMISSIONS: 'math7_quiz_submissions',
   WEAK_TAGS: 'math7_weak_tags',
   COMPLETED_LESSONS: 'math7_completed_lessons'
@@ -145,12 +157,121 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
-  const [streak] = useState<number>(() => {
+  const [streakState, setStreakState] = useState<StreakState>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.STREAK);
-      return saved ? parseInt(saved, 10) : 4;
+      const saved = localStorage.getItem(STORAGE_KEYS.STREAK_STATE);
+      if (saved) return JSON.parse(saved);
+      const savedNum = localStorage.getItem(STORAGE_KEYS.STREAK);
+      const cur = savedNum ? parseInt(savedNum, 10) : 4;
+      return {
+        currentStreak: cur,
+        bestStreak: Math.max(cur, 6),
+        lastActiveDate: new Date().toISOString().split('T')[0],
+        todayCompleted: false
+      };
     } catch {
-      return 4;
+      return {
+        currentStreak: 4,
+        bestStreak: 6,
+        lastActiveDate: new Date().toISOString().split('T')[0],
+        todayCompleted: false
+      };
+    }
+  });
+
+  const streak = streakState.currentStreak;
+
+  const [familyContracts, setFamilyContracts] = useState<FamilyRewardContract[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.FAMILY_CONTRACTS);
+      if (saved) return JSON.parse(saved);
+      return [
+        {
+          id: 'contract-1',
+          targetXp: 300,
+          rewardName: 'Cùng bố đi bơi và ăn kem ngày Chủ Nhật',
+          isClaimed: false
+        },
+        {
+          id: 'contract-2',
+          targetXp: 600,
+          rewardName: 'Được chọn thực đơn món ngon bữa tối Thứ 7',
+          isClaimed: false
+        },
+        {
+          id: 'contract-3',
+          targetXp: 1000,
+          rewardName: 'Mua bộ cờ vua hoặc cuốn sách con yêu thích',
+          isClaimed: false
+        }
+      ];
+    } catch {
+      return [];
+    }
+  });
+
+  const [badges, setBadges] = useState<Badge[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.BADGES);
+      if (saved) return JSON.parse(saved);
+      return [
+        {
+          id: 'badge-rational-master',
+          title: 'Chiến Thần Số Hữu Tỉ',
+          description: 'Hoàn thành xuất sắc 5 bài học của Chương I: Số hữu tỉ',
+          icon: 'Calculator',
+          category: 'mastery',
+          unlockedAt: '2026-11-01',
+          progress: 100
+        },
+        {
+          id: 'badge-parallel-lines',
+          title: 'Bậc Thầy Cát Tuyến',
+          description: 'Thành thạo góc so le trong, đồng vị và tiên đề Euclid (Chương III)',
+          icon: 'Compass',
+          category: 'mastery',
+          unlockedAt: null,
+          progress: 60
+        },
+        {
+          id: 'badge-triangle-centers',
+          title: 'Nhà Thám Hiểm 4 Tâm',
+          description: 'Khám phá và tương tác với 4 tâm kì diệu G, H, O, I trong tam giác',
+          icon: 'Triangle',
+          category: 'explorer',
+          unlockedAt: null,
+          progress: 40
+        },
+        {
+          id: 'badge-streak-7',
+          title: 'Kỷ Luật Thép (7 Ngày)',
+          description: 'Duy trì thói quen tự học liên tục trong 7 ngày không ngắt quãng',
+          icon: 'Flame',
+          category: 'streak',
+          unlockedAt: null,
+          progress: 57
+        },
+        {
+          id: 'badge-family-teamwork',
+          title: 'Đồng Đội Gia Đình',
+          description: 'Cùng bố mẹ thảo luận 3 câu hỏi bàn ăn buổi tối',
+          icon: 'HeartHandshake',
+          category: 'family',
+          unlockedAt: '2026-11-02',
+          progress: 100
+        },
+        {
+          id: 'badge-probability-explorer',
+          title: 'Vòng Quay Thống Kê',
+          description: 'Quay vòng may mắn trên 50 lần để kiểm chứng Luật số lớn',
+          icon: 'Dices',
+          category: 'explorer',
+          unlockedAt: null,
+          progress: 20
+        }
+      ];
+    } catch {
+      return [];
     }
   });
 
@@ -261,6 +382,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch {}
   }, [quizSubmissions]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.STREAK_STATE, JSON.stringify(streakState));
+      localStorage.setItem(STORAGE_KEYS.STREAK, streakState.currentStreak.toString());
+    } catch {}
+  }, [streakState]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.FAMILY_CONTRACTS, JSON.stringify(familyContracts));
+    } catch {}
+  }, [familyContracts]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.BADGES, JSON.stringify(badges));
+    } catch {}
+  }, [badges]);
+
   const setRole = (newRole: UserRole) => {
     setRoleState(newRole);
   };
@@ -359,6 +499,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCompletedLessonIds(prev => [...prev, lessonId]);
     }
 
+    if (percentage >= 70) {
+      completeTodayStreak();
+    }
+
     // Check for mistakes to update weak tags
     const newWeak: string[] = [];
     Object.keys(isCorrect).forEach(qId => {
@@ -372,6 +516,47 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (newWeak.length > 0) {
       setWeakTags(prev => Array.from(new Set([...prev, ...newWeak])));
     }
+  };
+
+  const completeTodayStreak = () => {
+    const today = new Date().toISOString().split('T')[0];
+    setStreakState(prev => {
+      if (prev.todayCompleted && prev.lastActiveDate === today) return prev;
+      const nextStreak = prev.currentStreak + 1;
+      return {
+        currentStreak: nextStreak,
+        bestStreak: Math.max(prev.bestStreak, nextStreak),
+        lastActiveDate: today,
+        todayCompleted: true
+      };
+    });
+  };
+
+  const addFamilyContract = (targetXp: number, rewardName: string) => {
+    if (!rewardName.trim()) return;
+    const newContract: FamilyRewardContract = {
+      id: `contract-${Date.now()}`,
+      targetXp: Math.max(50, targetXp),
+      rewardName: rewardName.trim(),
+      isClaimed: false
+    };
+    setFamilyContracts(prev => [...prev, newContract]);
+  };
+
+  const toggleClaimContract = (id: string) => {
+    setFamilyContracts(prev => prev.map(c => 
+      c.id === id ? { ...c, isClaimed: !c.isClaimed } : c
+    ));
+  };
+
+  const deleteFamilyContract = (id: string) => {
+    setFamilyContracts(prev => prev.filter(c => c.id !== id));
+  };
+
+  const unlockBadge = (badgeId: string) => {
+    setBadges(prev => prev.map(b => 
+      b.id === badgeId ? { ...b, unlockedAt: new Date().toISOString().split('T')[0], progress: 100 } : b
+    ));
   };
 
   const currentLesson =
@@ -413,6 +598,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setTodayStudyTimeMinutes,
         xp,
         streak,
+        streakState,
+        setStreakState,
+        completeTodayStreak,
+        familyContracts,
+        addFamilyContract,
+        toggleClaimContract,
+        deleteFamilyContract,
+        badges,
+        unlockBadge,
         weakTags,
         quizSubmissions,
         submitQuiz,

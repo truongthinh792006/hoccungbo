@@ -205,3 +205,27 @@ export interface QuizSubmissionRecord {
   isCorrect: Record<string, boolean>;
   hintsUsedCount: Record<string, number>;
 }
+
+export interface StreakState {
+  currentStreak: number;          // Số ngày liên tiếp hiện tại
+  bestStreak: number;             // Kỷ lục chuỗi ngày cao nhất
+  lastActiveDate: string;         // Định dạng YYYY-MM-DD
+  todayCompleted: boolean;        // Đã hoàn thành nhiệm vụ tối nay chưa
+}
+
+export interface Badge {
+  id: string;
+  title: string;                  // Tên huy hiệu (VD: "Chiến thần Số hữu tỉ")
+  description: string;            // Điều kiện đạt được
+  icon: string;                   // Tên icon Lucide hoặc SVG
+  category: 'mastery' | 'streak' | 'family' | 'explorer';
+  unlockedAt: string | null;      // Ngày mở khóa (null nếu chưa đạt)
+  progress: number;               // Tiến độ hiện tại (0 - 100%)
+}
+
+export interface FamilyRewardContract {
+  id: string;
+  targetXp: number;               // Mốc XP cần đạt (VD: 500 XP)
+  rewardName: string;             // Phần thưởng do bố nhập (VD: "Đi bơi cùng bố cuối tuần")
+  isClaimed: boolean;             // Trạng thái nhận thưởng
+}
