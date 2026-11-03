@@ -20,12 +20,23 @@ export const SyllabusNavigator: React.FC = () => {
     quizSubmissions 
   } = useApp();
 
+  const [selectedTerm, setSelectedTerm] = useState<'all' | 1 | 2>(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedChapterId, setSelectedChapterId] = useState<string>('all');
 
-  // Filter lessons based on active chapter tab and search keyword
+  // Chapters filtered by term
+  const chaptersForTerm = useMemo(() => {
+    if (selectedTerm === 'all') return math7Chapters;
+    return math7Chapters.filter(ch => ch.term === selectedTerm);
+  }, [selectedTerm]);
+
+  // Filter lessons based on active term, chapter tab and search keyword
   const filteredLessons = useMemo(() => {
     let result = math7CurriculumLessons;
+
+    if (selectedTerm !== 'all') {
+      result = result.filter(l => l.term === selectedTerm);
+    }
 
     if (selectedChapterId !== 'all') {
       result = result.filter(l => l.chapterId === selectedChapterId);
@@ -42,7 +53,7 @@ export const SyllabusNavigator: React.FC = () => {
     }
 
     return result;
-  }, [selectedChapterId, searchQuery]);
+  }, [selectedTerm, selectedChapterId, searchQuery]);
 
   const todayLesson = useMemo(() => {
     return math7CurriculumLessons.find(l => l.id === todayLessonId) || math7CurriculumLessons[0];
@@ -75,7 +86,7 @@ export const SyllabusNavigator: React.FC = () => {
                   </span>
                 </h2>
                 <p className="text-xs text-slate-500">
-                  Học kì 1: Trọn bộ 4 Chương (19 bài học chuẩn năng lực CV 5512)
+                  Trọn bộ 9 Chương ({math7CurriculumLessons.length} bài học chuẩn năng lực CV 5512)
                 </p>
               </div>
             </div>
@@ -85,6 +96,49 @@ export const SyllabusNavigator: React.FC = () => {
               className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors"
             >
               <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Term Selector Toggle */}
+          <div className="flex items-center gap-1.5 p-1 bg-slate-200/80 rounded-xl mb-3 text-xs font-bold">
+            <button
+              onClick={() => {
+                setSelectedTerm(1);
+                setSelectedChapterId('all');
+              }}
+              className={`flex-1 py-1.5 rounded-lg transition-all text-center ${
+                selectedTerm === 1
+                  ? 'bg-white text-emerald-700 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Học kì 1 (Chương I - IV)
+            </button>
+            <button
+              onClick={() => {
+                setSelectedTerm(2);
+                setSelectedChapterId('all');
+              }}
+              className={`flex-1 py-1.5 rounded-lg transition-all text-center ${
+                selectedTerm === 2
+                  ? 'bg-white text-emerald-700 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Học kì 2 (Chương V - IX)
+            </button>
+            <button
+              onClick={() => {
+                setSelectedTerm('all');
+                setSelectedChapterId('all');
+              }}
+              className={`px-3 py-1.5 rounded-lg transition-all text-center ${
+                selectedTerm === 'all'
+                  ? 'bg-white text-emerald-700 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Cả năm
             </button>
           </div>
 
@@ -151,10 +205,10 @@ export const SyllabusNavigator: React.FC = () => {
                   : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
               }`}
             >
-              Tất cả ({math7CurriculumLessons.length})
+              Tất cả ({chaptersForTerm.reduce((acc, ch) => acc + ch.lessonIds.length, 0)})
             </button>
 
-            {math7Chapters.map(ch => {
+            {chaptersForTerm.map(ch => {
               const isSelected = selectedChapterId === ch.id;
               return (
                 <button
@@ -209,6 +263,9 @@ export const SyllabusNavigator: React.FC = () => {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700">
                           #{lesson.order}
+                        </span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                          HK{lesson.term || (lesson.order <= 19 ? 1 : 2)}
                         </span>
                         <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
                           {lesson.chapterTitle.split(':')[0]}

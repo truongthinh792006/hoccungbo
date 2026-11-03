@@ -85,7 +85,7 @@ export const StudentStudyView: React.FC = () => {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition-all"
             >
               <ListOrdered className="w-3.5 h-3.5" />
-              <span>Mục lục (19 bài)</span>
+              <span>Mục lục ({allLessons.length} bài)</span>
             </button>
           </div>
         </div>

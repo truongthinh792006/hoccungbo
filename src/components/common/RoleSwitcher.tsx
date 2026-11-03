@@ -48,7 +48,7 @@ export const RoleSwitcher: React.FC = () => {
                   className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200 transition-colors"
                 >
                   <BookOpen className="w-3 h-3 text-emerald-600" />
-                  <span>Mục lục SGK (19 bài)</span>
+                  <span>Mục lục SGK ({allLessons.length} bài)</span>
                 </button>
               </div>
 

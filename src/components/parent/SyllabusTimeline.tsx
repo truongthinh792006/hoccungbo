@@ -32,7 +32,7 @@ export const SyllabusTimeline: React.FC = () => {
             <span>Tiến Trình Học Tập (Syllabus Tracker)</span>
           </h3>
           <p className="text-xs text-slate-500">
-            Lộ trình chuẩn 4 Chương (19 bài) SGK Toán 7 Kết nối tri thức với cuộc sống
+            Lộ trình chuẩn {math7Chapters.length} Chương ({allLessons.length} bài) SGK Toán 7 Kết nối tri thức với cuộc sống
           </p>
         </div>
 

@@ -46,8 +46,8 @@ export const MathText: React.FC<MathTextProps> = ({
         // Pure formula without $ -> wrap entire string
         text = `$${text.trim()}$`;
       } else {
-        // Mixed text: auto-wrap any LaTeX segment starting with \ or -\
-        text = text.replace(/((?:-)?\\(?:frac|left|right|cdot|quad|sqrt|neq|in|mathbb|implies|times)[^ \n,.)]+)/g, '$$$1$$');
+        // Mixed text: auto-wrap any math formula block containing LaTeX commands
+        text = text.replace(/((?:-)?\\(?:frac|left|right|cdot|quad|sqrt|neq|in|mathbb|implies|times|widehat|Delta)[^;\n]+(?:;|\.|$)?)/g, (_, match) => `$${match.trim()}$`);
       }
     }
 

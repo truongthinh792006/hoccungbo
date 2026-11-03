@@ -165,6 +165,7 @@ export interface Math7Lesson {
   order: number;
   chapterId: string;
   chapterTitle: string;
+  term?: 1 | 2;
   title: string;
   subtitle: string;
   status: LessonStatus;
@@ -185,6 +186,7 @@ export interface Math7Lesson {
 export interface ChapterMeta {
   id: string;
   order: number;
+  term?: 1 | 2;
   title: string;
   shortTitle: string;
   description: string;
