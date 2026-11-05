@@ -22,6 +22,10 @@ import {
   UNIT5_EXERCISES 
 } from '../../../data/english/unit5_food_and_drink_data';
 import { 
+  UNIT6_VOCABULARY, 
+  UNIT6_EXERCISES 
+} from '../../../data/english/unit6_visit_to_a_school_data';
+import { 
   Sparkles, 
   Volume2, 
   ArrowLeft, 
@@ -39,7 +43,8 @@ import {
   HeartPulse, 
   Users, 
   Palette,
-  Utensils
+  Utensils,
+  School
 } from 'lucide-react';
 
 interface UnitInfo {
@@ -105,19 +110,29 @@ const ENGLISH_UNITS: UnitInfo[] = [
     title: 'Food and Drink', 
     viTitle: 'Ẩm thực & Thức uống', 
     status: 'ready', 
-    badge: 'Mới mở • Sẵn sàng học', 
+    badge: 'Đã hoàn thành', 
     tagline: 'Nguyên liệu nấu ăn & Món phở • Cặp âm /ɒ/ & /ɔː/ • Danh từ đếm được/không đếm được, some/any, how much/how many', 
     description: 'Khám phá ẩm thực truyền thống, phân biệt cặp âm /ɒ/ và /ɔː/, làm chủ danh từ đếm được và không đếm được, từ chỉ số lượng (some, any) cùng mẫu câu hỏi lượng (how much, how many) và 20 câu trắc nghiệm phản xạ.', 
     buddyPrompt: 'Bố có thể đố con: "How much broth do we need for 4 bowls of pho?" Con trả lời: "We need about 2 liters of hot broth and some fresh herbs!"' 
   },
-  { id: 'unit-06', number: 6, title: 'A Visit to a School', viTitle: 'Thăm một ngôi trường', status: 'locked', badge: 'Học kì 1', tagline: '', description: '', buddyPrompt: '' },
+  { 
+    id: 'unit-06', 
+    number: 6, 
+    title: 'A Visit to a School', 
+    viTitle: 'Thăm một ngôi trường', 
+    status: 'ready', 
+    badge: 'Mới mở • Trọn HK1', 
+    tagline: 'Văn Miếu - Quốc Tử Giám • Cặp âm /tʃ/ & /dʒ/ • Giới từ chỉ thời gian và nơi chốn (at, in, on)', 
+    description: 'Khám phá trường đại học đầu tiên của Việt Nam (Imperial Academy), phân biệt cặp âm /tʃ/ và /dʒ/, làm chủ giới từ chỉ thời gian & nơi chốn (at, in, on) và 20 câu trắc nghiệm phản xạ.', 
+    buddyPrompt: 'Bố có thể đố con: "When was the Imperial Academy established?" Con trả lời: "It was established in 1076 by Emperor Ly Nhan Tong!"' 
+  },
 ];
 
 export const English7StudyView: React.FC = () => {
   const { setCurrentSubject, openSubjectHub, xp, addXp, streak } = useApp();
   
-  // Selected Unit state (defaults to Unit 5 as requested, can toggle 1, 2, 3, 4, 5)
-  const [selectedUnitNumber, setSelectedUnitNumber] = useState<1 | 2 | 3 | 4 | 5>(5);
+  // Selected Unit state (defaults to Unit 6 to explore new unit, can toggle 1, 2, 3, 4, 5, 6)
+  const [selectedUnitNumber, setSelectedUnitNumber] = useState<1 | 2 | 3 | 4 | 5 | 6>(6);
   const [activeTab, setActiveTab] = useState<'vocab' | 'pronunciation' | 'grammar' | 'practice'>('vocab');
   
   // Flashcard state
@@ -132,7 +147,7 @@ export const English7StudyView: React.FC = () => {
   const [rewardedQuestionIds, setRewardedQuestionIds] = useState<Record<string, boolean>>({});
 
   // Dynamic datasets based on selected unit
-  const currentUnitInfo = ENGLISH_UNITS.find(u => u.number === selectedUnitNumber) || ENGLISH_UNITS[4];
+  const currentUnitInfo = ENGLISH_UNITS.find(u => u.number === selectedUnitNumber) || ENGLISH_UNITS[5];
   
   const getUnitData = (unitNum: number) => {
     switch (unitNum) {
@@ -145,8 +160,10 @@ export const English7StudyView: React.FC = () => {
       case 4:
         return { vocab: UNIT4_VOCABULARY, exercises: UNIT4_EXERCISES };
       case 5:
-      default:
         return { vocab: UNIT5_VOCABULARY, exercises: UNIT5_EXERCISES };
+      case 6:
+      default:
+        return { vocab: UNIT6_VOCABULARY, exercises: UNIT6_EXERCISES };
     }
   };
 
@@ -154,11 +171,11 @@ export const English7StudyView: React.FC = () => {
 
   // Switch Unit handler
   const handleSelectUnit = (unitNumber: number) => {
-    if (unitNumber > 5) {
-      alert(`Unit ${unitNumber} đang được chuẩn bị. Con có thể học Unit 1 đến Unit 5!`);
+    if (unitNumber > 6) {
+      alert(`Unit ${unitNumber} thuộc Học kỳ 2 đang được chuẩn bị. Con có thể học trọn vẹn Unit 1 đến Unit 6 của Học kỳ 1!`);
       return;
     }
-    setSelectedUnitNumber(unitNumber as 1 | 2 | 3 | 4 | 5);
+    setSelectedUnitNumber(unitNumber as 1 | 2 | 3 | 4 | 5 | 6);
     setSelectedWordIndex(0);
     setCurrentQuizIndex(0);
     setShowHint(false);
@@ -232,8 +249,10 @@ export const English7StudyView: React.FC = () => {
       case 4:
         return 'bg-gradient-to-r from-violet-700 via-purple-700 to-pink-700';
       case 5:
-      default:
         return 'bg-gradient-to-r from-amber-700 via-orange-700 to-rose-700';
+      case 6:
+      default:
+        return 'bg-gradient-to-r from-teal-800 via-emerald-800 to-cyan-900';
     }
   };
 
@@ -252,7 +271,7 @@ export const English7StudyView: React.FC = () => {
                 NXB Giáo dục & Pearson
               </span>
               <span className="text-xs bg-amber-400 text-slate-900 px-2 py-0.5 rounded-full font-black">
-                {selectedUnitNumber === 5 ? 'Mới cập nhật' : 'Đã hoàn thành'}
+                {selectedUnitNumber === 6 ? 'Mới mở • Trọn HK1' : 'Đã hoàn thành'}
               </span>
             </div>
 
@@ -261,6 +280,7 @@ export const English7StudyView: React.FC = () => {
               {selectedUnitNumber === 3 && <Users className="w-6 h-6 text-amber-300 inline-block" />}
               {selectedUnitNumber === 4 && <Palette className="w-6 h-6 text-pink-300 inline-block" />}
               {selectedUnitNumber === 5 && <Utensils className="w-6 h-6 text-yellow-300 inline-block" />}
+              {selectedUnitNumber === 6 && <School className="w-6 h-6 text-emerald-300 inline-block" />}
               <span>Unit {currentUnitInfo.number}: {currentUnitInfo.title} ({currentUnitInfo.viTitle})</span>
             </h1>
             <p className="text-xs sm:text-sm text-indigo-100 leading-relaxed">
@@ -295,7 +315,7 @@ export const English7StudyView: React.FC = () => {
             <span>Danh mục 12 Units Tiếng Anh 7 Global Success</span>
           </span>
           <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-            Đã mở Unit 1 đến Unit 5
+            Trọn vẹn Học kỳ 1: Đã mở Unit 1 đến Unit 6 (120 câu)
           </span>
         </div>
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
@@ -359,7 +379,7 @@ export const English7StudyView: React.FC = () => {
               : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
           }`}
         >
-          2. Phát Âm: {selectedUnitNumber === 1 ? '/ə/ & /ɜ:/' : selectedUnitNumber === 2 ? '/f/ & /v/' : selectedUnitNumber === 3 ? '/t/ & /d/' : selectedUnitNumber === 4 ? '/ʃ/ & /ʒ/' : '/ɒ/ & /ɔː/'}
+          2. Phát Âm: {selectedUnitNumber === 1 ? '/ə/ & /ɜ:/' : selectedUnitNumber === 2 ? '/f/ & /v/' : selectedUnitNumber === 3 ? '/t/ & /d/' : selectedUnitNumber === 4 ? '/ʃ/ & /ʒ/' : selectedUnitNumber === 5 ? '/ɒ/ & /ɔː/' : '/tʃ/ & /dʒ/'}
         </button>
         <button
           onClick={() => setActiveTab('grammar')}
@@ -730,7 +750,7 @@ export const English7StudyView: React.FC = () => {
                     </div>
                   </div>
                 </>
-              ) : (
+              ) : selectedUnitNumber === 5 ? (
                 // UNIT 5 PRONUNCIATION: /ɒ/ vs /ɔː/
                 <>
                   <div>
@@ -808,6 +828,84 @@ export const English7StudyView: React.FC = () => {
                     </div>
                   </div>
                 </>
+              ) : (
+                // UNIT 6 PRONUNCIATION: /tʃ/ vs /dʒ/
+                <>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900">
+                      Phân biệt phụ âm vô thanh /tʃ/ và phụ âm hữu thanh /dʒ/
+                    </h3>
+                    <p className="text-xs text-slate-600 mt-1">
+                      Cả hai đều là phụ âm tắc xát. 
+                      Với âm <span className="font-mono font-bold text-teal-700">/tʃ/</span>: là âm vô thanh (không rung dây thanh quản, bật hơi sắc nét giống âm "ch"). 
+                      Với âm <span className="font-mono font-bold text-emerald-700">/dʒ/</span>: là âm hữu thanh (dây thanh quản rung mạnh trong cổ họng).
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Column 1: /tʃ/ */}
+                    <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-xl font-black text-teal-800 bg-white px-3 py-1 rounded-xl border border-teal-200">
+                          /tʃ/
+                        </span>
+                        <span className="text-xs font-bold text-teal-700">Vô thanh (không rung)</span>
+                      </div>
+                      <p className="text-[11px] text-teal-900 font-medium">Thường gặp ở chữ cái "ch", "tch"</p>
+                      <ul className="space-y-2 text-xs">
+                        {[
+                          { word: 'chair', ipa: '/tʃeə(r)/', vi: 'cái ghế' },
+                          { word: 'chicken', ipa: '/ˈtʃɪkɪn/', vi: 'con gà' },
+                          { word: 'teacher', ipa: '/ˈtiːtʃə(r)/', vi: 'giáo viên' },
+                          { word: 'watch', ipa: '/wɒtʃ/', vi: 'xem, đồng hồ đeo tay' },
+                          { word: 'chopsticks', ipa: '/ˈtʃɒpstɪks/', vi: 'đôi đũa' }
+                        ].map((item) => (
+                          <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-teal-100">
+                            <span className="font-bold text-slate-800">{item.word}</span>
+                            <span className="font-mono text-slate-500">{item.ipa}</span>
+                            <button
+                              onClick={() => speakText(item.word)}
+                              className="w-7 h-7 rounded-lg bg-teal-100 hover:bg-teal-200 flex items-center justify-center text-teal-800"
+                            >
+                              <Volume2 className="w-3.5 h-3.5" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Column 2: /dʒ/ */}
+                    <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-xl font-black text-emerald-800 bg-white px-3 py-1 rounded-xl border border-emerald-200">
+                          /dʒ/
+                        </span>
+                        <span className="text-xs font-bold text-emerald-700">Hữu thanh (rung cổ họng)</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-900 font-medium">Thường gặp ở chữ cái "j", "g", "ge", "dge"</p>
+                      <ul className="space-y-2 text-xs">
+                        {[
+                          { word: 'juice', ipa: '/dʒuːs/', vi: 'nước ép hoa quả' },
+                          { word: 'gym', ipa: '/dʒɪm/', vi: 'phòng tập thể dục' },
+                          { word: 'jam', ipa: '/dʒæm/', vi: 'mứt hoa quả' },
+                          { word: 'village', ipa: '/ˈvɪlɪdʒ/', vi: 'ngôi làng' },
+                          { word: 'orange', ipa: '/ˈɒrɪndʒ/', vi: 'quả cam, màu cam' }
+                        ].map((item) => (
+                          <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-emerald-100">
+                            <span className="font-bold text-slate-800">{item.word}</span>
+                            <span className="font-mono text-slate-500">{item.ipa}</span>
+                            <button
+                              onClick={() => speakText(item.word)}
+                              className="w-7 h-7 rounded-lg bg-emerald-100 hover:bg-emerald-200 flex items-center justify-center text-emerald-800"
+                            >
+                              <Volume2 className="w-3.5 h-3.5" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           )}
@@ -847,7 +945,7 @@ export const English7StudyView: React.FC = () => {
                   </h3>
                   <p className="text-xs text-slate-600 mt-1">Các cấu trúc so sánh: as...as, different from, the same as, too, either.</p>
                 </div>
-              ) : (
+              ) : selectedUnitNumber === 5 ? (
                 // UNIT 5 GRAMMAR: COUNTABLE/UNCOUNTABLE & QUANTIFIERS
                 <>
                   <div>
@@ -914,6 +1012,84 @@ export const English7StudyView: React.FC = () => {
                     </div>
                   </div>
                 </>
+              ) : (
+                // UNIT 6 GRAMMAR: PREPOSITIONS OF TIME & PLACE (AT, IN, ON)
+                <>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900">
+                      Ngữ pháp trọng tâm Unit 6: Giới từ chỉ thời gian và nơi chốn (Prepositions of Time and Place)
+                    </h3>
+                    <p className="text-xs text-slate-600 mt-1">
+                      Làm chủ bộ 3 giới từ trọng tâm <strong>AT - IN - ON</strong> để miêu tả thời điểm lịch sử và các địa điểm, phòng chức năng trong trường học.
+                    </p>
+                  </div>
+
+                  {/* 1. Preposition AT */}
+                  <div className="p-4 rounded-2xl bg-sky-50 border border-sky-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-sky-900 uppercase tracking-wide">
+                        1. Giới từ AT (Thời điểm cụ thể & Địa điểm xác định)
+                      </h4>
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-lg bg-sky-200/80 text-sky-800">AT</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      <div className="p-2.5 rounded-xl bg-white border border-sky-200 space-y-1">
+                        <span className="font-bold text-sky-800">Thời gian (Time)</span>
+                        <p className="text-[11px] text-slate-600">Giờ chính xác, thời điểm cụ thể trong ngày hoặc dịp lễ ngắn:</p>
+                        <p className="text-[11px] text-sky-900 font-semibold">• at 7:30 a.m., at noon, at night, at the weekend</p>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-white border border-sky-200 space-y-1">
+                        <span className="font-bold text-sky-800">Nơi chốn (Place)</span>
+                        <p className="text-[11px] text-slate-600">Điểm dừng, cơ sở hoặc vị trí xác định cụ thể:</p>
+                        <p className="text-[11px] text-sky-900 font-semibold">• at school, at home, at the gate, at the Imperial Academy</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2. Preposition IN */}
+                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-emerald-900 uppercase tracking-wide">
+                        2. Giới từ IN (Khoảng thời gian rộng lớn & Không gian bao quanh)
+                      </h4>
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-lg bg-emerald-200/80 text-emerald-800">IN</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      <div className="p-2.5 rounded-xl bg-white border border-emerald-200 space-y-1">
+                        <span className="font-bold text-emerald-800">Thời gian (Time)</span>
+                        <p className="text-[11px] text-slate-600">Tháng, năm, thế kỷ, mùa, các buổi lớn trong ngày:</p>
+                        <p className="text-[11px] text-emerald-900 font-semibold">• in 1076, in the 11th century, in October, in summer, in the morning</p>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-white border border-emerald-200 space-y-1">
+                        <span className="font-bold text-emerald-800">Nơi chốn (Place)</span>
+                        <p className="text-[11px] text-slate-600">Bên trong phòng kín, khuôn viên hoặc thành phố, đất nước:</p>
+                        <p className="text-[11px] text-emerald-900 font-semibold">• in the classroom, in the lab, in the garden, in Hanoi, in Vietnam</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 3. Preposition ON */}
+                  <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-amber-900 uppercase tracking-wide">
+                        3. Giới từ ON (Ngày cụ thể & Bề mặt / Tầng lầu)
+                      </h4>
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-lg bg-amber-200/80 text-amber-800">ON</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      <div className="p-2.5 rounded-xl bg-white border border-amber-200 space-y-1">
+                        <span className="font-bold text-amber-800">Thời gian (Time)</span>
+                        <p className="text-[11px] text-slate-600">Các thứ trong tuần, ngày tháng kèm ngày, ngày lễ có từ 'Day':</p>
+                        <p className="text-[11px] text-amber-900 font-semibold">• on Monday, on Friday morning, on October 10th, on Teachers' Day</p>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-white border border-amber-200 space-y-1">
+                        <span className="font-bold text-amber-800">Nơi chốn (Place)</span>
+                        <p className="text-[11px] text-slate-600">Tiếp xúc trên bề mặt phẳng, hoặc vị trí tầng lầu:</p>
+                        <p className="text-[11px] text-amber-900 font-semibold">• on the table, on the wall, on the second floor, on the stone tablets</p>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           )}
@@ -937,7 +1113,9 @@ export const English7StudyView: React.FC = () => {
                         ? 'Phát âm /t/ /d/ (4)'
                         : selectedUnitNumber === 4
                         ? 'Phát âm /ʃ/ /ʒ/ (4)'
-                        : 'Phát âm /ɒ/ /ɔː/ (4)'
+                        : selectedUnitNumber === 5
+                        ? 'Phát âm /ɒ/ /ɔː/ (4)'
+                        : 'Phát âm /tʃ/ /dʒ/ (4)'
                     },
                     { id: 'grammar', label: 'Ngữ pháp (7)' },
                     { id: 'reading', label: 'Đọc hiểu & Phản xạ (4)' }
