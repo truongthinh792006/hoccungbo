@@ -278,3 +278,48 @@ export interface MistakeRecord {
   lastAttemptedAt?: string;
   exerciseSnapshot?: PracticeExercise;
 }
+
+// ============================================================================
+// PHÒNG THI THỬ & ĐỀ KIỂM TRA MÔ PHỎNG (MOCK EXAM ENGINE)
+// ============================================================================
+
+export type ExamType = 'GIUA_KI_1' | 'CUOI_KI_1' | 'GIUA_KI_2' | 'CUOI_KI_2' | 'CUSTOM' | 'SPEED_TEST';
+
+export interface ExamConfig {
+  id: string;
+  type: ExamType;
+  title: string;
+  subtitle: string;
+  durationMinutes: number;
+  questionCount: number;
+  chapterIds: string[];
+  description: string;
+  badgeLabel: string;
+  colorScheme: 'indigo' | 'emerald' | 'amber' | 'rose' | 'purple' | 'cyan';
+}
+
+export interface ExamQuestion extends PracticeExercise {
+  userSelectedOptionIndex?: number;
+  isFlagged?: boolean;
+}
+
+export interface ExamResultRecord {
+  id: string;
+  examId: string;
+  examTitle: string;
+  examType: ExamType;
+  submittedAt: string;
+  durationSecondsUsed: number;
+  totalTimeMinutes: number;
+  score: number; // Thang 10 (vd: 9.0)
+  maxScore: number;
+  correctCount: number;
+  totalQuestions: number;
+  wrongCount: number;
+  skippedCount: number;
+  questions: ExamQuestion[];
+  chapterBreakdown: Record<string, { total: number; correct: number; chapterTitle: string }>;
+  difficultyBreakdown: Record<ExerciseDifficulty, { total: number; correct: number }>;
+  xpEarned: number;
+}
+

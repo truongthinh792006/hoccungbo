@@ -93,6 +93,11 @@ interface AppContextType {
   resolveMistake: (exerciseId: string) => void;
   deleteMistake: (exerciseId: string) => void;
   addXp: (amount: number, reason?: string) => void;
+  // Phòng Thi Thử (Mock Exam Mode)
+  isExamModalOpen: boolean;
+  openExamModal: () => void;
+  closeExamModal: () => void;
+  toggleExamModal: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -394,6 +399,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return getStoredMistakes();
   });
   const [isMistakeNotebookOpen, setIsMistakeNotebookOpen] = useState<boolean>(false);
+
+  // Phòng Thi Thử (Mock Exam Mode)
+  const [isExamModalOpen, setIsExamModalOpen] = useState<boolean>(false);
+  const openExamModal = () => setIsExamModalOpen(true);
+  const closeExamModal = () => setIsExamModalOpen(false);
+  const toggleExamModal = () => setIsExamModalOpen(prev => !prev);
 
   // Sync state to LocalStorage
   useEffect(() => {
@@ -870,7 +881,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         recordMistake,
         resolveMistake,
         deleteMistake,
-        addXp
+        addXp,
+        isExamModalOpen,
+        openExamModal,
+        closeExamModal,
+        toggleExamModal
       }}
     >
       {children}

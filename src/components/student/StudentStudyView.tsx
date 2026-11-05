@@ -8,7 +8,7 @@ import { PracticeDrillSection } from './PracticeDrillSection';
 import { math7Chapters, getNextLesson, getPrevLesson } from '../../data/math7_curriculum';
 import { 
   Bot, Award, Bookmark, ChevronLeft, 
-  ChevronRight, ListOrdered, CheckCircle2, BookMarked 
+  ChevronRight, ListOrdered, CheckCircle2, BookMarked, Trophy 
 } from 'lucide-react';
 
 export const StudentStudyView: React.FC = () => {
@@ -23,7 +23,8 @@ export const StudentStudyView: React.FC = () => {
     openQuizModal,
     completedLessonIds,
     activeMistakesCount,
-    openMistakeNotebook
+    openMistakeNotebook,
+    openExamModal
   } = useApp();
 
   const [rightTab, setRightTab] = useState<'socratic' | 'quiz'>('socratic');
@@ -86,6 +87,16 @@ export const StudentStudyView: React.FC = () => {
                   {activeMistakesCount}
                 </span>
               )}
+            </button>
+
+            {/* Phòng Thi Thử */}
+            <button
+              onClick={openExamModal}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 shadow-2xs transition-all cursor-pointer"
+              title="Luyện thi giữa kì & cuối kì 45-60 phút"
+            >
+              <Trophy className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Phòng Thi Thử</span>
             </button>
 
             {/* Bookmark button for current lesson */}

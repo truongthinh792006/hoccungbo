@@ -4,6 +4,7 @@ import { TodayLearningRecap } from './TodayLearningRecap';
 import { MasteryCard } from './MasteryCard';
 import { ConversationPrompts } from './ConversationPrompts';
 import { MistakeInsightsCard } from './MistakeInsightsCard';
+import { ExamResultsParentCard } from './ExamResultsParentCard';
 import { FamilyRewardContractCard } from './FamilyRewardContractCard';
 import { SyllabusTimeline } from './SyllabusTimeline';
 import { AiKeySettingsCard } from './AiKeySettingsCard';
@@ -50,7 +51,10 @@ export const ParentDashboardView: React.FC = () => {
       {/* 3. Điểm con cần lưu ý: Insight từ Sổ tay câu sai */}
       <MistakeInsightsCard />
 
-      {/* 4. Family Reward Contract & Badges Hub */}
+      {/* 4. Kết quả các bài thi thử của con */}
+      <ExamResultsParentCard />
+
+      {/* 5. Family Reward Contract & Badges Hub */}
       <FamilyRewardContractCard />
 
       {/* 4. Hybrid BYOK Setting: Cài đặt Trợ lý AI (Gemini API) */}

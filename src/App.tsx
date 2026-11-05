@@ -7,9 +7,10 @@ import { SyllabusNavigator } from './components/curriculum/SyllabusNavigator';
 import { QuizSlidingPanel } from './components/student/QuizSlidingPanel';
 import { InstallAppPrompt } from './components/common/InstallAppPrompt';
 import { MistakeNotebookModal } from './components/student/MistakeNotebookModal';
+import { ExamModal } from './components/student/exam/ExamModal';
 
 function MainAppContent() {
-  const { role } = useApp();
+  const { role, isExamModalOpen, closeExamModal } = useApp();
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
@@ -36,6 +37,9 @@ function MainAppContent() {
 
       {/* Mistake Bank & Retry Modal */}
       <MistakeNotebookModal />
+
+      {/* Mock Exam Room Modal */}
+      <ExamModal isOpen={isExamModalOpen} onClose={closeExamModal} />
 
       {/* PWA Install Banner */}
       <InstallAppPrompt />

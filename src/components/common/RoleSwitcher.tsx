@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Flame, Sparkles, User, ShieldCheck, ChevronRight, BookOpen, Layers, Bookmark, BookMarked } from 'lucide-react';
+import { Flame, Sparkles, User, ShieldCheck, ChevronRight, BookOpen, Layers, Bookmark, BookMarked, Trophy } from 'lucide-react';
 import { GamificationModal } from './GamificationModal';
 
 export const RoleSwitcher: React.FC = () => {
@@ -16,7 +16,8 @@ export const RoleSwitcher: React.FC = () => {
     allLessons,
     setCurrentLessonId,
     activeMistakesCount,
-    openMistakeNotebook
+    openMistakeNotebook,
+    openExamModal
   } = useApp();
 
   const [isGamificationModalOpen, setIsGamificationModalOpen] = useState(false);
@@ -129,6 +130,19 @@ export const RoleSwitcher: React.FC = () => {
                       {activeMistakesCount}
                     </span>
                   )}
+                </button>
+              )}
+
+              {/* Phòng Thi Thử button */}
+              {role === 'STUDENT' && (
+                <button
+                  onClick={openExamModal}
+                  className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs"
+                  title="Mở Phòng Thi Thử 45 phút - Đề chuẩn KNTT"
+                >
+                  <Trophy className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="hidden sm:inline">Phòng Thi Thử</span>
+                  <span className="sm:hidden">Thi Thử</span>
                 </button>
               )}
 
