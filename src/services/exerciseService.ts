@@ -14,8 +14,8 @@ type ChapterExerciseModule = {
 const CHAPTER_LOADERS: Record<string, () => Promise<ChapterExerciseModule>> = {
   chuong_1_so_huu_ti: () => import('../data/exercises/chapter1_exercises'),
   chuong_4_tam_giac_bang_nhau: () => import('../data/exercises/chapter4_exercises'),
+  chuong_2_so_thuc: () => import('../data/exercises/chapter2_exercises'),
   // Fallbacks for other chapters (expandable as new chapters are authored)
-  chuong_2_so_thuc: async () => ({ default: [] }),
   chuong_3_goc_duong_thang_song_song: async () => ({ default: [] }),
   chuong_5_thu_thap_va_bieu_dien_du_lieu: async () => ({ default: [] }),
   chuong_6_ti_le_thuc: () => import('../data/exercises/chapter6_exercises'),
@@ -89,7 +89,10 @@ export function getChapterIdForLesson(lessonId: string): string | null {
   if (/12|13|14|15|16|ch4/i.test(lessonId)) {
     return 'chuong_4_tam_giac_bang_nhau';
   }
-  if (/luyen_tap_chung_chuong_1|cuoi_chuong_1|ch1|chuong_1/i.test(lessonId) || /(^|[^0-9])(1|2|3|4|5)($|[^0-9])/i.test(lessonId)) {
+  if (/ch2|chuong_2|so_thap_phan|so_vo_ti|can_bac_hai|so_thuc|luyen_tap_chung_chuong_2/i.test(lessonId) || /(^|[^0-9])(6|7|8)($|[^0-9])/i.test(lessonId)) {
+    return 'chuong_2_so_thuc';
+  }
+  if (/luyen_tap_chung_chuong_1|cuoi_chuong_1|ch1|chuong_1/i.test(lessonId) || /(^|[^0-9])(1|2|3|4)($|[^0-9])/i.test(lessonId)) {
     return 'chuong_1_so_huu_ti';
   }
 
@@ -101,7 +104,11 @@ const LESSON_ALIAS_MAP: Record<string, string[]> = {
   'bai_2_cong_tru_nhan_chia_so_huu_ti': ['lesson-02', 'lesson-2', 'ch1_l02', 'ch1_l2', '2', '02', 'bai_02', 'bai_2'],
   'bai_3_luy_thua_so_mu_tu_nhien': ['lesson-03', 'lesson-3', 'ch1_l03', 'ch1_l3', '3', '03', 'bai_03', 'bai_3'],
   'bai_4_thu_tu_thuc_hien_phep_tinh_chuyen_ve': ['lesson-04', 'lesson-4', 'ch1_l04', 'ch1_l4', '4', '04', 'bai_04', 'bai_4', 'bai_4_quy_tac_dau_ngoac_chuyen_ve'],
-  'luyen_tap_chung_chuong_1': ['lesson-05', 'lesson-5', 'ch1_l05', 'ch1_l5', '5', '05', 'bai_05', 'bai_5', 'bai_tap_cuoi_chuong_1', 'luyen_tap_chung_1'],
+  'luyen_tap_chung_chuong_1': ['lesson-ch1-review', 'ch1_l05', 'ch1_l5', 'bai_tap_cuoi_chuong_1', 'luyen_tap_chung_1'],
+  'bai_5_lam_quen_so_thap_phan_vo_han_tuan_hoan': ['lesson-05', 'lesson-5', 'ch2_l05', 'ch2_l5', 'bai_05', 'bai_5', 'bai_05_lam_quen_voi_so_thap_phan_vo_han_tuan_hoan', '5', '05'],
+  'bai_6_so_vo_ti_can_bac_hai_so_hoc': ['lesson-06', 'lesson-6', 'ch2_l06', 'ch2_l6', 'bai_06', 'bai_6', 'bai_06_so_vo_ti_can_bac_hai_so_hoc', '6', '06'],
+  'bai_7_tap_hop_cac_so_thuc': ['lesson-07', 'lesson-7', 'ch2_l07', 'ch2_l7', 'bai_07', 'bai_7', 'bai_07_tap_hop_cac_so_thuc', '7', '07'],
+  'luyen_tap_chung_chuong_2': ['lesson-08', 'lesson-8', 'ch2_l08', 'ch2_l8', 'bai_08', 'bai_8', 'bai_08_review', 'luyen_tap_chung_2', '8', '08'],
   'bai_12_tong_cac_goc_trong_mot_tam_giac': ['lesson-12', 'ch4_l12', '12'],
   'bai_13_hai_tam_giac_bang_nhau_truong_hop_ccc': ['lesson-13', 'ch4_l13', '13'],
   'bai_14_truong_hop_bang_nhau_cgc_gcg': ['lesson-14', 'ch4_l14', '14', 'bai_14_truong_hop_bang_nhau_thu_hai_cgc'],
