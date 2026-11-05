@@ -45,50 +45,42 @@ export const RoleSwitcher: React.FC = () => {
                 {currentSubject === 'toan' ? <BookOpen className="w-5 h-5" /> : <Languages className="w-5 h-5" />}
               </button>
 
-              <div className="min-w-0">
+              <div className="min-w-0 flex flex-col justify-center">
                 {/* Subject Tag & Subject Switcher Pill */}
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap">
                   {/* Clickable Subject Dropdown Pill */}
                   <button
                     onClick={openSubjectHub}
-                    className="group flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-indigo-950 text-white transition-all shadow-xs"
+                    className="group flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-indigo-950 text-white transition-all shadow-xs shrink-0 cursor-pointer"
                     title="Nhấn để đổi giữa Toán 7, Tiếng Anh 7, KHTN 7, Ngữ văn 7"
                   >
-                    <GraduationCap className="w-3.5 h-3.5 text-amber-400" />
-                    <span className="font-extrabold text-xs sm:text-sm tracking-tight">
+                    <GraduationCap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span className="font-extrabold text-xs sm:text-sm tracking-tight whitespace-nowrap">
                       {currentSubject === 'toan' ? 'Toán 7' : 'Tiếng Anh 7'}
                     </span>
-                    <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-white transition-transform group-hover:translate-y-0.5" />
+                    <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-white transition-transform group-hover:translate-y-0.5 shrink-0" />
                   </button>
 
-                  <span className="text-[11px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-200/80 flex items-center gap-1">
-                    <Layers className="w-3 h-3" />
+                  <span className="hidden xs:inline-flex text-[11px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-200/80 items-center gap-1 shrink-0 whitespace-nowrap">
+                    <Layers className="w-3 h-3 shrink-0" />
                     <span>{currentSubject === 'toan' ? 'Kết nối tri thức' : 'Global Success'}</span>
                   </span>
 
-                  {currentSubject === 'toan' ? (
+                  {currentSubject === 'toan' && (
                     <button
                       onClick={openSyllabus}
-                      className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200 transition-colors"
+                      className="hidden md:inline-flex items-center gap-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200 transition-colors shrink-0 whitespace-nowrap"
                     >
-                      <BookOpen className="w-3 h-3 text-emerald-600" />
+                      <BookOpen className="w-3 h-3 text-emerald-600 shrink-0" />
                       <span>Mục lục SGK ({allLessons.length} bài)</span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={openSubjectHub}
-                      className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-2.5 py-0.5 rounded-full border border-indigo-200 transition-colors"
-                    >
-                      <Sparkles className="w-3 h-3 text-amber-500" />
-                      <span>Bàn học 4 môn</span>
                     </button>
                   )}
                 </div>
 
-                {/* Breadcrumb */}
+                {/* Breadcrumb - Single line strictly truncated */}
                 {currentSubject === 'toan' ? (
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500 truncate mt-0.5">
-                    <span className="hidden sm:inline font-medium text-slate-600">{currentLesson.chapterTitle.split(':')[0]}</span>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 truncate mt-0.5 max-w-[200px] sm:max-w-xs md:max-w-md">
+                    <span className="hidden sm:inline font-medium text-slate-600 truncate">{currentLesson.chapterTitle.split(':')[0]}</span>
                     <ChevronRight className="w-3 h-3 text-slate-400 hidden sm:inline shrink-0" />
                     <button
                       onClick={openSyllabus}
@@ -98,12 +90,13 @@ export const RoleSwitcher: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500 truncate mt-0.5">
-                    <span className="hidden sm:inline font-medium text-slate-600">Global Success 7</span>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 truncate mt-0.5 max-w-[200px] sm:max-w-xs md:max-w-md">
+                    <span className="hidden sm:inline font-medium text-slate-600 shrink-0">Global Success 7</span>
                     <ChevronRight className="w-3 h-3 text-slate-400 hidden sm:inline shrink-0" />
                     <button
                       onClick={openSubjectHub}
                       className="font-semibold text-indigo-800 hover:underline truncate text-left"
+                      title="Nhấn để mở Bàn học 4 môn"
                     >
                       Unit 1: Hobbies • Unit 2: Healthy Living
                     </button>
@@ -114,26 +107,28 @@ export const RoleSwitcher: React.FC = () => {
 
             {/* Right: Gamification & Role Switcher */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              {/* Quick Bookmark Badge: "Bài học hôm nay" */}
-              <button
-                onClick={() => {
-                  if (currentLesson.id !== todayLesson.id) {
-                    setCurrentLessonId(todayLesson.id);
-                  } else {
-                    openSyllabus();
-                  }
-                }}
-                className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100/70 text-amber-900 text-xs font-bold transition-all"
-                title="Nhấn để nhảy nhanh đến bài học hôm nay tại trường"
-              >
-                <Bookmark className="w-3.5 h-3.5 fill-current text-amber-600" />
-                <span>Hôm nay: B.{todayLesson.order}</span>
-              </button>
+              {/* Quick Bookmark Badge: "Bài học hôm nay" (Toán 7) */}
+              {currentSubject === 'toan' && (
+                <button
+                  onClick={() => {
+                    if (currentLesson.id !== todayLesson.id) {
+                      setCurrentLessonId(todayLesson.id);
+                    } else {
+                      openSyllabus();
+                    }
+                  }}
+                  className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 hover:bg-amber-100/70 text-amber-900 text-xs font-bold transition-all shrink-0"
+                  title="Nhấn để nhảy nhanh đến bài học hôm nay tại trường"
+                >
+                  <Bookmark className="w-3.5 h-3.5 fill-current text-amber-600" />
+                  <span>Hôm nay: B.{todayLesson.order}</span>
+                </button>
+              )}
 
               {/* Streak Flame (Clickable) */}
               <button
                 onClick={() => setIsGamificationModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200 text-amber-800 text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200 text-amber-800 text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer shrink-0"
                 title="Xem chuỗi ngày học tập và khế ước phần thưởng cùng bố"
               >
                 <Flame className="w-4 h-4 text-amber-500 fill-amber-500 animate-bounce" />
@@ -143,18 +138,18 @@ export const RoleSwitcher: React.FC = () => {
               {/* XP Badge (Clickable) */}
               <button
                 onClick={() => setIsGamificationModalOpen(true)}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-emerald-800 text-xs font-bold transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-emerald-800 text-xs font-bold transition-all active:scale-95 cursor-pointer shrink-0"
                 title="Xem điểm tích lũy và đổi quà bố thưởng"
               >
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
                 <span>+{xp} XP</span>
               </button>
 
-              {/* Sổ tay câu sai button (Desktop/Tablet) */}
-              {role === 'STUDENT' && (
+              {/* Sổ tay câu sai button (Desktop/Tablet - Toán 7) */}
+              {role === 'STUDENT' && currentSubject === 'toan' && (
                 <button
                   onClick={openMistakeNotebook}
-                  className={`hidden md:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all active:scale-95 cursor-pointer ${
+                  className={`hidden md:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all active:scale-95 cursor-pointer shrink-0 ${
                     activeMistakesCount > 0
                       ? 'bg-rose-50 hover:bg-rose-100 border-rose-300 text-rose-800 shadow-xs'
                       : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-600'
@@ -171,15 +166,27 @@ export const RoleSwitcher: React.FC = () => {
                 </button>
               )}
 
-              {/* Phòng Thi Thử button (Desktop/Tablet) */}
-              {role === 'STUDENT' && (
+              {/* Phòng Thi Thử button (Desktop/Tablet - Toán 7) */}
+              {role === 'STUDENT' && currentSubject === 'toan' && (
                 <button
                   onClick={openExamModal}
-                  className="hidden md:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs"
+                  className="hidden md:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs shrink-0"
                   title="Mở Phòng Thi Thử 45 phút - Đề chuẩn KNTT"
                 >
                   <Trophy className="w-3.5 h-3.5 text-indigo-600" />
                   <span>Phòng Thi Thử</span>
+                </button>
+              )}
+
+              {/* Bàn học 4 môn button (Desktop/Tablet - Tiếng Anh) */}
+              {role === 'STUDENT' && currentSubject === 'tieng-anh' && (
+                <button
+                  onClick={openSubjectHub}
+                  className="hidden md:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs shrink-0"
+                  title="Mở Bàn học 4 môn"
+                >
+                  <Layers className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>Bàn học 4 môn</span>
                 </button>
               )}
 
