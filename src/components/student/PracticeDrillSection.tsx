@@ -304,7 +304,7 @@ export const PracticeDrillSection: React.FC<PracticeDrillSectionProps> = ({ less
                         {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <MathText>{opt.text}</MathText>
+                        <MathText text={opt.text}>{opt.text}</MathText>
                       </div>
                     </button>
                   );
@@ -386,8 +386,11 @@ export const PracticeDrillSection: React.FC<PracticeDrillSectionProps> = ({ less
                       <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
                       <span>Lời Giải Chi Tiết Chuẩn SGK</span>
                     </div>
-                    <span className="text-[11px] font-bold text-slate-500 normal-case">
-                      Đáp án đúng: <strong className="text-emerald-700">{ex.options.find(o => o.id === ex.correctAnswerId)?.text}</strong>
+                    <span className="text-[11px] font-bold text-slate-500 normal-case flex items-center gap-1">
+                      <span>Đáp án đúng:</span>
+                      <strong className="text-emerald-700 inline-flex items-center">
+                        <MathText text={ex.options.find(o => o.id === ex.correctAnswerId)?.text} />
+                      </strong>
                     </span>
                   </div>
 

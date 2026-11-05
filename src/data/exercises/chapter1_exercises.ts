@@ -10,7 +10,7 @@ export const chapter1Exercises: PracticeExercise[] = [
     difficulty: 'co_ban',
     question: 'Khẳng định nào sau đây là **đúng** về tập hợp số hữu tỉ $\\mathbb{Q}$?',
     options: [
-      { id: 'opt-a', text: 'Số hữu tỉ là số viết được dưới dạng phân số \\(\\frac{a}{b}\\) với \\(a, b \\in \\mathbb{Z}, b \\neq 0\\).', isCorrect: true },
+      { id: 'opt-a', text: 'Số hữu tỉ là số viết được dưới dạng phân số $\\frac{a}{b}$ với $a, b \\in \\mathbb{Z}, b \\neq 0$.', isCorrect: true },
       { id: 'opt-b', text: 'Mọi số thập phân đều không phải là số hữu tỉ.', isCorrect: false },
       { id: 'opt-c', text: 'Số 0 không phải là số hữu tỉ vì không viết được dưới dạng phân số.', isCorrect: false },
       { id: 'opt-d', text: 'Số hữu tỉ chỉ gồm các số nguyên dương và phân số dương.', isCorrect: false }
@@ -28,10 +28,10 @@ export const chapter1Exercises: PracticeExercise[] = [
     difficulty: 'co_ban',
     question: 'Số đối của số hữu tỉ $-\\frac{3}{5}$ là:',
     options: [
-      { id: 'opt-a', text: '\\(-\\frac{5}{3}\\)', isCorrect: false },
-      { id: 'opt-b', text: '\\(\\frac{3}{5}\\)', isCorrect: true },
-      { id: 'opt-c', text: '\\(\\frac{5}{3}\\)', isCorrect: false },
-      { id: 'opt-d', text: '\\(-\\frac{3}{-5}\\)', isCorrect: false }
+      { id: 'opt-a', text: '$-\\frac{5}{3}$', isCorrect: false },
+      { id: 'opt-b', text: '$\\frac{3}{5}$', isCorrect: true },
+      { id: 'opt-c', text: '$\\frac{5}{3}$', isCorrect: false },
+      { id: 'opt-d', text: '$-\\frac{3}{-5}$', isCorrect: false }
     ],
     correctAnswerId: 'opt-b',
     hint: '💡 Hai số đối nhau có tổng bằng 0 và nằm về hai phía đối xứng nhau qua gốc 0 trên trục số.',
@@ -48,10 +48,10 @@ export const chapter1Exercises: PracticeExercise[] = [
     difficulty: 'co_ban',
     question: 'Tính giá trị của biểu thức: $A = \\left(-\\frac{2}{3}\\right)^3$.',
     options: [
-      { id: 'opt-a', text: '\\(-\\frac{8}{27}\\)', isCorrect: true },
-      { id: 'opt-b', text: '\\(\\frac{8}{27}\\)', isCorrect: false },
-      { id: 'opt-c', text: '\\(-\\frac{6}{9}\\)', isCorrect: false },
-      { id: 'opt-d', text: '\\(-\\frac{8}{9}\\)', isCorrect: false }
+      { id: 'opt-a', text: '$-\\frac{8}{27}$', isCorrect: true },
+      { id: 'opt-b', text: '$\\frac{8}{27}$', isCorrect: false },
+      { id: 'opt-c', text: '$-\\frac{6}{9}$', isCorrect: false },
+      { id: 'opt-d', text: '$-\\frac{8}{9}$', isCorrect: false }
     ],
     correctAnswerId: 'opt-a',
     hint: '💡 Áp dụng công thức $\\left(\\frac{a}{b}\\right)^n = \\frac{a^n}{b^n}$. Lưu ý dấu âm nâng lên lũy thừa bậc lẻ vẫn là dấu âm.',
@@ -66,10 +66,10 @@ export const chapter1Exercises: PracticeExercise[] = [
     difficulty: 'thong_hieu',
     question: 'Rút gọn biểu thức: $M = \\left(\\frac{1}{2}\\right)^3 \\cdot \\left(\\frac{1}{2}\\right)^4$.',
     options: [
-      { id: 'opt-a', text: '\\(\\left(\\frac{1}{2}\\right)^{12}\\)', isCorrect: false },
-      { id: 'opt-b', text: '\\(\\left(\\frac{1}{2}\\right)^7\\)', isCorrect: true },
-      { id: 'opt-c', text: '\\(1^7\\)', isCorrect: false },
-      { id: 'opt-d', text: '\\(\\left(\\frac{1}{4}\\right)^7\\)', isCorrect: false }
+      { id: 'opt-a', text: '$\\left(\\frac{1}{2}\\right)^{12}$', isCorrect: false },
+      { id: 'opt-b', text: '$\\left(\\frac{1}{2}\\right)^7$', isCorrect: true },
+      { id: 'opt-c', text: '$1^7$', isCorrect: false },
+      { id: 'opt-d', text: '$\\left(\\frac{1}{4}\\right)^7$', isCorrect: false }
     ],
     correctAnswerId: 'opt-b',
     hint: '💡 Áp dụng quy tắc nhân hai lũy thừa cùng cơ số: $x^m \\cdot x^n = x^{m+n}$. Giữ nguyên cơ số và cộng các số mũ.',

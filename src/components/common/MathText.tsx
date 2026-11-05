@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import katex from 'katex';
 
 interface MathTextProps {
-  children?: string;
+  children?: React.ReactNode;
+  text?: string;
   formula?: string;
   block?: boolean;
   className?: string;
@@ -10,6 +11,7 @@ interface MathTextProps {
 
 export const MathText: React.FC<MathTextProps> = ({
   children,
+  text: textProp,
   formula,
   block = false,
   className = ''
@@ -33,13 +35,19 @@ export const MathText: React.FC<MathTextProps> = ({
     }
   }
 
-  // Parse embedded $...$ and $$...$$ with auto-recovery for raw LaTeX
+  const rawInput = typeof children === 'string' ? children : (textProp || (typeof children === 'number' ? String(children) : ''));
+
+  // Parse embedded $...$, $$...$$, \(...\), and \[...\] with auto-recovery for raw LaTeX
   const parsedNodes = useMemo(() => {
-    if (!children) return null;
+    if (!rawInput) return null;
 
-    let text = children;
+    let text = rawInput;
 
-    // Resilient fallback: If no $ is present but raw LaTeX syntax exists
+    // 1. Convert standard LaTeX delimiters: \[ ... \] to $$...$$ and \( ... \) to $...$
+    text = text.replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => `$$${math}$$`);
+    text = text.replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => `$${math}$`);
+
+    // 2. Resilient fallback: If no $ is present but raw LaTeX syntax exists
     if (!text.includes('$') && (text.includes('\\') || text.includes('^'))) {
       const hasVietnamese = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(text);
       if (!hasVietnamese) {
@@ -94,7 +102,7 @@ export const MathText: React.FC<MathTextProps> = ({
       }
       return <span key={index}>{part}</span>;
     });
-  }, [children]);
+  }, [rawInput]);
 
   return <span className={className}>{parsedNodes}</span>;
 };
