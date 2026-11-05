@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { useApp } from '../../../context/AppContext';
 import { 
+  UNIT1_VOCABULARY, 
+  UNIT1_EXERCISES, 
+  EnglishExercise 
+} from '../../../data/english/unit1_hobbies_data';
+import { 
   Sparkles, 
   Volume2, 
   ArrowLeft, 
@@ -9,28 +14,13 @@ import {
   Flame, 
   Award, 
   CheckCircle2, 
-  Play
+  Play,
+  Check,
+  X,
+  HelpCircle,
+  RotateCcw,
+  GraduationCap
 } from 'lucide-react';
-
-// Vocabulary preview for Unit 1: Hobbies
-interface VocabItem {
-  word: string;
-  type: string;
-  ipa: string;
-  meaning: string;
-  example: string;
-}
-
-const UNIT1_VOCAB_PREVIEW: VocabItem[] = [
-  { word: 'hobby', type: 'n', ipa: '/ˈhɒbi/', meaning: 'sở thích', example: 'My favourite hobby is reading books.' },
-  { word: 'origami', type: 'n', ipa: '/ˌɒrɪˈɡɑːmi/', meaning: 'nghệ thuật gấp giấy Nhật Bản', example: 'She likes making origami paper birds.' },
-  { word: 'horse riding', type: 'n', ipa: '/ˈhɔːs raɪdɪŋ/', meaning: 'cưỡi ngựa', example: 'Horse riding is an exciting outdoor activity.' },
-  { word: 'gardening', type: 'n', ipa: '/ˈɡɑːdnɪŋ/', meaning: 'làm vườn', example: 'My grandparents love gardening on weekends.' },
-  { word: 'collecting coins', type: 'phr', ipa: '/kəˈlektɪŋ kɔɪnz/', meaning: 'sưu tầm tiền xu', example: 'He has been collecting coins for 3 years.' },
-  { word: 'dollhouse', type: 'n', ipa: '/ˈdɒlhaʊs/', meaning: 'nhà búp bê', example: 'She made a tiny wooden dollhouse with her dad.' },
-  { word: 'fragile', type: 'adj', ipa: '/ˈfrædʒaɪl/', meaning: 'dễ vỡ, mỏng manh', example: 'Be careful! Eggshell carvings are very fragile.' },
-  { word: 'carve', type: 'v', ipa: '/kɑːv/', meaning: 'chạm khắc', example: 'My uncle can carve beautiful flowers from wood.' }
-];
 
 const ENGLISH_UNITS = [
   { id: 'unit-01', number: 1, title: 'Hobbies', viTitle: 'Sở thích', status: 'ready', badge: 'Sẵn sàng học' },
@@ -42,18 +32,28 @@ const ENGLISH_UNITS = [
 ];
 
 export const English7StudyView: React.FC = () => {
-  const { setCurrentSubject, openSubjectHub, xp, streak } = useApp();
-  const [activeTab, setActiveTab] = useState<'vocab' | 'grammar' | 'pronunciation'>('vocab');
+  const { setCurrentSubject, openSubjectHub, xp, addXp, streak } = useApp();
+  const [activeTab, setActiveTab] = useState<'vocab' | 'pronunciation' | 'grammar' | 'practice'>('vocab');
+  
+  // Flashcard state
   const [selectedWordIndex, setSelectedWordIndex] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
+  // Practice Drills state
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'vocabulary' | 'pronunciation' | 'grammar' | 'reading'>('all');
+  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<Record<string, number>>({});
+  const [showHint, setShowHint] = useState(false);
+  const [rewardedQuestionIds, setRewardedQuestionIds] = useState<Record<string, boolean>>({});
+
   // Quick Text-to-Speech using native Web Speech API
-  const speakWord = (text: string) => {
+  const speakText = (text: string) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
+      const cleanText = text.replace(/_+/g, 'blank').replace(/[\/\(\)]/g, ' ');
+      const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = 'en-US';
-      utterance.rate = 0.85;
+      utterance.rate = 0.88;
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = () => setIsSpeaking(false);
@@ -61,7 +61,44 @@ export const English7StudyView: React.FC = () => {
     }
   };
 
-  const currentWord = UNIT1_VOCAB_PREVIEW[selectedWordIndex];
+  const currentWord = UNIT1_VOCABULARY[selectedWordIndex];
+
+  // Filtered exercises based on category
+  const filteredExercises = UNIT1_EXERCISES.filter((ex) => {
+    if (selectedCategory === 'all') return true;
+    return ex.category === selectedCategory;
+  });
+
+  const activeExercise: EnglishExercise | undefined = filteredExercises[currentQuizIndex] || filteredExercises[0];
+
+  // Calculate statistics
+  const totalQuestions = UNIT1_EXERCISES.length;
+  const answeredCount = Object.keys(userAnswers).length;
+  const correctCount = Object.entries(userAnswers).filter(([qId, answerIdx]) => {
+    const q = UNIT1_EXERCISES.find((item) => item.id === qId);
+    return q && q.correctIndex === answerIdx;
+  }).length;
+
+  const handleSelectAnswer = (optionIdx: number) => {
+    if (!activeExercise) return;
+    if (userAnswers[activeExercise.id] !== undefined) return; // already answered
+
+    const isCorrect = optionIdx === activeExercise.correctIndex;
+    setUserAnswers((prev) => ({ ...prev, [activeExercise.id]: optionIdx }));
+
+    if (isCorrect && !rewardedQuestionIds[activeExercise.id]) {
+      addXp(10, 'Đúng câu phản xạ Tiếng Anh Unit 1');
+      setRewardedQuestionIds((prev) => ({ ...prev, [activeExercise.id]: true }));
+    }
+  };
+
+  const handleResetQuiz = () => {
+    if (window.confirm('Con có chắc muốn làm lại từ đầu bộ câu hỏi trắc nghiệm này không?')) {
+      setUserAnswers({});
+      setCurrentQuizIndex(0);
+      setShowHint(false);
+    }
+  };
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -83,7 +120,7 @@ export const English7StudyView: React.FC = () => {
               Unit 1: Hobbies (Sở Thích)
             </h1>
             <p className="text-xs sm:text-sm text-indigo-100 leading-relaxed">
-              Khởi động làm chủ từ vựng chỉ hoạt động giải trí, phân biệt cặp âm <span className="font-mono bg-white/20 px-1 rounded">/ə/</span> và <span className="font-mono bg-white/20 px-1 rounded">/ɜ:/</span>, cùng cấu trúc câu với động từ chỉ sự yêu thích (like, love, enjoy + V-ing).
+              Khởi động làm chủ từ vựng chỉ hoạt động giải trí, phân biệt cặp âm <span className="font-mono bg-white/20 px-1 rounded">/ə/</span> và <span className="font-mono bg-white/20 px-1 rounded">/ɜ:/</span>, cùng cấu trúc câu với động từ chỉ sự yêu thích (like, love, enjoy + V-ing) và bộ 20 câu trắc nghiệm phản xạ.
             </p>
           </div>
 
@@ -111,10 +148,10 @@ export const English7StudyView: React.FC = () => {
       <div className="bg-white rounded-2xl border border-slate-200/90 p-3 shadow-xs">
         <div className="flex items-center justify-between mb-2 px-1">
           <span className="text-xs font-extrabold text-slate-800 tracking-tight flex items-center gap-1.5">
-            <span>Danh mục 12 Units Tiếng Anh 7</span>
+            <span>Danh mục 12 Units Tiếng Anh 7 Global Success</span>
           </span>
           <span className="text-[11px] text-slate-500">
-            Học kỳ I & II
+            Bộ GD&ĐT (GDPT 2018)
           </span>
         </div>
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
@@ -125,7 +162,7 @@ export const English7StudyView: React.FC = () => {
                 key={u.id}
                 onClick={() => {
                   if (u.number !== 1) {
-                    alert(`Unit ${u.number}: ${u.title} đang được hoàn thiện bài tập! Hiện tại con đang học Unit 1: Hobbies.`);
+                    alert(`Unit ${u.number}: ${u.title} đang được biên soạn tiếp. Hiện tại Unit 1 đã có đầy đủ từ vựng, phát âm, ngữ pháp và 20 bài tập phản xạ!`);
                   }
                 }}
                 className={`px-3 py-2 rounded-xl text-left shrink-0 transition-all flex flex-col min-w-[150px] border ${
@@ -154,51 +191,66 @@ export const English7StudyView: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Learning Sections: Tabs */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (2 Cols): Vocabulary & Grammar & Pronunciation */}
-        <div className="lg:col-span-2 space-y-4">
-          {/* Section Navigation Tabs */}
-          <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-            <button
-              onClick={() => setActiveTab('vocab')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'vocab'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              1. Từ Vựng & Flashcard ({UNIT1_VOCAB_PREVIEW.length} từ)
-            </button>
-            <button
-              onClick={() => setActiveTab('pronunciation')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'pronunciation'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              2. Phát Âm: /ə/ & /ɜ:/
-            </button>
-            <button
-              onClick={() => setActiveTab('grammar')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'grammar'
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              3. Ngữ Pháp Trọng Tâm
-            </button>
-          </div>
+      {/* Main Navigation Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto no-scrollbar">
+        <button
+          onClick={() => setActiveTab('vocab')}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === 'vocab'
+              ? 'bg-indigo-600 text-white shadow-xs'
+              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          1. Từ Vựng & Flashcard ({UNIT1_VOCABULARY.length} từ)
+        </button>
+        <button
+          onClick={() => setActiveTab('pronunciation')}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === 'pronunciation'
+              ? 'bg-indigo-600 text-white shadow-xs'
+              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          2. Phát Âm: /ə/ & /ɜ:/
+        </button>
+        <button
+          onClick={() => setActiveTab('grammar')}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === 'grammar'
+              ? 'bg-indigo-600 text-white shadow-xs'
+              : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          3. Ngữ Pháp Trọng Tâm
+        </button>
+        <button
+          onClick={() => setActiveTab('practice')}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+            activeTab === 'practice'
+              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-xs'
+              : 'bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100'
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+          <span>4. Luyện Tập Phản Xạ ({UNIT1_EXERCISES.length} câu)</span>
+          <span className="px-1.5 py-0.2 rounded-full bg-white/20 text-[10px] font-black">
+            {answeredCount}/{totalQuestions}
+          </span>
+        </button>
+      </div>
 
+      {/* Main Container */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column (2 Cols): Active Tab Content */}
+        <div className="lg:col-span-2 space-y-4">
+          
           {/* TAB 1: VOCABULARY FLASHCARD & LIST */}
           {activeTab === 'vocab' && (
             <div className="space-y-4">
               {/* Interactive Flashcard Card */}
               <div className="bg-gradient-to-br from-indigo-50 via-white to-sky-50 rounded-3xl border-2 border-indigo-200/80 p-6 sm:p-8 shadow-sm text-center relative">
                 <span className="inline-block px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold mb-3">
-                  Từ {selectedWordIndex + 1} / {UNIT1_VOCAB_PREVIEW.length} • Flashcard tương tác
+                  Từ {selectedWordIndex + 1} / {UNIT1_VOCABULARY.length} • Flashcard phát âm chuẩn
                 </span>
 
                 <div className="space-y-2">
@@ -213,7 +265,7 @@ export const English7StudyView: React.FC = () => {
                       ({currentWord.type})
                     </span>
                     <button
-                      onClick={() => speakWord(currentWord.word)}
+                      onClick={() => speakText(currentWord.word)}
                       className={`w-9 h-9 rounded-full flex items-center justify-center text-white shadow-md transition-transform active:scale-95 ${
                         isSpeaking ? 'bg-amber-500 animate-pulse' : 'bg-indigo-600 hover:bg-indigo-700'
                       }`}
@@ -224,11 +276,16 @@ export const English7StudyView: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-5 p-4 bg-white rounded-2xl border border-slate-200/90 shadow-2xs max-w-md mx-auto">
-                  <p className="text-lg font-bold text-emerald-700">
+                <div className="mt-5 p-4 bg-white rounded-2xl border border-slate-200/90 shadow-2xs max-w-md mx-auto space-y-1.5">
+                  <p className="text-base sm:text-lg font-bold text-emerald-700">
                     {currentWord.meaning}
                   </p>
-                  <p className="text-xs text-slate-500 italic mt-1">
+                  {currentWord.collocation && (
+                    <p className="text-xs font-semibold text-indigo-600 bg-indigo-50/70 px-2 py-1 rounded-lg">
+                      💡 Cụm từ: {currentWord.collocation}
+                    </p>
+                  )}
+                  <p className="text-xs text-slate-500 italic">
                     "{currentWord.example}"
                   </p>
                 </div>
@@ -236,20 +293,20 @@ export const English7StudyView: React.FC = () => {
                 {/* Next / Prev Buttons */}
                 <div className="flex items-center justify-center gap-3 mt-6">
                   <button
-                    onClick={() => setSelectedWordIndex((prev) => (prev > 0 ? prev - 1 : UNIT1_VOCAB_PREVIEW.length - 1))}
+                    onClick={() => setSelectedWordIndex((prev) => (prev > 0 ? prev - 1 : UNIT1_VOCABULARY.length - 1))}
                     className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-all shadow-2xs"
                   >
                     ← Từ trước
                   </button>
                   <button
-                    onClick={() => speakWord(currentWord.example)}
+                    onClick={() => speakText(currentWord.example)}
                     className="px-4 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold hover:bg-indigo-100 transition-all flex items-center gap-1.5"
                   >
                     <Play className="w-3.5 h-3.5" />
                     <span>Nghe câu mẫu</span>
                   </button>
                   <button
-                    onClick={() => setSelectedWordIndex((prev) => (prev < UNIT1_VOCAB_PREVIEW.length - 1 ? prev + 1 : 0))}
+                    onClick={() => setSelectedWordIndex((prev) => (prev < UNIT1_VOCABULARY.length - 1 ? prev + 1 : 0))}
                     className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-all shadow-sm"
                   >
                     Từ kế tiếp →
@@ -260,15 +317,15 @@ export const English7StudyView: React.FC = () => {
               {/* Vocabulary Grid List */}
               <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs">
                 <h4 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-3">
-                  Danh sách từ vựng Unit 1
+                  Danh sách từ vựng trọng tâm Unit 1
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {UNIT1_VOCAB_PREVIEW.map((item, idx) => (
+                  {UNIT1_VOCABULARY.map((item, idx) => (
                     <button
                       key={item.word}
                       onClick={() => {
                         setSelectedWordIndex(idx);
-                        speakWord(item.word);
+                        speakText(item.word);
                       }}
                       className={`p-2.5 rounded-xl text-left border transition-all flex items-center justify-between ${
                         selectedWordIndex === idx
@@ -323,7 +380,7 @@ export const English7StudyView: React.FC = () => {
                         <span className="font-bold text-slate-800">{item.word}</span>
                         <span className="font-mono text-slate-500">{item.ipa}</span>
                         <button
-                          onClick={() => speakWord(item.word)}
+                          onClick={() => speakText(item.word)}
                           className="w-7 h-7 rounded-lg bg-sky-100 hover:bg-sky-200 flex items-center justify-center text-sky-800"
                         >
                           <Volume2 className="w-3.5 h-3.5" />
@@ -352,7 +409,7 @@ export const English7StudyView: React.FC = () => {
                         <span className="font-bold text-slate-800">{item.word}</span>
                         <span className="font-mono text-slate-500">{item.ipa}</span>
                         <button
-                          onClick={() => speakWord(item.word)}
+                          onClick={() => speakText(item.word)}
                           className="w-7 h-7 rounded-lg bg-indigo-100 hover:bg-indigo-200 flex items-center justify-center text-indigo-800"
                         >
                           <Volume2 className="w-3.5 h-3.5" />
@@ -408,27 +465,286 @@ export const English7StudyView: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* TAB 4: PRACTICE DRILLS (20 QUESTIONS) */}
+          {activeTab === 'practice' && (
+            <div className="space-y-4">
+              {/* Category Filter Pills & Reset */}
+              <div className="flex items-center justify-between gap-2 flex-wrap bg-white rounded-2xl border border-slate-200/90 p-3 shadow-2xs">
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                  {[
+                    { id: 'all', label: 'Tất cả (20)' },
+                    { id: 'vocabulary', label: 'Từ vựng (5)' },
+                    { id: 'pronunciation', label: 'Phát âm (4)' },
+                    { id: 'grammar', label: 'Ngữ pháp (7)' },
+                    { id: 'reading', label: 'Đọc hiểu & Phản xạ (4)' }
+                  ].map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => {
+                        setSelectedCategory(cat.id as any);
+                        setCurrentQuizIndex(0);
+                        setShowHint(false);
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                        selectedCategory === cat.id
+                          ? 'bg-indigo-600 text-white shadow-2xs'
+                          : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleResetQuiz}
+                  className="flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-rose-600 px-2 py-1 rounded-lg hover:bg-rose-50 transition-colors shrink-0"
+                  title="Làm lại bộ câu hỏi"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Làm lại</span>
+                </button>
+              </div>
+
+              {/* Question Navigation Numbers */}
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-3 shadow-2xs">
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-2 px-1">
+                  <span className="font-bold text-slate-800">
+                    Câu hỏi {currentQuizIndex + 1} / {filteredExercises.length}
+                  </span>
+                  <span>Đã làm: {answeredCount}/{totalQuestions} câu</span>
+                </div>
+
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                  {filteredExercises.map((ex, idx) => {
+                    const isAnswered = userAnswers[ex.id] !== undefined;
+                    const isCorrect = isAnswered && userAnswers[ex.id] === ex.correctIndex;
+                    const isCurrent = idx === currentQuizIndex;
+
+                    return (
+                      <button
+                        key={ex.id}
+                        onClick={() => {
+                          setCurrentQuizIndex(idx);
+                          setShowHint(false);
+                        }}
+                        className={`w-8 h-8 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center justify-center ${
+                          isCurrent
+                            ? 'ring-2 ring-indigo-600 font-black'
+                            : ''
+                        } ${
+                          isAnswered
+                            ? isCorrect
+                              ? 'bg-emerald-500 text-white shadow-2xs'
+                              : 'bg-rose-500 text-white shadow-2xs'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        {idx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Active Question Card */}
+              {activeExercise && (
+                <div className="bg-white rounded-3xl border-2 border-slate-200/90 p-5 sm:p-6 shadow-sm space-y-4">
+                  {/* Question Header */}
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold border border-indigo-200">
+                        {activeExercise.title}
+                      </span>
+                      <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md ${
+                        activeExercise.level === 'nhan_biet'
+                          ? 'bg-sky-100 text-sky-800'
+                          : activeExercise.level === 'thong_hieu'
+                          ? 'bg-amber-100 text-amber-800'
+                          : 'bg-purple-100 text-purple-800'
+                      }`}>
+                        {activeExercise.level === 'nhan_biet' ? 'Nhận biết' : activeExercise.level === 'thong_hieu' ? 'Thông hiểu' : 'Vận dụng'}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => speakText(activeExercise.question)}
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
+                      title="Nghe câu hỏi bằng tiếng Anh"
+                    >
+                      <Volume2 className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>Nghe đọc</span>
+                    </button>
+                  </div>
+
+                  {/* Question Content */}
+                  <div className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed pt-1">
+                    {activeExercise.question}
+                  </div>
+
+                  {/* 4 Options Grid */}
+                  <div className="grid grid-cols-1 gap-2.5 pt-2">
+                    {activeExercise.options.map((option, optIdx) => {
+                      const isSelected = userAnswers[activeExercise.id] === optIdx;
+                      const isAnswered = userAnswers[activeExercise.id] !== undefined;
+                      const isCorrect = optIdx === activeExercise.correctIndex;
+
+                      let btnStyle = 'border-slate-200/90 bg-white hover:border-indigo-300 hover:bg-indigo-50/30 text-slate-800';
+                      if (isAnswered) {
+                        if (isCorrect) {
+                          btnStyle = 'border-emerald-500 bg-emerald-50 text-emerald-900 font-bold ring-2 ring-emerald-500/20';
+                        } else if (isSelected) {
+                          btnStyle = 'border-rose-500 bg-rose-50 text-rose-900 font-bold';
+                        } else {
+                          btnStyle = 'border-slate-200 bg-slate-50 text-slate-400 opacity-60';
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={optIdx}
+                          disabled={isAnswered}
+                          onClick={() => handleSelectAnswer(optIdx)}
+                          className={`w-full p-3.5 sm:p-4 rounded-2xl border-2 text-left transition-all flex items-center justify-between text-sm ${btnStyle}`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black shrink-0 ${
+                              isSelected
+                                ? isCorrect
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-rose-600 text-white'
+                                : isAnswered && isCorrect
+                                ? 'bg-emerald-600 text-white'
+                                : 'bg-slate-100 text-slate-700'
+                            }`}>
+                              {String.fromCharCode(65 + optIdx)}
+                            </span>
+                            <span className="leading-snug">{option}</span>
+                          </div>
+
+                          {isAnswered && (
+                            <div className="shrink-0 ml-2">
+                              {isCorrect ? (
+                                <Check className="w-5 h-5 text-emerald-600" />
+                              ) : isSelected ? (
+                                <X className="w-5 h-5 text-rose-600" />
+                              ) : null}
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Hint and Action Row */}
+                  <div className="pt-2 flex items-center justify-between gap-2 flex-wrap">
+                    <button
+                      onClick={() => setShowHint(!showHint)}
+                      className="flex items-center gap-1.5 text-xs font-bold text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-xl border border-amber-200 transition-all"
+                    >
+                      <HelpCircle className="w-3.5 h-3.5 text-amber-600" />
+                      <span>{showHint ? 'Ẩn gợi ý' : 'Xem gợi ý tư duy'}</span>
+                    </button>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        disabled={currentQuizIndex === 0}
+                        onClick={() => {
+                          setCurrentQuizIndex((prev) => Math.max(0, prev - 1));
+                          setShowHint(false);
+                        }}
+                        className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:hover:bg-slate-100 transition-all"
+                      >
+                        ← Câu trước
+                      </button>
+
+                      <button
+                        disabled={currentQuizIndex === filteredExercises.length - 1}
+                        onClick={() => {
+                          setCurrentQuizIndex((prev) => Math.min(filteredExercises.length - 1, prev + 1));
+                          setShowHint(false);
+                        }}
+                        className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-40 disabled:hover:bg-indigo-600 transition-all shadow-xs"
+                      >
+                        Câu kế tiếp →
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Hint Box */}
+                  {showHint && (
+                    <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 animate-fadeIn">
+                      <p className="font-bold flex items-center gap-1 mb-1">
+                        <span>💡 Gợi ý từ cô giáo:</span>
+                      </p>
+                      <p className="leading-relaxed">{activeExercise.hint}</p>
+                    </div>
+                  )}
+
+                  {/* Detailed Explanation upon Answer */}
+                  {userAnswers[activeExercise.id] !== undefined && (
+                    <div className={`p-4 rounded-2xl border animate-fadeIn space-y-1.5 ${
+                      userAnswers[activeExercise.id] === activeExercise.correctIndex
+                        ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                        : 'bg-rose-50 border-rose-200 text-rose-950'
+                    }`}>
+                      <div className="flex items-center gap-2">
+                        {userAnswers[activeExercise.id] === activeExercise.correctIndex ? (
+                          <div className="flex items-center gap-1.5 text-xs font-black text-emerald-700 uppercase tracking-wide">
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>Chính xác! (+10 XP)</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 text-xs font-black text-rose-700 uppercase tracking-wide">
+                            <X className="w-4 h-4" />
+                            <span>Chưa chính xác! Cùng xem giải thích bên dưới:</span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs leading-relaxed font-medium">
+                        {activeExercise.explanation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Right Column (1 Col): Study Goals & Step 2 Announcement */}
+        {/* Right Column (1 Col): Study Goals & AI Socratic Buddy */}
         <div className="space-y-4">
-          {/* Quick Stats Card */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-3">
+          {/* Practice Summary Score Card */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-3.5">
             <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
               <Award className="w-4 h-4 text-amber-500" />
-              <span>Tiến độ học môn Tiếng Anh</span>
+              <span>Tiến độ Unit 1: Hobbies</span>
             </h4>
 
             <div className="grid grid-cols-2 gap-2 text-center">
               <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-100">
-                <div className="text-lg font-black text-indigo-700">1 / 12</div>
-                <div className="text-[10px] text-slate-500 font-semibold">Unit đang mở</div>
+                <div className="text-lg font-black text-indigo-700">
+                  {correctCount}/{totalQuestions}
+                </div>
+                <div className="text-[10px] text-slate-500 font-semibold">Đúng trắc nghiệm</div>
               </div>
-              <div className="p-3 rounded-xl bg-amber-50 border border-amber-100">
-                <div className="text-lg font-black text-amber-700">+{xp} XP</div>
-                <div className="text-[10px] text-slate-500 font-semibold">Tích lũy chung</div>
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+                <div className="text-lg font-black text-emerald-700">+{xp} XP</div>
+                <div className="text-[10px] text-slate-500 font-semibold">Điểm tích lũy</div>
               </div>
             </div>
+
+            {/* Quick Practice Trigger Button */}
+            {activeTab !== 'practice' && (
+              <button
+                onClick={() => setActiveTab('practice')}
+                className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
+              >
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <span>Làm 20 câu trắc nghiệm phản xạ</span>
+              </button>
+            )}
 
             <div className="pt-2 border-t border-slate-100 space-y-2 text-xs">
               <div className="flex items-center justify-between text-slate-600">
@@ -436,11 +752,11 @@ export const English7StudyView: React.FC = () => {
                 <span className="font-bold text-slate-800">Global Success 7</span>
               </div>
               <div className="flex items-center justify-between text-slate-600">
-                <span>Trọng tâm Unit 1:</span>
-                <span className="font-bold text-indigo-700">Hobbies (Sở thích)</span>
+                <span>Số từ vựng:</span>
+                <span className="font-bold text-indigo-700">{UNIT1_VOCABULARY.length} từ kèm audio</span>
               </div>
               <div className="flex items-center justify-between text-slate-600">
-                <span>Chuỗi ngày học:</span>
+                <span>Chuỗi học:</span>
                 <span className="font-bold text-amber-600 flex items-center gap-1">
                   <Flame className="w-3.5 h-3.5 fill-current" />
                   <span>{streak} ngày liên tiếp</span>
@@ -466,7 +782,7 @@ export const English7StudyView: React.FC = () => {
             </p>
 
             <button
-              onClick={() => speakWord("What is your favourite hobby and why do you like it? I like reading because it is relaxing!")}
+              onClick={() => speakText("What is your favourite hobby and why do you like it? I like reading because it is relaxing!")}
               className="w-full py-2 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold transition-all flex items-center justify-center gap-1.5 border border-white/20"
             >
               <Volume2 className="w-3.5 h-3.5 text-amber-300" />
@@ -479,7 +795,7 @@ export const English7StudyView: React.FC = () => {
             onClick={() => setCurrentSubject('toan')}
             className="w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2"
           >
-            <CheckCircle2 className="w-4 h-4" />
+            <GraduationCap className="w-4 h-4" />
             <span>Quay lại học môn Toán 7</span>
           </button>
         </div>
