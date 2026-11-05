@@ -6,10 +6,18 @@ import {
   StreakState, 
   Badge, 
   FamilyRewardContract,
-  FocusTimerState
+  FocusTimerState,
+  PracticeExercise,
+  MistakeRecord
 } from '../types/curriculum';
 import { math7CurriculumLessons } from '../data/math7_curriculum';
 import { SoundEffects } from '../utils/soundEffects';
+import { 
+  getStoredMistakes, 
+  recordMistake as recordMistakeInService, 
+  resolveMistake as resolveMistakeInService, 
+  deleteMistake as deleteMistakeInService 
+} from '../services/mistakeService';
 
 interface AppContextType {
   role: UserRole;
@@ -75,6 +83,16 @@ interface AppContextType {
   openDinnerTalkModal: () => void;
   closeDinnerTalkModal: () => void;
   claimDinnerTalkReward: () => void;
+  // Sổ tay câu sai (Mistake Bank & Retry Module)
+  mistakes: MistakeRecord[];
+  activeMistakesCount: number;
+  isMistakeNotebookOpen: boolean;
+  openMistakeNotebook: () => void;
+  closeMistakeNotebook: () => void;
+  recordMistake: (exercise: PracticeExercise, lesson: { id: string; title: string }) => void;
+  resolveMistake: (exerciseId: string) => void;
+  deleteMistake: (exerciseId: string) => void;
+  addXp: (amount: number, reason?: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -371,6 +389,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [isDinnerTalkModalOpen, setIsDinnerTalkModalOpen] = useState(false);
 
+  // Sổ tay câu sai & Phục thù (Mistake Bank)
+  const [mistakes, setMistakes] = useState<MistakeRecord[]>(() => {
+    return getStoredMistakes();
+  });
+  const [isMistakeNotebookOpen, setIsMistakeNotebookOpen] = useState<boolean>(false);
+
   // Sync state to LocalStorage
   useEffect(() => {
     try {
@@ -574,6 +598,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     setIsDinnerTalkModalOpen(false);
   };
+
+  const addXp = (amount: number) => {
+    setXp(prev => {
+      const nextXp = Math.max(0, prev + amount);
+      try {
+        localStorage.setItem(STORAGE_KEYS.XP, nextXp.toString());
+      } catch {}
+      return nextXp;
+    });
+  };
+
+  const recordMistake = (exercise: PracticeExercise, lesson: { id: string; title: string }) => {
+    const updated = recordMistakeInService(exercise, lesson);
+    setMistakes(updated);
+  };
+
+  const resolveMistake = (exerciseId: string) => {
+    const { updated, resolved } = resolveMistakeInService(exerciseId);
+    setMistakes(updated);
+
+    if (resolved) {
+      // Award +10 XP bonus for overcoming mistake
+      addXp(10);
+      // Play celebratory sound
+      SoundEffects.playCelebration();
+    }
+  };
+
+  const deleteMistake = (exerciseId: string) => {
+    const updated = deleteMistakeInService(exerciseId);
+    setMistakes(updated);
+  };
+
+  const openMistakeNotebook = () => setIsMistakeNotebookOpen(true);
+  const closeMistakeNotebook = () => setIsMistakeNotebookOpen(false);
+
+  const activeMistakesCount = mistakes.filter(m => !m.mastered).length;
 
   const setRole = (newRole: UserRole) => {
     setRoleState(newRole);
@@ -800,7 +861,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isDinnerTalkModalOpen,
         openDinnerTalkModal: () => setIsDinnerTalkModalOpen(true),
         closeDinnerTalkModal: () => setIsDinnerTalkModalOpen(false),
-        claimDinnerTalkReward
+        claimDinnerTalkReward,
+        mistakes,
+        activeMistakesCount,
+        isMistakeNotebookOpen,
+        openMistakeNotebook,
+        closeMistakeNotebook,
+        recordMistake,
+        resolveMistake,
+        deleteMistake,
+        addXp
       }}
     >
       {children}

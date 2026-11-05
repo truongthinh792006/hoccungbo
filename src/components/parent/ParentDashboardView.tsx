@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { TodayLearningRecap } from './TodayLearningRecap';
 import { MasteryCard } from './MasteryCard';
 import { ConversationPrompts } from './ConversationPrompts';
+import { MistakeInsightsCard } from './MistakeInsightsCard';
 import { FamilyRewardContractCard } from './FamilyRewardContractCard';
 import { SyllabusTimeline } from './SyllabusTimeline';
 import { AiKeySettingsCard } from './AiKeySettingsCard';
@@ -46,7 +47,10 @@ export const ParentDashboardView: React.FC = () => {
       {/* 2. Three Dinner-table Questions for Parents with Concise Answers */}
       <ConversationPrompts />
 
-      {/* 3. Family Reward Contract & Badges Hub */}
+      {/* 3. Điểm con cần lưu ý: Insight từ Sổ tay câu sai */}
+      <MistakeInsightsCard />
+
+      {/* 4. Family Reward Contract & Badges Hub */}
       <FamilyRewardContractCard />
 
       {/* 4. Hybrid BYOK Setting: Cài đặt Trợ lý AI (Gemini API) */}

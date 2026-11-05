@@ -6,6 +6,7 @@ import { ParentDashboardView } from './components/parent/ParentDashboardView';
 import { SyllabusNavigator } from './components/curriculum/SyllabusNavigator';
 import { QuizSlidingPanel } from './components/student/QuizSlidingPanel';
 import { InstallAppPrompt } from './components/common/InstallAppPrompt';
+import { MistakeNotebookModal } from './components/student/MistakeNotebookModal';
 
 function MainAppContent() {
   const { role } = useApp();
@@ -32,6 +33,9 @@ function MainAppContent() {
 
       {/* Interactive Micro-Quiz Sliding Panel */}
       <QuizSlidingPanel />
+
+      {/* Mistake Bank & Retry Modal */}
+      <MistakeNotebookModal />
 
       {/* PWA Install Banner */}
       <InstallAppPrompt />

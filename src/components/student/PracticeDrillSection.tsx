@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Math7Lesson, PracticeExercise, ExerciseDifficulty, ExerciseOption } from '../../types/curriculum';
 import { getExercisesByLessonId, getExerciseStats, filterExercises } from '../../services/exerciseService';
+import { useApp } from '../../context/AppContext';
 import { MathText } from '../common/MathText';
 import { 
   Dumbbell, CheckCircle2, Lightbulb, BookOpen, 
@@ -13,6 +14,7 @@ interface PracticeDrillSectionProps {
 }
 
 export const PracticeDrillSection: React.FC<PracticeDrillSectionProps> = ({ lesson }) => {
+  const { recordMistake, resolveMistake } = useApp();
   const [exercises, setExercises] = useState<PracticeExercise[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeFilter, setActiveFilter] = useState<ExerciseDifficulty | 'all'>('all');
@@ -63,9 +65,13 @@ export const PracticeDrillSection: React.FC<PracticeDrillSectionProps> = ({ less
       setSolvedCorrectly(prev => ({ ...prev, [ex.id]: true }));
       // Automatically open solution when correct
       setOpenSolutions(prev => ({ ...prev, [ex.id]: true }));
+      // Mark as resolved in mistake bank if previously incorrect
+      resolveMistake(ex.id);
     } else {
       // If incorrect, automatically offer the hint!
       setOpenHints(prev => ({ ...prev, [ex.id]: true }));
+      // Automatically log to Sổ tay câu sai (Mistake Bank)
+      recordMistake(ex, { id: lesson.id, title: lesson.title });
     }
   };
 
@@ -373,9 +379,12 @@ export const PracticeDrillSection: React.FC<PracticeDrillSectionProps> = ({ less
                 </div>
 
                 {isIncorrect && (
-                  <span className="text-xs font-semibold text-rose-600 flex items-center gap-1">
-                    <AlertCircle className="w-3.5 h-3.5 text-rose-500" />
-                    <span>Chưa đúng, con hãy đọc gợi ý tư duy nhé!</span>
+                  <span className="text-xs font-semibold text-rose-600 flex items-center gap-1.5 flex-wrap">
+                    <AlertCircle className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                    <span>Chưa đúng, con đọc gợi ý nhé!</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 flex items-center gap-1">
+                      <span>📕 Đã lưu vào Sổ tay câu sai</span>
+                    </span>
                   </span>
                 )}
               </div>

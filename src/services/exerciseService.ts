@@ -31,7 +31,7 @@ const loadedChapters = new Set<string>();
 /**
  * Normalizes an exercise to ensure uniform structure whether options were defined as string[] or ExerciseOption[]
  */
-export function normalizeExercise(ex: PracticeExercise): PracticeExercise {
+export function normalizeExercise(ex: PracticeExercise): Omit<PracticeExercise, 'options'> & { options: ExerciseOption[] } {
   const difficulty = (ex.difficulty || ex.level || 'co_ban') as ExerciseDifficulty;
   const level = (ex.level || ex.difficulty || 'co_ban') as ExerciseDifficulty;
 

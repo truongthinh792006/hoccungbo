@@ -103,6 +103,41 @@ class SoundEffectsService {
       // Audio autoplay policy fail-safe
     }
   }
+
+  /**
+   * Joyful celebration chime for retry victory / overcoming a mistake (+10 XP)
+   * Plays an upbeat major triad (C5 - E5 - G5 - C6)
+   */
+  public playCelebration(): void {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      const baseTime = ctx.currentTime;
+
+      notes.forEach((freq, idx) => {
+        const noteStart = baseTime + idx * 0.08;
+        const osc = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, noteStart);
+
+        gainNode.gain.setValueAtTime(0.0001, noteStart);
+        gainNode.gain.linearRampToValueAtTime(0.18, noteStart + 0.02);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, noteStart + 0.45);
+
+        osc.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        osc.start(noteStart);
+        osc.stop(noteStart + 0.5);
+      });
+    } catch {
+      // Audio autoplay policy fail-safe
+    }
+  }
 }
 
 export const SoundEffects = new SoundEffectsService();

@@ -266,3 +266,15 @@ export interface PracticeExercise {
   keyTakeaway?: string;
   tags?: string[];
 }
+
+export interface MistakeRecord {
+  id: string; // matches exerciseId
+  lessonId: string;
+  lessonTitle: string;
+  exerciseTitle: string;
+  addedAt: string;
+  wrongAttemptsCount: number;
+  mastered: boolean;
+  lastAttemptedAt?: string;
+  exerciseSnapshot?: PracticeExercise;
+}

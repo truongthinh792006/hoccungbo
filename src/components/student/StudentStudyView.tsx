@@ -8,7 +8,7 @@ import { PracticeDrillSection } from './PracticeDrillSection';
 import { math7Chapters, getNextLesson, getPrevLesson } from '../../data/math7_curriculum';
 import { 
   Bot, Award, Bookmark, ChevronLeft, 
-  ChevronRight, ListOrdered, CheckCircle2 
+  ChevronRight, ListOrdered, CheckCircle2, BookMarked 
 } from 'lucide-react';
 
 export const StudentStudyView: React.FC = () => {
@@ -21,7 +21,9 @@ export const StudentStudyView: React.FC = () => {
     isTodayLesson,
     openSyllabus,
     openQuizModal,
-    completedLessonIds
+    completedLessonIds,
+    activeMistakesCount,
+    openMistakeNotebook
   } = useApp();
 
   const [rightTab, setRightTab] = useState<'socratic' | 'quiz'>('socratic');
@@ -67,6 +69,25 @@ export const StudentStudyView: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            {/* Sổ tay câu sai & Phục thù */}
+            <button
+              onClick={openMistakeNotebook}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                activeMistakesCount > 0
+                  ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border-rose-300 shadow-2xs'
+                  : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'
+              }`}
+              title="Mở Sổ tay câu sai & Phục thù điểm yếu"
+            >
+              <BookMarked className="w-3.5 h-3.5 text-rose-600" />
+              <span>Sổ tay câu sai</span>
+              {activeMistakesCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px] font-black animate-pulse">
+                  {activeMistakesCount}
+                </span>
+              )}
+            </button>
+
             {/* Bookmark button for current lesson */}
             <button
               onClick={() => setTodayLessonId(currentLesson.id)}
