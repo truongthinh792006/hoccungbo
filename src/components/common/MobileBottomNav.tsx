@@ -9,7 +9,9 @@ import {
   HeartHandshake, 
   User, 
   Sparkles,
-  Award
+  Award,
+  GraduationCap,
+  Languages
 } from 'lucide-react';
 
 export const MobileBottomNav: React.FC = () => {
@@ -22,7 +24,10 @@ export const MobileBottomNav: React.FC = () => {
     openMistakeNotebook, 
     activeMistakesCount,
     isMistakeNotebookOpen,
-    isSyllabusOpen
+    isSyllabusOpen,
+    currentSubject,
+    openSubjectHub,
+    isSubjectHubOpen
   } = useApp();
 
   return (
@@ -38,26 +43,46 @@ export const MobileBottomNav: React.FC = () => {
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="flex flex-col items-center justify-center h-full py-1 text-emerald-700 active:scale-95 transition-transform cursor-pointer"
-            >
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <BookOpen className="w-4 h-4" />
-              </div>
-              <span className="text-[10px] font-bold text-slate-800 mt-0.5 tracking-tight">Bài học</span>
-            </button>
-
-            {/* Tab 2: Mục Lục (Syllabus) */}
-            <button
-              onClick={openSyllabus}
               className={`flex flex-col items-center justify-center h-full py-1 active:scale-95 transition-transform cursor-pointer ${
-                isSyllabusOpen ? 'text-emerald-700' : 'text-slate-500 hover:text-slate-800'
+                currentSubject === 'toan' ? 'text-emerald-700' : 'text-indigo-700'
               }`}
             >
-              <div className="w-8 h-8 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-600">
-                <Layers className="w-4 h-4" />
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                currentSubject === 'toan' ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600'
+              }`}>
+                {currentSubject === 'toan' ? <BookOpen className="w-4 h-4" /> : <Languages className="w-4 h-4" />}
               </div>
-              <span className="text-[10px] font-semibold mt-0.5 tracking-tight">Mục lục</span>
+              <span className="text-[10px] font-bold text-slate-800 mt-0.5 tracking-tight">
+                {currentSubject === 'toan' ? 'Toán 7' : 'Tiếng Anh'}
+              </span>
             </button>
+
+            {/* Tab 2: Mục Lục (Math) hoặc Đổi Môn (Subject Hub) */}
+            {currentSubject === 'toan' ? (
+              <button
+                onClick={openSyllabus}
+                className={`flex flex-col items-center justify-center h-full py-1 active:scale-95 transition-transform cursor-pointer ${
+                  isSyllabusOpen ? 'text-emerald-700' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <div className="w-8 h-8 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-600">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] font-semibold mt-0.5 tracking-tight">Mục lục</span>
+              </button>
+            ) : (
+              <button
+                onClick={openSubjectHub}
+                className={`flex flex-col items-center justify-center h-full py-1 active:scale-95 transition-transform cursor-pointer ${
+                  isSubjectHubOpen ? 'text-indigo-700' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <div className="w-8 h-8 rounded-xl hover:bg-slate-100 flex items-center justify-center text-indigo-600">
+                  <GraduationCap className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] font-semibold mt-0.5 tracking-tight">Đổi môn</span>
+              </button>
+            )}
 
             {/* Tab 3: Phòng Thi Thử (Center Highlight) */}
             <button

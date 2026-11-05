@@ -2,16 +2,18 @@ import { AppProvider, useApp } from './context/AppContext';
 import { RoleSwitcher } from './components/common/RoleSwitcher';
 import { PinModal } from './components/common/PinModal';
 import { StudentStudyView } from './components/student/StudentStudyView';
+import { English7StudyView } from './components/student/english/English7StudyView';
 import { ParentDashboardView } from './components/parent/ParentDashboardView';
 import { SyllabusNavigator } from './components/curriculum/SyllabusNavigator';
 import { QuizSlidingPanel } from './components/student/QuizSlidingPanel';
 import { InstallAppPrompt } from './components/common/InstallAppPrompt';
 import { MistakeNotebookModal } from './components/student/MistakeNotebookModal';
 import { ExamModal } from './components/student/exam/ExamModal';
+import { SubjectHubModal } from './components/common/SubjectHubModal';
 import { MobileBottomNav } from './components/common/MobileBottomNav';
 
 function MainAppContent() {
-  const { role, isExamModalOpen, closeExamModal } = useApp();
+  const { role, currentSubject, isExamModalOpen, closeExamModal } = useApp();
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
@@ -21,7 +23,11 @@ function MainAppContent() {
       {/* Main Dual-View Screen with safe padding for mobile bottom nav */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 md:pb-8">
         {role === 'STUDENT' ? (
-          <StudentStudyView />
+          currentSubject === 'toan' ? (
+            <StudentStudyView />
+          ) : (
+            <English7StudyView />
+          )
         ) : (
           <ParentDashboardView />
         )}
@@ -32,6 +38,9 @@ function MainAppContent() {
 
       {/* Parental PIN Modal Gate */}
       <PinModal />
+
+      {/* 4-Subject Hub Modal */}
+      <SubjectHubModal />
 
       {/* Syllabus Navigator Slide-Over Drawer */}
       <SyllabusNavigator />

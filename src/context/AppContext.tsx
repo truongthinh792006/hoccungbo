@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   UserRole, 
+  SubjectId,
   Math7Lesson, 
   QuizSubmissionRecord, 
   StreakState, 
@@ -93,6 +94,13 @@ interface AppContextType {
   resolveMistake: (exerciseId: string) => void;
   deleteMistake: (exerciseId: string) => void;
   addXp: (amount: number, reason?: string) => void;
+  // Subject Selection & Subject Hub
+  currentSubject: SubjectId;
+  setCurrentSubject: (subject: SubjectId) => void;
+  isSubjectHubOpen: boolean;
+  openSubjectHub: () => void;
+  closeSubjectHub: () => void;
+  toggleSubjectHub: () => void;
   // Phòng Thi Thử (Mock Exam Mode)
   isExamModalOpen: boolean;
   openExamModal: () => void;
@@ -116,7 +124,8 @@ const STORAGE_KEYS = {
   QUIZ_SUBMISSIONS: 'math7_quiz_submissions',
   WEAK_TAGS: 'math7_weak_tags',
   COMPLETED_LESSONS: 'math7_completed_lessons',
-  FOCUS_TIMER: 'math7_focus_timer_state'
+  FOCUS_TIMER: 'math7_focus_timer_state',
+  SUBJECT: 'dong_hanh_selected_subject'
 };
 
 const PARENT_PIN = '1234';
@@ -130,6 +139,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return 'STUDENT';
     }
   });
+
+  const [currentSubject, setCurrentSubjectState] = useState<SubjectId>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.SUBJECT) as SubjectId;
+      if (saved && ['toan', 'tieng-anh', 'khtn', 'ngu-van'].includes(saved)) {
+        return saved;
+      }
+      return 'toan';
+    } catch {
+      return 'toan';
+    }
+  });
+
+  const setCurrentSubject = (subj: SubjectId) => {
+    setCurrentSubjectState(subj);
+    try {
+      localStorage.setItem(STORAGE_KEYS.SUBJECT, subj);
+    } catch (e) {
+      console.warn('Could not save selected subject to localStorage', e);
+    }
+  };
+
+  const [isSubjectHubOpen, setIsSubjectHubOpen] = useState(false);
+  const openSubjectHub = () => setIsSubjectHubOpen(true);
+  const closeSubjectHub = () => setIsSubjectHubOpen(false);
+  const toggleSubjectHub = () => setIsSubjectHubOpen(prev => !prev);
 
   const [currentLessonId, setCurrentLessonIdState] = useState<string>(() => {
     try {
@@ -885,7 +920,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isExamModalOpen,
         openExamModal,
         closeExamModal,
-        toggleExamModal
+        toggleExamModal,
+        // Subject Hub & Multi-Subject
+        currentSubject,
+        setCurrentSubject,
+        isSubjectHubOpen,
+        openSubjectHub,
+        closeSubjectHub,
+        toggleSubjectHub
       }}
     >
       {children}

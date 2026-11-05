@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Flame, Sparkles, User, ShieldCheck, ChevronRight, BookOpen, Layers, Bookmark, BookMarked, Trophy } from 'lucide-react';
+import { Flame, Sparkles, User, ShieldCheck, ChevronRight, BookOpen, Layers, Bookmark, BookMarked, Trophy, Languages, ChevronDown, GraduationCap } from 'lucide-react';
 import { GamificationModal } from './GamificationModal';
 
 export const RoleSwitcher: React.FC = () => {
@@ -17,7 +17,9 @@ export const RoleSwitcher: React.FC = () => {
     setCurrentLessonId,
     activeMistakesCount,
     openMistakeNotebook,
-    openExamModal
+    openExamModal,
+    currentSubject,
+    openSubjectHub
   } = useApp();
 
   const [isGamificationModalOpen, setIsGamificationModalOpen] = useState(false);
@@ -32,44 +34,81 @@ export const RoleSwitcher: React.FC = () => {
             {/* Left: Subject Tag & Breadcrumb */}
             <div className="flex items-center gap-3 min-w-0">
               <button
-                onClick={openSyllabus}
-                className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 shrink-0 transition-transform active:scale-95"
-                title="Nhấn để mở Mục lục 4 Chương"
+                onClick={currentSubject === 'toan' ? openSyllabus : openSubjectHub}
+                className={`w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md shrink-0 transition-transform active:scale-95 ${
+                  currentSubject === 'toan'
+                    ? 'bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-emerald-500/20'
+                    : 'bg-gradient-to-tr from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-indigo-500/20'
+                }`}
+                title={currentSubject === 'toan' ? "Nhấn để mở Mục lục Toán 7" : "Nhấn để mở Bàn học 4 môn"}
               >
-                <BookOpen className="w-5 h-5" />
+                {currentSubject === 'toan' ? <BookOpen className="w-5 h-5" /> : <Languages className="w-5 h-5" />}
               </button>
 
               <div className="min-w-0">
-                {/* Subject Tag & Syllabus Trigger */}
+                {/* Subject Tag & Subject Switcher Pill */}
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight">
-                    Toán 7
-                  </span>
+                  {/* Clickable Subject Dropdown Pill */}
+                  <button
+                    onClick={openSubjectHub}
+                    className="group flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-indigo-950 text-white transition-all shadow-xs"
+                    title="Nhấn để đổi giữa Toán 7, Tiếng Anh 7, KHTN 7, Ngữ văn 7"
+                  >
+                    <GraduationCap className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="font-extrabold text-xs sm:text-sm tracking-tight">
+                      {currentSubject === 'toan' ? 'Toán 7' : 'Tiếng Anh 7'}
+                    </span>
+                    <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-white transition-transform group-hover:translate-y-0.5" />
+                  </button>
+
                   <span className="text-[11px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-200/80 flex items-center gap-1">
                     <Layers className="w-3 h-3" />
-                    <span>Kết nối tri thức</span>
+                    <span>{currentSubject === 'toan' ? 'Kết nối tri thức' : 'Global Success'}</span>
                   </span>
 
-                  <button
-                    onClick={openSyllabus}
-                    className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200 transition-colors"
-                  >
-                    <BookOpen className="w-3 h-3 text-emerald-600" />
-                    <span>Mục lục SGK ({allLessons.length} bài)</span>
-                  </button>
+                  {currentSubject === 'toan' ? (
+                    <button
+                      onClick={openSyllabus}
+                      className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200 transition-colors"
+                    >
+                      <BookOpen className="w-3 h-3 text-emerald-600" />
+                      <span>Mục lục SGK ({allLessons.length} bài)</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={openSubjectHub}
+                      className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-2.5 py-0.5 rounded-full border border-indigo-200 transition-colors"
+                    >
+                      <Sparkles className="w-3 h-3 text-amber-500" />
+                      <span>Bàn học 4 môn</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Breadcrumb */}
-                <div className="flex items-center gap-1.5 text-xs text-slate-500 truncate mt-0.5">
-                  <span className="hidden sm:inline font-medium text-slate-600">{currentLesson.chapterTitle.split(':')[0]}</span>
-                  <ChevronRight className="w-3 h-3 text-slate-400 hidden sm:inline shrink-0" />
-                  <button
-                    onClick={openSyllabus}
-                    className="font-semibold text-emerald-800 hover:underline truncate text-left"
-                  >
-                    {currentLesson.title}
-                  </button>
-                </div>
+                {currentSubject === 'toan' ? (
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 truncate mt-0.5">
+                    <span className="hidden sm:inline font-medium text-slate-600">{currentLesson.chapterTitle.split(':')[0]}</span>
+                    <ChevronRight className="w-3 h-3 text-slate-400 hidden sm:inline shrink-0" />
+                    <button
+                      onClick={openSyllabus}
+                      className="font-semibold text-emerald-800 hover:underline truncate text-left"
+                    >
+                      {currentLesson.title}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 truncate mt-0.5">
+                    <span className="hidden sm:inline font-medium text-slate-600">Global Success 7</span>
+                    <ChevronRight className="w-3 h-3 text-slate-400 hidden sm:inline shrink-0" />
+                    <button
+                      onClick={openSubjectHub}
+                      className="font-semibold text-indigo-800 hover:underline truncate text-left"
+                    >
+                      Unit 1: Hobbies (Sở thích)
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
