@@ -18,7 +18,8 @@ const CHAPTER_LOADERS: Record<string, () => Promise<ChapterExerciseModule>> = {
   chuong_2_so_thuc: async () => ({ default: [] }),
   chuong_3_goc_duong_thang_song_song: async () => ({ default: [] }),
   chuong_5_thu_thap_va_bieu_dien_du_lieu: async () => ({ default: [] }),
-  chuong_6_ti_le_thuc: async () => ({ default: [] }),
+  chuong_6_ti_le_thuc: () => import('../data/exercises/chapter6_exercises'),
+  chuong_6_ti_le_thuc_va_dai_luong_ti_le: () => import('../data/exercises/chapter6_exercises'),
   chuong_7_bieu_thuc_dai_so: async () => ({ default: [] }),
   chuong_8_bien_co_va_xac_suat: async () => ({ default: [] }),
   chuong_9_quan_he_cac_yeu_to_tam_giac: () => import('../data/exercises/chapter9_exercises')
@@ -82,6 +83,9 @@ export function getChapterIdForLesson(lessonId: string): string | null {
   if (/31|32|33|34|35|ch9/i.test(lessonId)) {
     return 'chuong_9_quan_he_cac_yeu_to_tam_giac';
   }
+  if (/20|21|22|23|ch6/i.test(lessonId)) {
+    return 'chuong_6_ti_le_thuc_va_dai_luong_ti_le';
+  }
   if (/12|13|14|15|16|ch4/i.test(lessonId)) {
     return 'chuong_4_tam_giac_bang_nhau';
   }
@@ -98,6 +102,10 @@ const LESSON_ALIAS_MAP: Record<string, string[]> = {
   'bai_14_truong_hop_bang_nhau_cgc_gcg': ['lesson-14', 'ch4_l14', '14', 'bai_14_truong_hop_bang_nhau_thu_hai_cgc'],
   'bai_15_cac_truong_hop_bang_nhau_tam_giac_vuong': ['lesson-15', 'ch4_l15', '15', 'bai_15_truong_hop_bang_nhau_thu_ba_gcg'],
   'bai_16_tam_giac_can_duong_trung_truc': ['lesson-16', 'ch4_l16', '16'],
+  'bai_20_ti_le_thuc': ['lesson-20', 'ch6_l20', '20', 'bai_20'],
+  'bai_21_tinh_chat_day_ti_so_bang_nhau': ['lesson-21', 'ch6_l21', '21', 'bai_21'],
+  'bai_22_dai_luong_ti_le_thuan': ['lesson-22', 'ch6_l22', '22', 'bai_22'],
+  'bai_23_dai_luong_ti_le_nghich': ['lesson-23', 'ch6_l23', '23', 'bai_23'],
   'bai_31_quan_he_giua_goc_va_canh_doi_dien': ['lesson-31', 'ch9_l31', '31', 'bai_31'],
   'bai_32_quan_he_giua_duong_vuong_goc_va_duong_xien': ['lesson-32', 'ch9_l32', '32', 'bai_32'],
   'bai_33_quan_he_giua_ba_canh_cua_tam_giac': ['lesson-33', 'ch9_l33', '33', 'bai_33'],
