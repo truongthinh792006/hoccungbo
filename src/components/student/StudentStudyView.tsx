@@ -4,6 +4,7 @@ import { LessonTheory } from './LessonTheory';
 import { SocraticTutor } from './SocraticTutor';
 import { DrillQuiz } from './DrillQuiz';
 import { FocusTimerWidget } from './FocusTimerWidget';
+import { PracticeDrillSection } from './PracticeDrillSection';
 import { math7Chapters, getNextLesson, getPrevLesson } from '../../data/math7_curriculum';
 import { 
   Bot, Award, Bookmark, ChevronLeft, 
@@ -129,6 +130,9 @@ export const StudentStudyView: React.FC = () => {
         {/* Left Pane: 60% Width (col-span-7) */}
         <div className="lg:col-span-7 space-y-6">
           <LessonTheory lesson={currentLesson} />
+
+          {/* Differentiated Practice Exercises & Drills */}
+          <PracticeDrillSection lesson={currentLesson} />
 
           {/* Lesson Navigation Footer Bar */}
           <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs flex items-center justify-between gap-3">

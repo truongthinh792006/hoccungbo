@@ -241,3 +241,26 @@ export interface FocusTimerState {
   tickSoundEnabled: boolean;      // Bật/tắt âm tích tắc nhẹ khi đang đếm
   completedSessionsToday: number; // Số phiên Pomodoro đã hoàn thành hôm nay
 }
+
+export type ExerciseDifficulty = 'co_ban' | 'thong_hieu' | 'van_dung';
+
+export interface ExerciseOption {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+}
+
+export interface PracticeExercise {
+  id: string;
+  lessonId: string;
+  order: number;
+  title: string;
+  difficulty: ExerciseDifficulty;
+  question: string;
+  options: ExerciseOption[];
+  correctAnswerId: string;
+  hint: string;
+  solution: string;
+  keyTakeaway?: string;
+  tags?: string[];
+}
