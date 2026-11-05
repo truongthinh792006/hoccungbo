@@ -14,6 +14,10 @@ import {
   UNIT3_EXERCISES 
 } from '../../../data/english/unit3_community_service_data';
 import { 
+  UNIT4_VOCABULARY, 
+  UNIT4_EXERCISES 
+} from '../../../data/english/unit4_music_and_arts_data';
+import { 
   Sparkles, 
   Volume2, 
   ArrowLeft, 
@@ -22,14 +26,15 @@ import {
   Flame, 
   Award, 
   CheckCircle2, 
-  Play,
-  Check,
-  X,
-  HelpCircle,
-  RotateCcw,
-  GraduationCap,
-  HeartPulse,
-  Users
+  Play, 
+  Check, 
+  X, 
+  HelpCircle, 
+  RotateCcw, 
+  GraduationCap, 
+  HeartPulse, 
+  Users, 
+  Palette
 } from 'lucide-react';
 
 interface UnitInfo {
@@ -73,12 +78,22 @@ const ENGLISH_UNITS: UnitInfo[] = [
     title: 'Community Service', 
     viTitle: 'Hoạt động cộng đồng', 
     status: 'ready', 
-    badge: 'Mới mở • Sẵn sàng học', 
+    badge: 'Đã hoàn thành', 
     tagline: 'Hoạt động tình nguyện • Cặp âm /t/ & /d/ & đuôi -ed • Thì Quá khứ đơn (Past Simple)', 
     description: 'Khám phá các hoạt động công ích xã hội, phân biệt cặp âm /t/ và /d/ cùng các quy tắc phát âm đuôi -ed (/-t/, /-d/, /-ɪd/), làm chủ Thì Quá khứ đơn (Past Simple) và 20 câu trắc nghiệm phản xạ.', 
     buddyPrompt: 'Bố có thể đố con: "What did your school do to help the community last summer?" Con trả lời: "We donated warm clothes, cleaned up the park, and planted green trees!"' 
   },
-  { id: 'unit-04', number: 4, title: 'Music and Arts', viTitle: 'Âm nhạc & Nghệ thuật', status: 'locked', badge: 'Kế tiếp', tagline: '', description: '', buddyPrompt: '' },
+  { 
+    id: 'unit-04', 
+    number: 4, 
+    title: 'Music and Arts', 
+    viTitle: 'Âm nhạc & Nghệ thuật', 
+    status: 'ready', 
+    badge: 'Mới mở • Sẵn sàng học', 
+    tagline: 'Nhạc cụ & Múa rối nước • Cặp âm /ʃ/ & /ʒ/ • So sánh ngang bằng, khác nhau (as...as, different from, the same as, too, either)', 
+    description: 'Tìm hiểu về các nhạc cụ, bộ môn múa rối nước truyền thống, luyện phát âm cặp âm /ʃ/ và /ʒ/, làm chủ các cấu trúc so sánh (as...as, different from, the same as, too, either) và 20 câu trắc nghiệm phản xạ.', 
+    buddyPrompt: 'Bố có thể đố con: "Do you like classical music or pop music, and why?" Con trả lời: "I like pop music because it is not as slow as classical music!"' 
+  },
   { id: 'unit-05', number: 5, title: 'Food and Drink', viTitle: 'Ẩm thực & Thức uống', status: 'locked', badge: 'Kế tiếp', tagline: '', description: '', buddyPrompt: '' },
   { id: 'unit-06', number: 6, title: 'A Visit to a School', viTitle: 'Thăm một ngôi trường', status: 'locked', badge: 'Học kì 1', tagline: '', description: '', buddyPrompt: '' },
 ];
@@ -86,8 +101,8 @@ const ENGLISH_UNITS: UnitInfo[] = [
 export const English7StudyView: React.FC = () => {
   const { setCurrentSubject, openSubjectHub, xp, addXp, streak } = useApp();
   
-  // Selected Unit state (defaults to Unit 3 as requested, can toggle 1, 2, 3)
-  const [selectedUnitNumber, setSelectedUnitNumber] = useState<1 | 2 | 3>(3);
+  // Selected Unit state (defaults to Unit 4 as requested, can toggle 1, 2, 3, 4)
+  const [selectedUnitNumber, setSelectedUnitNumber] = useState<1 | 2 | 3 | 4>(4);
   const [activeTab, setActiveTab] = useState<'vocab' | 'pronunciation' | 'grammar' | 'practice'>('vocab');
   
   // Flashcard state
@@ -102,7 +117,7 @@ export const English7StudyView: React.FC = () => {
   const [rewardedQuestionIds, setRewardedQuestionIds] = useState<Record<string, boolean>>({});
 
   // Dynamic datasets based on selected unit
-  const currentUnitInfo = ENGLISH_UNITS.find(u => u.number === selectedUnitNumber) || ENGLISH_UNITS[2];
+  const currentUnitInfo = ENGLISH_UNITS.find(u => u.number === selectedUnitNumber) || ENGLISH_UNITS[3];
   
   const getUnitData = (unitNum: number) => {
     switch (unitNum) {
@@ -111,8 +126,10 @@ export const English7StudyView: React.FC = () => {
       case 2:
         return { vocab: UNIT2_VOCABULARY, exercises: UNIT2_EXERCISES };
       case 3:
-      default:
         return { vocab: UNIT3_VOCABULARY, exercises: UNIT3_EXERCISES };
+      case 4:
+      default:
+        return { vocab: UNIT4_VOCABULARY, exercises: UNIT4_EXERCISES };
     }
   };
 
@@ -120,11 +137,11 @@ export const English7StudyView: React.FC = () => {
 
   // Switch Unit handler
   const handleSelectUnit = (unitNumber: number) => {
-    if (unitNumber > 3) {
-      alert(`Unit ${unitNumber} đang được chuẩn bị. Con có thể học Unit 1, Unit 2 hoặc Unit 3!`);
+    if (unitNumber > 4) {
+      alert(`Unit ${unitNumber} đang được chuẩn bị. Con có thể học Unit 1, 2, 3 hoặc 4!`);
       return;
     }
-    setSelectedUnitNumber(unitNumber as 1 | 2 | 3);
+    setSelectedUnitNumber(unitNumber as 1 | 2 | 3 | 4);
     setSelectedWordIndex(0);
     setCurrentQuizIndex(0);
     setShowHint(false);
@@ -194,8 +211,10 @@ export const English7StudyView: React.FC = () => {
       case 2:
         return 'bg-gradient-to-r from-teal-700 via-emerald-700 to-indigo-800';
       case 3:
-      default:
         return 'bg-gradient-to-r from-indigo-700 via-purple-700 to-rose-700';
+      case 4:
+      default:
+        return 'bg-gradient-to-r from-violet-700 via-purple-700 to-pink-700';
     }
   };
 
@@ -214,13 +233,14 @@ export const English7StudyView: React.FC = () => {
                 NXB Giáo dục & Pearson
               </span>
               <span className="text-xs bg-amber-400 text-slate-900 px-2 py-0.5 rounded-full font-black">
-                {selectedUnitNumber === 3 ? 'Mới cập nhật' : 'Đã hoàn thành'}
+                {selectedUnitNumber === 4 ? 'Mới cập nhật' : 'Đã hoàn thành'}
               </span>
             </div>
 
             <h1 className="text-xl sm:text-2xl font-black tracking-tight flex items-center gap-2">
               {selectedUnitNumber === 2 && <HeartPulse className="w-6 h-6 text-rose-300 inline-block" />}
               {selectedUnitNumber === 3 && <Users className="w-6 h-6 text-amber-300 inline-block" />}
+              {selectedUnitNumber === 4 && <Palette className="w-6 h-6 text-pink-300 inline-block" />}
               <span>Unit {currentUnitInfo.number}: {currentUnitInfo.title} ({currentUnitInfo.viTitle})</span>
             </h1>
             <p className="text-xs sm:text-sm text-indigo-100 leading-relaxed">
@@ -255,7 +275,7 @@ export const English7StudyView: React.FC = () => {
             <span>Danh mục 12 Units Tiếng Anh 7 Global Success</span>
           </span>
           <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-            Đã mở Unit 1, Unit 2 & Unit 3
+            Đã mở Unit 1, 2, 3 & 4
           </span>
         </div>
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
@@ -319,7 +339,7 @@ export const English7StudyView: React.FC = () => {
               : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
           }`}
         >
-          2. Phát Âm: {selectedUnitNumber === 1 ? '/ə/ & /ɜ:/' : selectedUnitNumber === 2 ? '/f/ & /v/' : '/t/ & /d/ (-ed)'}
+          2. Phát Âm: {selectedUnitNumber === 1 ? '/ə/ & /ɜ:/' : selectedUnitNumber === 2 ? '/f/ & /v/' : selectedUnitNumber === 3 ? '/t/ & /d/' : '/ʃ/ & /ʒ/'}
         </button>
         <button
           onClick={() => setActiveTab('grammar')}
@@ -604,7 +624,7 @@ export const English7StudyView: React.FC = () => {
                     </div>
                   </div>
                 </>
-              ) : (
+              ) : selectedUnitNumber === 3 ? (
                 // UNIT 3 PRONUNCIATION: /t/ vs /d/ & -ed endings
                 <>
                   <div>
@@ -618,7 +638,6 @@ export const English7StudyView: React.FC = () => {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Column 1: /t/ */}
                     <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-xl font-black text-indigo-800 bg-white px-3 py-1 rounded-xl border border-indigo-200">
@@ -647,7 +666,6 @@ export const English7StudyView: React.FC = () => {
                       </ul>
                     </div>
 
-                    {/* Column 2: /d/ */}
                     <div className="p-4 rounded-2xl bg-purple-50 border border-purple-200 space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-xl font-black text-purple-800 bg-white px-3 py-1 rounded-xl border border-purple-200">
@@ -676,28 +694,81 @@ export const English7StudyView: React.FC = () => {
                       </ul>
                     </div>
                   </div>
+                </>
+              ) : (
+                // UNIT 4 PRONUNCIATION: /ʃ/ vs /ʒ/
+                <>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900">
+                      Phân biệt phụ âm vô thanh /ʃ/ và hữu thanh /ʒ/
+                    </h3>
+                    <p className="text-xs text-slate-600 mt-1">
+                      Cả hai âm đều được tạo ra bằng cách cong đầu lưỡi về phía vòm họng và đẩy luồng hơi qua. 
+                      Với âm <span className="font-mono font-bold text-pink-700">/ʃ/</span> (vô thanh - giống tiếng "suỵt", dây thanh không rung), và âm <span className="font-mono font-bold text-violet-700">/ʒ/</span> (hữu thanh - cảm nhận thanh quản rung rõ).
+                    </p>
+                  </div>
 
-                  {/* Bonus Box: 3 rules of -ed endings */}
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                    <h4 className="text-xs font-black text-slate-900 uppercase tracking-wide">
-                      ⚡ 3 Quy tắc phát âm đuôi Quá khứ "-ed" cực chuẩn
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                      <div className="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1">
-                        <span className="font-bold text-rose-700">1. Phát âm là /-ɪd/</span>
-                        <p className="text-[11px] text-slate-600">Sau động từ tận cùng bằng âm <strong>/t/</strong> hoặc <strong>/d/</strong></p>
-                        <p className="text-[11px] text-indigo-700 italic">donat<u>ed</u>, plant<u>ed</u>, visit<u>ed</u></p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Column 1: /ʃ/ */}
+                    <div className="p-4 rounded-2xl bg-pink-50 border border-pink-200 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-xl font-black text-pink-800 bg-white px-3 py-1 rounded-xl border border-pink-200">
+                          /ʃ/
+                        </span>
+                        <span className="text-xs font-bold text-pink-700">Vô thanh (không rung)</span>
                       </div>
-                      <div className="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1">
-                        <span className="font-bold text-amber-700">2. Phát âm là /-t/</span>
-                        <p className="text-[11px] text-slate-600">Sau các âm vô thanh (/p, k, f, s, ʃ, tʃ/)</p>
-                        <p className="text-[11px] text-indigo-700 italic">help<u>ed</u>, wash<u>ed</u>, look<u>ed</u></p>
+                      <p className="text-[11px] text-pink-900 font-medium">Hay gặp ở các từ có: "sh", "cian", "tion", "cial"</p>
+                      <ul className="space-y-2 text-xs">
+                        {[
+                          { word: 'musician', ipa: '/mjuːˈzɪʃn/', vi: 'nhạc sĩ' },
+                          { word: 'exhibition', ipa: '/ˌeksɪˈbɪʃn/', vi: 'buổi triển lãm' },
+                          { word: 'special', ipa: '/ˈspeʃl/', vi: 'đặc biệt' },
+                          { word: 'show', ipa: '/ʃəʊ/', vi: 'buổi biểu diễn' },
+                          { word: 'action', ipa: '/ˈækʃn/', vi: 'hành động' }
+                        ].map((item) => (
+                          <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-pink-100">
+                            <span className="font-bold text-slate-800">{item.word}</span>
+                            <span className="font-mono text-slate-500">{item.ipa}</span>
+                            <button
+                              onClick={() => speakText(item.word)}
+                              className="w-7 h-7 rounded-lg bg-pink-100 hover:bg-pink-200 flex items-center justify-center text-pink-800"
+                            >
+                              <Volume2 className="w-3.5 h-3.5" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Column 2: /ʒ/ */}
+                    <div className="p-4 rounded-2xl bg-violet-50 border border-violet-200 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-xl font-black text-violet-800 bg-white px-3 py-1 rounded-xl border border-violet-200">
+                          /ʒ/
+                        </span>
+                        <span className="text-xs font-bold text-violet-700">Hữu thanh (thanh quản rung)</span>
                       </div>
-                      <div className="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1">
-                        <span className="font-bold text-emerald-700">3. Phát âm là /-d/</span>
-                        <p className="text-[11px] text-slate-600">Sau các âm hữu thanh còn lại & nguyên âm</p>
-                        <p className="text-[11px] text-indigo-700 italic">clean<u>ed</u>, play<u>ed</u>, donat<u>ed</u></p>
-                      </div>
+                      <p className="text-[11px] text-violet-900 font-medium">Hay gặp ở các từ có đuôi: "-sure", "-sion"</p>
+                      <ul className="space-y-2 text-xs">
+                        {[
+                          { word: 'measure', ipa: '/ˈmeʒə/', vi: 'đo lường' },
+                          { word: 'pleasure', ipa: '/ˈpleʒə/', vi: 'niềm vui thích' },
+                          { word: 'television', ipa: '/ˈtelɪvɪʒn/', vi: 'ti-vi' },
+                          { word: 'decision', ipa: '/dɪˈsɪʒn/', vi: 'quyết định' },
+                          { word: 'usual', ipa: '/ˈjuːʒuəl/', vi: 'bình thường' }
+                        ].map((item) => (
+                          <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-violet-100">
+                            <span className="font-bold text-slate-800">{item.word}</span>
+                            <span className="font-mono text-slate-500">{item.ipa}</span>
+                            <button
+                              onClick={() => speakText(item.word)}
+                              className="w-7 h-7 rounded-lg bg-violet-100 hover:bg-violet-200 flex items-center justify-center text-violet-800"
+                            >
+                              <Volume2 className="w-3.5 h-3.5" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 </>
@@ -762,48 +833,26 @@ export const English7StudyView: React.FC = () => {
                     </h4>
                     <div className="text-xs space-y-2 text-slate-700">
                       <p>
-                        <strong>Câu đơn:</strong> Là câu chỉ chứa <em>một mệnh đề độc lập</em> (có thể có chủ ngữ ghép hoặc vị ngữ ghép).
+                        <strong>Câu đơn:</strong> Là câu chỉ chứa <em>một mệnh đề độc lập</em>.
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                         <div className="p-2.5 rounded-xl bg-white border border-slate-200">
                           <span className="font-bold text-indigo-800">and (và)</span>: Thêm thông tin, bổ sung.
-                          <p className="text-[11px] text-slate-500 italic mt-0.5">Eat vegetables <strong>and</strong> drink water.</p>
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-slate-200">
-                          <span className="font-bold text-indigo-800">but (nhưng)</span>: Diễn tả sự tương phản, đối lập.
-                          <p className="text-[11px] text-slate-500 italic mt-0.5">He is tired, <strong>but</strong> he still smiles.</p>
+                          <span className="font-bold text-indigo-800">but (nhưng)</span>: Diễn tả sự tương phản.
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-slate-200">
-                          <span className="font-bold text-indigo-800">or (hoặc/nếu không)</span>: Sự lựa chọn, cảnh báo.
-                          <p className="text-[11px] text-slate-500 italic mt-0.5">Wear a warm hat, <strong>or</strong> you will get cold.</p>
+                          <span className="font-bold text-indigo-800">or (hoặc/nếu không)</span>: Sự lựa chọn.
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-slate-200">
-                          <span className="font-bold text-indigo-800">so (vì vậy/nên)</span>: Chỉ kết quả của hành động trước.
-                          <p className="text-[11px] text-slate-500 italic mt-0.5">She exercises daily, <strong>so</strong> she is fit.</p>
+                          <span className="font-bold text-indigo-800">so (vì vậy/nên)</span>: Chỉ kết quả.
                         </div>
                       </div>
                     </div>
                   </div>
-
-                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2.5">
-                    <h4 className="text-xs font-black text-emerald-900 uppercase tracking-wide">
-                      2. Mẫu câu đưa ra lời khuyên sức khỏe (Giving Health Advice)
-                    </h4>
-                    <div className="text-xs space-y-2 text-slate-700">
-                      <p>
-                        <strong>Cấu trúc với Should / Shouldn't:</strong>
-                      </p>
-                      <ul className="list-disc list-inside space-y-1 text-slate-600">
-                        <li>You <strong>should</strong> + V-bare: Bạn nên làm gì (VD: <em>You should sleep 8 hours a night.</em>)</li>
-                        <li>You <strong>shouldn't</strong> + V-bare: Bạn không nên làm gì (VD: <em>You shouldn't touch your acne.</em>)</li>
-                      </ul>
-                      <p className="pt-1">
-                        <strong>Câu mệnh lệnh (Imperatives):</strong> <em>Drink more warm water. Don't eat too many sweet candies!</em>
-                      </p>
-                    </div>
-                  </div>
                 </>
-              ) : (
+              ) : selectedUnitNumber === 3 ? (
                 // UNIT 3 GRAMMAR: THE PAST SIMPLE TENSE
                 <>
                   <div>
@@ -816,53 +865,78 @@ export const English7StudyView: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* To-be in Past Simple */}
                   <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-2">
                     <h4 className="text-xs font-black text-indigo-900 uppercase tracking-wide">
                       1. Động từ "To-be" ở Quá khứ đơn (Was / Were)
                     </h4>
-                    <div className="text-xs space-y-1.5 text-slate-700">
-                      <p><strong>Khẳng định:</strong> S (I / He / She / It / Danh từ số ít) + <strong>was</strong> | S (We / You / They / Danh từ số nhiều) + <strong>were</strong></p>
-                      <p><strong>Phủ định:</strong> S + was not (<strong>wasn't</strong>) / were not (<strong>weren't</strong>)</p>
-                      <p><strong>Nghi vấn:</strong> <strong>Was / Were</strong> + S + ...?</p>
-                      <p className="text-slate-500 italic">VD: There were many volunteers at the hospital yesterday.</p>
+                    <div className="text-xs space-y-1 text-slate-700">
+                      <p><strong>Khẳng định:</strong> S + was / were | <strong>Phủ định:</strong> S + wasn't / weren't</p>
                     </div>
                   </div>
 
-                  {/* Regular & Irregular Verbs */}
                   <div className="p-4 rounded-2xl bg-purple-50 border border-purple-200 space-y-2">
                     <h4 className="text-xs font-black text-purple-900 uppercase tracking-wide">
-                      2. Động từ thường ở Quá khứ đơn (Regular & Irregular Verbs)
+                      2. Động từ thường ở Quá khứ đơn
+                    </h4>
+                    <div className="text-xs space-y-1 text-slate-700">
+                      <p><strong>Khẳng định:</strong> S + V-ed / V2 | <strong>Phủ định:</strong> S + didn't + V-bare</p>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                // UNIT 4 GRAMMAR: COMPARISONS (as...as, different from, the same as, too, either)
+                <>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900">
+                      Ngữ pháp trọng tâm Unit 4: Các cấu trúc so sánh & Đồng tình
+                    </h3>
+                    <p className="text-xs text-slate-600 mt-1">
+                      Học sinh làm chủ cách so sánh hai vật/người về tính chất nghệ thuật, âm nhạc và cách đồng tình khẳng định (too) hay phủ định (either).
+                    </p>
+                  </div>
+
+                  {/* 1. as... as & not as... as */}
+                  <div className="p-4 rounded-2xl bg-pink-50 border border-pink-200 space-y-2">
+                    <h4 className="text-xs font-black text-pink-900 uppercase tracking-wide">
+                      1. So sánh ngang bằng: (not) as + adj + as
                     </h4>
                     <div className="text-xs space-y-1.5 text-slate-700">
-                      <p><strong>Khẳng định:</strong> S + <strong>V-ed</strong> (có quy tắc) hoặc <strong>V2</strong> (bất quy tắc)</p>
-                      <p><strong>Phủ định:</strong> S + <strong>didn't + V-bare</strong> (động từ trở về nguyên thể!)</p>
-                      <p><strong>Nghi vấn:</strong> <strong>Did + S + V-bare</strong>...?</p>
-                      <p className="text-slate-500 italic">VD: We cleaned up the park, but we didn't plant any trees.</p>
+                      <p><strong>Ngang bằng (như nhau):</strong> S1 + be + <strong>as + adj + as</strong> + S2 / Noun</p>
+                      <p className="text-slate-500 italic">VD: Classical music is <strong>as interesting as</strong> pop music.</p>
+                      <p><strong>Không bằng (kém hơn):</strong> S1 + be not + <strong>as + adj + as</strong> + S2 / Noun</p>
+                      <p className="text-slate-500 italic">VD: The museum tickets are <strong>not as expensive as</strong> the concert tickets.</p>
                     </div>
                   </div>
 
-                  {/* Irregular verbs table in Unit 3 */}
+                  {/* 2. different from & the same as */}
+                  <div className="p-4 rounded-2xl bg-violet-50 border border-violet-200 space-y-2">
+                    <h4 className="text-xs font-black text-violet-900 uppercase tracking-wide">
+                      2. So sánh khác nhau (different from) & Giống nhau (the same as)
+                    </h4>
+                    <div className="text-xs space-y-1.5 text-slate-700">
+                      <p><strong>Khác biệt:</strong> S1 + be + <strong>different from</strong> + S2 / Noun</p>
+                      <p className="text-slate-500 italic">VD: Traditional water puppetry is <strong>different from</strong> modern 3D cinema.</p>
+                      <p><strong>Giống hệt:</strong> S1 + be + <strong>the same as</strong> + S2 / Noun</p>
+                      <p className="text-slate-500 italic">VD: Her taste in music is <strong>the same as</strong> mine.</p>
+                    </div>
+                  </div>
+
+                  {/* 3. too & either */}
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
                     <h4 className="text-xs font-black text-slate-900 uppercase tracking-wide">
-                      3. Bảng động từ bất quy tắc hay gặp nhất trong Unit 3
+                      3. Thể hiện sự đồng tình ở cuối câu: too & either
                     </h4>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                      {[
-                        { v1: 'give', v2: 'gave', vi: 'cho, tặng' },
-                        { v1: 'teach', v2: 'taught', vi: 'dạy học' },
-                        { v1: 'buy', v2: 'bought', vi: 'mua' },
-                        { v1: 'take', v2: 'took', vi: 'cầm, đưa' },
-                        { v1: 'make', v2: 'made', vi: 'làm, chế tạo' },
-                        { v1: 'go', v2: 'went', vi: 'đi' },
-                        { v1: 'have', v2: 'had', vi: 'có' },
-                        { v1: 'build', v2: 'built', vi: 'xây dựng' }
-                      ].map((item) => (
-                        <div key={item.v1} className="p-2 rounded-xl bg-white border border-slate-200">
-                          <div className="font-bold text-indigo-900">{item.v1} → <span className="text-rose-600">{item.v2}</span></div>
-                          <div className="text-[10px] text-slate-500">{item.vi}</div>
-                        </div>
-                      ))}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      <div className="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1">
+                        <span className="font-bold text-emerald-700">too (cũng vậy)</span>
+                        <p className="text-[11px] text-slate-600">Đứng ở cuối câu <strong>khẳng định</strong></p>
+                        <p className="text-[11px] text-indigo-700 italic">VD: I like jazz, and my brother likes it, <strong>too</strong>.</p>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1">
+                        <span className="font-bold text-rose-700">either (cũng không)</span>
+                        <p className="text-[11px] text-slate-600">Đứng ở cuối câu <strong>phủ định</strong></p>
+                        <p className="text-[11px] text-indigo-700 italic">VD: Mai doesn't like rock, and Lan doesn't, <strong>either</strong>.</p>
+                      </div>
                     </div>
                   </div>
                 </>
@@ -885,7 +959,9 @@ export const English7StudyView: React.FC = () => {
                         ? 'Phát âm /ə/ /ɜ:/ (4)' 
                         : selectedUnitNumber === 2 
                         ? 'Phát âm /f/ /v/ (4)' 
-                        : 'Phát âm /t/ /d/ & -ed (4)' 
+                        : selectedUnitNumber === 3
+                        ? 'Phát âm /t/ /d/ & -ed (4)'
+                        : 'Phát âm /ʃ/ /ʒ/ (4)'
                     },
                     { id: 'grammar', label: 'Ngữ pháp (7)' },
                     { id: 'reading', label: 'Đọc hiểu & Phản xạ (4)' }

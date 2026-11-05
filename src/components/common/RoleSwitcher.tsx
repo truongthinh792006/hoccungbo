@@ -98,7 +98,7 @@ export const RoleSwitcher: React.FC = () => {
                       className="font-semibold text-indigo-800 hover:underline truncate text-left"
                       title="Nhấn để mở Bàn học 4 môn"
                     >
-                      Unit 1, 2 & 3 • Global Success 7
+                      Unit 1 - 4 • Global Success 7
                     </button>
                   </div>
                 )}
