@@ -89,7 +89,7 @@ export function getChapterIdForLesson(lessonId: string): string | null {
   if (/12|13|14|15|16|ch4/i.test(lessonId)) {
     return 'chuong_4_tam_giac_bang_nhau';
   }
-  if (/1|2|3|4|ch1/i.test(lessonId)) {
+  if (/luyen_tap_chung_chuong_1|cuoi_chuong_1|ch1|chuong_1/i.test(lessonId) || /(^|[^0-9])(1|2|3|4|5)($|[^0-9])/i.test(lessonId)) {
     return 'chuong_1_so_huu_ti';
   }
 
@@ -97,6 +97,11 @@ export function getChapterIdForLesson(lessonId: string): string | null {
 }
 
 const LESSON_ALIAS_MAP: Record<string, string[]> = {
+  'bai_1_tap_hop_cac_so_huu_ti': ['lesson-01', 'lesson-1', 'ch1_l01', 'ch1_l1', '1', '01', 'bai_01', 'bai_1'],
+  'bai_2_cong_tru_nhan_chia_so_huu_ti': ['lesson-02', 'lesson-2', 'ch1_l02', 'ch1_l2', '2', '02', 'bai_02', 'bai_2'],
+  'bai_3_luy_thua_so_mu_tu_nhien': ['lesson-03', 'lesson-3', 'ch1_l03', 'ch1_l3', '3', '03', 'bai_03', 'bai_3'],
+  'bai_4_thu_tu_thuc_hien_phep_tinh_chuyen_ve': ['lesson-04', 'lesson-4', 'ch1_l04', 'ch1_l4', '4', '04', 'bai_04', 'bai_4', 'bai_4_quy_tac_dau_ngoac_chuyen_ve'],
+  'luyen_tap_chung_chuong_1': ['lesson-05', 'lesson-5', 'ch1_l05', 'ch1_l5', '5', '05', 'bai_05', 'bai_5', 'bai_tap_cuoi_chuong_1', 'luyen_tap_chung_1'],
   'bai_12_tong_cac_goc_trong_mot_tam_giac': ['lesson-12', 'ch4_l12', '12'],
   'bai_13_hai_tam_giac_bang_nhau_truong_hop_ccc': ['lesson-13', 'ch4_l13', '13'],
   'bai_14_truong_hop_bang_nhau_cgc_gcg': ['lesson-14', 'ch4_l14', '14', 'bai_14_truong_hop_bang_nhau_thu_hai_cgc'],
