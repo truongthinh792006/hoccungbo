@@ -15,8 +15,8 @@ const CHAPTER_LOADERS: Record<string, () => Promise<ChapterExerciseModule>> = {
   chuong_1_so_huu_ti: () => import('../data/exercises/chapter1_exercises'),
   chuong_4_tam_giac_bang_nhau: () => import('../data/exercises/chapter4_exercises'),
   chuong_2_so_thuc: () => import('../data/exercises/chapter2_exercises'),
+  chuong_3_goc_duong_thang_song_song: () => import('../data/exercises/chapter3_exercises'),
   // Fallbacks for other chapters (expandable as new chapters are authored)
-  chuong_3_goc_duong_thang_song_song: async () => ({ default: [] }),
   chuong_5_thu_thap_va_bieu_dien_du_lieu: async () => ({ default: [] }),
   chuong_6_ti_le_thuc: () => import('../data/exercises/chapter6_exercises'),
   chuong_6_ti_le_thuc_va_dai_luong_ti_le: () => import('../data/exercises/chapter6_exercises'),
@@ -93,6 +93,9 @@ export function getChapterIdForLesson(lessonId: string): string | null {
   if (/12|13|14|15|16|ch4/i.test(lessonId)) {
     return 'chuong_4_tam_giac_bang_nhau';
   }
+  if (/ch3|chuong_3|goc|song_song|euclid|dinh_li/i.test(lessonId) || /(ch3_l|lesson-0?[89]|lesson-1[01]|bai_0?[89]|bai_1[01])/i.test(lessonId)) {
+    return 'chuong_3_goc_duong_thang_song_song';
+  }
   if (/ch2|chuong_2|so_thap_phan|so_vo_ti|can_bac_hai|so_thuc|luyen_tap_chung_chuong_2/i.test(lessonId) || /(^|[^0-9])(6|7|8)($|[^0-9])/i.test(lessonId)) {
     return 'chuong_2_so_thuc';
   }
@@ -113,6 +116,10 @@ const LESSON_ALIAS_MAP: Record<string, string[]> = {
   'bai_6_so_vo_ti_can_bac_hai_so_hoc': ['lesson-06', 'lesson-6', 'ch2_l06', 'ch2_l6', 'bai_06', 'bai_6', 'bai_06_so_vo_ti_can_bac_hai_so_hoc', '6', '06'],
   'bai_7_tap_hop_cac_so_thuc': ['lesson-07', 'lesson-7', 'ch2_l07', 'ch2_l7', 'bai_07', 'bai_7', 'bai_07_tap_hop_cac_so_thuc', '7', '07'],
   'luyen_tap_chung_chuong_2': ['lesson-08', 'lesson-8', 'ch2_l08', 'ch2_l8', 'bai_08', 'bai_8', 'bai_08_review', 'luyen_tap_chung_2', '8', '08'],
+  'bai_8_goc_o_vi_tri_dac_biet_tia_phan_giac': ['lesson-08-ch3', 'lesson-8-ch3', 'ch3_l08', 'ch3_l8', 'bai_08_ch3', 'bai_8_goc', 'bai_8_goc_o_vi_tri_dac_biet'],
+  'bai_9_hai_duong_thang_song_song_dau_hieu_nhan_biet': ['lesson-09', 'lesson-9', 'ch3_l09', 'ch3_l9', 'bai_09', 'bai_9', 'bai_9_hai_duong_thang_song_song', '9'],
+  'bai_10_tien_de_euclid_tinh_chat_hai_duong_thang_song_song': ['lesson-10', 'ch3_l10', '10', 'bai_10', 'bai_10_tien_de_euclid'],
+  'bai_11_dinh_li_va_chung_minh_dinh_li': ['lesson-11', 'ch3_l11', '11', 'bai_11', 'bai_11_dinh_li'],
   'bai_12_tong_cac_goc_trong_mot_tam_giac': ['lesson-12', 'ch4_l12', '12'],
   'bai_13_hai_tam_giac_bang_nhau_truong_hop_ccc': ['lesson-13', 'ch4_l13', '13'],
   'bai_14_truong_hop_bang_nhau_cgc_gcg': ['lesson-14', 'ch4_l14', '14', 'bai_14_truong_hop_bang_nhau_thu_hai_cgc'],
