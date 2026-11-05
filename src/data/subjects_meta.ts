@@ -51,7 +51,7 @@ export const SUBJECTS_REGISTRY: SubjectMeta[] = [
     description: 'Học từ vựng qua flashcard thông minh có phát âm chuẩn, nắm vững ngữ pháp trọng tâm và luyện đề phản xạ theo từng Unit.',
     stats: {
       unitsCount: '12 Units',
-      exercisesCount: 'Sẵn sàng Unit 1: Hobbies',
+      exercisesCount: 'Sẵn sàng Unit 1 & Unit 2 (40 câu)',
       featureHighlight: 'Flashcard phát âm & AI English Buddy'
     },
     gradient: 'from-blue-600 via-indigo-600 to-sky-700',

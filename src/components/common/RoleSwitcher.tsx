@@ -105,7 +105,7 @@ export const RoleSwitcher: React.FC = () => {
                       onClick={openSubjectHub}
                       className="font-semibold text-indigo-800 hover:underline truncate text-left"
                     >
-                      Unit 1: Hobbies (Sở thích)
+                      Unit 1: Hobbies • Unit 2: Healthy Living
                     </button>
                   </div>
                 )}
