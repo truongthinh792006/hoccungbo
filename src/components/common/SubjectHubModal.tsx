@@ -133,7 +133,7 @@ export const SubjectHubModal: React.FC = () => {
                       {/* Status Badge */}
                       {isAvailable ? (
                         <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0 ${subject.badgeColor}`}>
-                          {subject.id === 'toan' ? '9 Chương • 496 Câu' : 'Unit 1, 2, 3 & 4 • 80 Câu'}
+                          {subject.id === 'toan' ? '9 Chương • 496 Câu' : 'Unit 1 - 5 • 100 Câu'}
                         </span>
                       ) : (
                         <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-200 text-slate-600 flex items-center gap-1 shrink-0">

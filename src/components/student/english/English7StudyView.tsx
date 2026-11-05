@@ -18,6 +18,10 @@ import {
   UNIT4_EXERCISES 
 } from '../../../data/english/unit4_music_and_arts_data';
 import { 
+  UNIT5_VOCABULARY, 
+  UNIT5_EXERCISES 
+} from '../../../data/english/unit5_food_and_drink_data';
+import { 
   Sparkles, 
   Volume2, 
   ArrowLeft, 
@@ -34,7 +38,8 @@ import {
   GraduationCap, 
   HeartPulse, 
   Users, 
-  Palette
+  Palette,
+  Utensils
 } from 'lucide-react';
 
 interface UnitInfo {
@@ -89,20 +94,30 @@ const ENGLISH_UNITS: UnitInfo[] = [
     title: 'Music and Arts', 
     viTitle: 'Âm nhạc & Nghệ thuật', 
     status: 'ready', 
-    badge: 'Mới mở • Sẵn sàng học', 
+    badge: 'Đã hoàn thành', 
     tagline: 'Nhạc cụ & Múa rối nước • Cặp âm /ʃ/ & /ʒ/ • So sánh ngang bằng, khác nhau (as...as, different from, the same as, too, either)', 
     description: 'Tìm hiểu về các nhạc cụ, bộ môn múa rối nước truyền thống, luyện phát âm cặp âm /ʃ/ và /ʒ/, làm chủ các cấu trúc so sánh (as...as, different from, the same as, too, either) và 20 câu trắc nghiệm phản xạ.', 
     buddyPrompt: 'Bố có thể đố con: "Do you like classical music or pop music, and why?" Con trả lời: "I like pop music because it is not as slow as classical music!"' 
   },
-  { id: 'unit-05', number: 5, title: 'Food and Drink', viTitle: 'Ẩm thực & Thức uống', status: 'locked', badge: 'Kế tiếp', tagline: '', description: '', buddyPrompt: '' },
+  { 
+    id: 'unit-05', 
+    number: 5, 
+    title: 'Food and Drink', 
+    viTitle: 'Ẩm thực & Thức uống', 
+    status: 'ready', 
+    badge: 'Mới mở • Sẵn sàng học', 
+    tagline: 'Nguyên liệu nấu ăn & Món phở • Cặp âm /ɒ/ & /ɔː/ • Danh từ đếm được/không đếm được, some/any, how much/how many', 
+    description: 'Khám phá ẩm thực truyền thống, phân biệt cặp âm /ɒ/ và /ɔː/, làm chủ danh từ đếm được và không đếm được, từ chỉ số lượng (some, any) cùng mẫu câu hỏi lượng (how much, how many) và 20 câu trắc nghiệm phản xạ.', 
+    buddyPrompt: 'Bố có thể đố con: "How much broth do we need for 4 bowls of pho?" Con trả lời: "We need about 2 liters of hot broth and some fresh herbs!"' 
+  },
   { id: 'unit-06', number: 6, title: 'A Visit to a School', viTitle: 'Thăm một ngôi trường', status: 'locked', badge: 'Học kì 1', tagline: '', description: '', buddyPrompt: '' },
 ];
 
 export const English7StudyView: React.FC = () => {
   const { setCurrentSubject, openSubjectHub, xp, addXp, streak } = useApp();
   
-  // Selected Unit state (defaults to Unit 4 as requested, can toggle 1, 2, 3, 4)
-  const [selectedUnitNumber, setSelectedUnitNumber] = useState<1 | 2 | 3 | 4>(4);
+  // Selected Unit state (defaults to Unit 5 as requested, can toggle 1, 2, 3, 4, 5)
+  const [selectedUnitNumber, setSelectedUnitNumber] = useState<1 | 2 | 3 | 4 | 5>(5);
   const [activeTab, setActiveTab] = useState<'vocab' | 'pronunciation' | 'grammar' | 'practice'>('vocab');
   
   // Flashcard state
@@ -117,7 +132,7 @@ export const English7StudyView: React.FC = () => {
   const [rewardedQuestionIds, setRewardedQuestionIds] = useState<Record<string, boolean>>({});
 
   // Dynamic datasets based on selected unit
-  const currentUnitInfo = ENGLISH_UNITS.find(u => u.number === selectedUnitNumber) || ENGLISH_UNITS[3];
+  const currentUnitInfo = ENGLISH_UNITS.find(u => u.number === selectedUnitNumber) || ENGLISH_UNITS[4];
   
   const getUnitData = (unitNum: number) => {
     switch (unitNum) {
@@ -128,8 +143,10 @@ export const English7StudyView: React.FC = () => {
       case 3:
         return { vocab: UNIT3_VOCABULARY, exercises: UNIT3_EXERCISES };
       case 4:
-      default:
         return { vocab: UNIT4_VOCABULARY, exercises: UNIT4_EXERCISES };
+      case 5:
+      default:
+        return { vocab: UNIT5_VOCABULARY, exercises: UNIT5_EXERCISES };
     }
   };
 
@@ -137,11 +154,11 @@ export const English7StudyView: React.FC = () => {
 
   // Switch Unit handler
   const handleSelectUnit = (unitNumber: number) => {
-    if (unitNumber > 4) {
-      alert(`Unit ${unitNumber} đang được chuẩn bị. Con có thể học Unit 1, 2, 3 hoặc 4!`);
+    if (unitNumber > 5) {
+      alert(`Unit ${unitNumber} đang được chuẩn bị. Con có thể học Unit 1 đến Unit 5!`);
       return;
     }
-    setSelectedUnitNumber(unitNumber as 1 | 2 | 3 | 4);
+    setSelectedUnitNumber(unitNumber as 1 | 2 | 3 | 4 | 5);
     setSelectedWordIndex(0);
     setCurrentQuizIndex(0);
     setShowHint(false);
@@ -213,8 +230,10 @@ export const English7StudyView: React.FC = () => {
       case 3:
         return 'bg-gradient-to-r from-indigo-700 via-purple-700 to-rose-700';
       case 4:
-      default:
         return 'bg-gradient-to-r from-violet-700 via-purple-700 to-pink-700';
+      case 5:
+      default:
+        return 'bg-gradient-to-r from-amber-700 via-orange-700 to-rose-700';
     }
   };
 
@@ -233,7 +252,7 @@ export const English7StudyView: React.FC = () => {
                 NXB Giáo dục & Pearson
               </span>
               <span className="text-xs bg-amber-400 text-slate-900 px-2 py-0.5 rounded-full font-black">
-                {selectedUnitNumber === 4 ? 'Mới cập nhật' : 'Đã hoàn thành'}
+                {selectedUnitNumber === 5 ? 'Mới cập nhật' : 'Đã hoàn thành'}
               </span>
             </div>
 
@@ -241,6 +260,7 @@ export const English7StudyView: React.FC = () => {
               {selectedUnitNumber === 2 && <HeartPulse className="w-6 h-6 text-rose-300 inline-block" />}
               {selectedUnitNumber === 3 && <Users className="w-6 h-6 text-amber-300 inline-block" />}
               {selectedUnitNumber === 4 && <Palette className="w-6 h-6 text-pink-300 inline-block" />}
+              {selectedUnitNumber === 5 && <Utensils className="w-6 h-6 text-yellow-300 inline-block" />}
               <span>Unit {currentUnitInfo.number}: {currentUnitInfo.title} ({currentUnitInfo.viTitle})</span>
             </h1>
             <p className="text-xs sm:text-sm text-indigo-100 leading-relaxed">
@@ -275,7 +295,7 @@ export const English7StudyView: React.FC = () => {
             <span>Danh mục 12 Units Tiếng Anh 7 Global Success</span>
           </span>
           <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-            Đã mở Unit 1, 2, 3 & 4
+            Đã mở Unit 1 đến Unit 5
           </span>
         </div>
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
@@ -339,7 +359,7 @@ export const English7StudyView: React.FC = () => {
               : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
           }`}
         >
-          2. Phát Âm: {selectedUnitNumber === 1 ? '/ə/ & /ɜ:/' : selectedUnitNumber === 2 ? '/f/ & /v/' : selectedUnitNumber === 3 ? '/t/ & /d/' : '/ʃ/ & /ʒ/'}
+          2. Phát Âm: {selectedUnitNumber === 1 ? '/ə/ & /ɜ:/' : selectedUnitNumber === 2 ? '/f/ & /v/' : selectedUnitNumber === 3 ? '/t/ & /d/' : selectedUnitNumber === 4 ? '/ʃ/ & /ʒ/' : '/ɒ/ & /ɔː/'}
         </button>
         <button
           onClick={() => setActiveTab('grammar')}
@@ -570,14 +590,12 @@ export const English7StudyView: React.FC = () => {
                         </span>
                         <span className="text-xs font-bold text-teal-700">Vô thanh (không rung)</span>
                       </div>
-                      <p className="text-[11px] text-teal-900 font-medium">Chú ý cách viết đặc biệt: "ph" (photo) và "gh" (cough, laugh)</p>
                       <ul className="space-y-2 text-xs">
                         {[
                           { word: 'fat', ipa: '/fæt/', vi: 'béo, mỡ' },
                           { word: 'fruit', ipa: '/fruːt/', vi: 'trái cây' },
                           { word: 'cough', ipa: '/kɒf/', vi: 'ho' },
-                          { word: 'laugh', ipa: '/lɑːf/', vi: 'cười' },
-                          { word: 'safe', ipa: '/seɪf/', vi: 'an toàn' }
+                          { word: 'laugh', ipa: '/lɑːf/', vi: 'cười' }
                         ].map((item) => (
                           <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-teal-100">
                             <span className="font-bold text-slate-800">{item.word}</span>
@@ -598,16 +616,14 @@ export const English7StudyView: React.FC = () => {
                         <span className="font-mono text-xl font-black text-emerald-800 bg-white px-3 py-1 rounded-xl border border-emerald-200">
                           /v/
                         </span>
-                        <span className="text-xs font-bold text-emerald-700">Hữu thanh (cổ họng rung)</span>
+                        <span className="text-xs font-bold text-emerald-700">Hữu thanh (rung thanh quản)</span>
                       </div>
-                      <p className="text-[11px] text-emerald-900 font-medium">Âm /v/ luôn rung thanh quản khi phát âm</p>
                       <ul className="space-y-2 text-xs">
                         {[
                           { word: 'view', ipa: '/vjuː/', vi: 'tầm nhìn' },
                           { word: 'vegetables', ipa: '/ˈvedʒtəblz/', vi: 'rau củ' },
                           { word: 'have', ipa: '/hæv/', vi: 'có' },
-                          { word: 'activity', ipa: '/ækˈtɪvəti/', vi: 'hoạt động' },
-                          { word: 'vitamin', ipa: '/ˈvɪtəmɪn/', vi: 'vi-ta-min' }
+                          { word: 'activity', ipa: '/ækˈtɪvəti/', vi: 'hoạt động' }
                         ].map((item) => (
                           <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-emerald-100">
                             <span className="font-bold text-slate-800">{item.word}</span>
@@ -631,64 +647,83 @@ export const English7StudyView: React.FC = () => {
                     <h3 className="text-base font-extrabold text-slate-900">
                       Phân biệt phụ âm /t/ và /d/ cùng các quy tắc phát âm đuôi -ed
                     </h3>
-                    <p className="text-xs text-slate-600 mt-1">
-                      Cả hai âm đều được phát ra bằng cách chạm đầu lưỡi vào phần nướu trên. 
-                      Âm <span className="font-mono font-bold text-indigo-700">/t/</span> là âm vô thanh bật hơi nhẹ, còn <span className="font-mono font-bold text-purple-700">/d/</span> là âm hữu thanh làm rung cổ họng.
-                    </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono text-xl font-black text-indigo-800 bg-white px-3 py-1 rounded-xl border border-indigo-200">
-                          /t/
-                        </span>
-                        <span className="text-xs font-bold text-indigo-700">Vô thanh (bật hơi)</span>
-                      </div>
+                      <span className="font-mono text-xl font-black text-indigo-800 bg-white px-3 py-1 rounded-xl border border-indigo-200">
+                        /t/
+                      </span>
                       <ul className="space-y-2 text-xs">
                         {[
                           { word: 'tutor', ipa: '/ˈtjuːtə/', vi: 'dạy kèm' },
-                          { word: 'plant', ipa: '/plɑːnt/', vi: 'trồng cây' },
-                          { word: 'dirty', ipa: '/ˈdɜːti/', vi: 'bẩn' },
-                          { word: 'student', ipa: '/ˈstjuːdnt/', vi: 'học sinh' }
+                          { word: 'plant', ipa: '/plɑːnt/', vi: 'trồng cây' }
                         ].map((item) => (
                           <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-indigo-100">
                             <span className="font-bold text-slate-800">{item.word}</span>
                             <span className="font-mono text-slate-500">{item.ipa}</span>
-                            <button
-                              onClick={() => speakText(item.word)}
-                              className="w-7 h-7 rounded-lg bg-indigo-100 hover:bg-indigo-200 flex items-center justify-center text-indigo-800"
-                            >
-                              <Volume2 className="w-3.5 h-3.5" />
-                            </button>
                           </li>
                         ))}
                       </ul>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-purple-50 border border-purple-200 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono text-xl font-black text-purple-800 bg-white px-3 py-1 rounded-xl border border-purple-200">
-                          /d/
-                        </span>
-                        <span className="text-xs font-bold text-purple-700">Hữu thanh (rung cổ họng)</span>
-                      </div>
+                      <span className="font-mono text-xl font-black text-purple-800 bg-white px-3 py-1 rounded-xl border border-purple-200">
+                        /d/
+                      </span>
                       <ul className="space-y-2 text-xs">
                         {[
                           { word: 'donate', ipa: '/dəʊˈneɪt/', vi: 'quyên góp' },
-                          { word: 'provide', ipa: '/prəˈvaɪd/', vi: 'cung cấp' },
-                          { word: 'elderly', ipa: '/ˈeldəli/', vi: 'người cao tuổi' },
-                          { word: 'food', ipa: '/fuːd/', vi: 'thức ăn' }
+                          { word: 'provide', ipa: '/prəˈvaɪd/', vi: 'cung cấp' }
                         ].map((item) => (
                           <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-purple-100">
                             <span className="font-bold text-slate-800">{item.word}</span>
                             <span className="font-mono text-slate-500">{item.ipa}</span>
-                            <button
-                              onClick={() => speakText(item.word)}
-                              className="w-7 h-7 rounded-lg bg-purple-100 hover:bg-purple-200 flex items-center justify-center text-purple-800"
-                            >
-                              <Volume2 className="w-3.5 h-3.5" />
-                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </>
+              ) : selectedUnitNumber === 4 ? (
+                // UNIT 4 PRONUNCIATION: /ʃ/ vs /ʒ/
+                <>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900">
+                      Phân biệt phụ âm vô thanh /ʃ/ và hữu thanh /ʒ/
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-pink-50 border border-pink-200 space-y-3">
+                      <span className="font-mono text-xl font-black text-pink-800 bg-white px-3 py-1 rounded-xl border border-pink-200">
+                        /ʃ/
+                      </span>
+                      <ul className="space-y-2 text-xs">
+                        {[
+                          { word: 'musician', ipa: '/mjuːˈzɪʃn/', vi: 'nhạc sĩ' },
+                          { word: 'exhibition', ipa: '/ˌeksɪˈbɪʃn/', vi: 'buổi triển lãm' }
+                        ].map((item) => (
+                          <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-pink-100">
+                            <span className="font-bold text-slate-800">{item.word}</span>
+                            <span className="font-mono text-slate-500">{item.ipa}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-violet-50 border border-violet-200 space-y-3">
+                      <span className="font-mono text-xl font-black text-violet-800 bg-white px-3 py-1 rounded-xl border border-violet-200">
+                        /ʒ/
+                      </span>
+                      <ul className="space-y-2 text-xs">
+                        {[
+                          { word: 'measure', ipa: '/ˈmeʒə/', vi: 'đo lường' },
+                          { word: 'pleasure', ipa: '/ˈpleʒə/', vi: 'niềm vui thích' }
+                        ].map((item) => (
+                          <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-violet-100">
+                            <span className="font-bold text-slate-800">{item.word}</span>
+                            <span className="font-mono text-slate-500">{item.ipa}</span>
                           </li>
                         ))}
                       </ul>
@@ -696,42 +731,43 @@ export const English7StudyView: React.FC = () => {
                   </div>
                 </>
               ) : (
-                // UNIT 4 PRONUNCIATION: /ʃ/ vs /ʒ/
+                // UNIT 5 PRONUNCIATION: /ɒ/ vs /ɔː/
                 <>
                   <div>
                     <h3 className="text-base font-extrabold text-slate-900">
-                      Phân biệt phụ âm vô thanh /ʃ/ và hữu thanh /ʒ/
+                      Phân biệt nguyên âm ngắn /ɒ/ và nguyên âm dài /ɔː/
                     </h3>
                     <p className="text-xs text-slate-600 mt-1">
-                      Cả hai âm đều được tạo ra bằng cách cong đầu lưỡi về phía vòm họng và đẩy luồng hơi qua. 
-                      Với âm <span className="font-mono font-bold text-pink-700">/ʃ/</span> (vô thanh - giống tiếng "suỵt", dây thanh không rung), và âm <span className="font-mono font-bold text-violet-700">/ʒ/</span> (hữu thanh - cảm nhận thanh quản rung rõ).
+                      Cả hai âm đều là nguyên âm tròn môi. 
+                      Với âm <span className="font-mono font-bold text-amber-700">/ɒ/</span>: mở miệng rộng, môi tròn và phát âm dứt khoát. 
+                      Với âm <span className="font-mono font-bold text-orange-700">/ɔː/</span>: môi tròn khum sâu hơn, nâng cuống lưỡi và kéo dài âm.
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Column 1: /ʃ/ */}
-                    <div className="p-4 rounded-2xl bg-pink-50 border border-pink-200 space-y-3">
+                    {/* Column 1: /ɒ/ */}
+                    <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-xl font-black text-pink-800 bg-white px-3 py-1 rounded-xl border border-pink-200">
-                          /ʃ/
+                        <span className="font-mono text-xl font-black text-amber-800 bg-white px-3 py-1 rounded-xl border border-amber-200">
+                          /ɒ/
                         </span>
-                        <span className="text-xs font-bold text-pink-700">Vô thanh (không rung)</span>
+                        <span className="text-xs font-bold text-amber-700">Âm ngắn, dứt khoát</span>
                       </div>
-                      <p className="text-[11px] text-pink-900 font-medium">Hay gặp ở các từ có: "sh", "cian", "tion", "cial"</p>
+                      <p className="text-[11px] text-amber-900 font-medium">Hay gặp ở các từ chứa chữ "o" ngắn</p>
                       <ul className="space-y-2 text-xs">
                         {[
-                          { word: 'musician', ipa: '/mjuːˈzɪʃn/', vi: 'nhạc sĩ' },
-                          { word: 'exhibition', ipa: '/ˌeksɪˈbɪʃn/', vi: 'buổi triển lãm' },
-                          { word: 'special', ipa: '/ˈspeʃl/', vi: 'đặc biệt' },
-                          { word: 'show', ipa: '/ʃəʊ/', vi: 'buổi biểu diễn' },
-                          { word: 'action', ipa: '/ˈækʃn/', vi: 'hành động' }
+                          { word: 'pot', ipa: '/pɒt/', vi: 'cái nồi' },
+                          { word: 'hot', ipa: '/hɒt/', vi: 'nóng' },
+                          { word: 'bottle', ipa: '/ˈbɒtl/', vi: 'cái chai' },
+                          { word: 'soft', ipa: '/sɒft/', vi: 'mềm, nhẹ' },
+                          { word: 'cost', ipa: '/kɒst/', vi: 'giá tiền' }
                         ].map((item) => (
-                          <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-pink-100">
+                          <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-amber-100">
                             <span className="font-bold text-slate-800">{item.word}</span>
                             <span className="font-mono text-slate-500">{item.ipa}</span>
                             <button
                               onClick={() => speakText(item.word)}
-                              className="w-7 h-7 rounded-lg bg-pink-100 hover:bg-pink-200 flex items-center justify-center text-pink-800"
+                              className="w-7 h-7 rounded-lg bg-amber-100 hover:bg-amber-200 flex items-center justify-center text-amber-800"
                             >
                               <Volume2 className="w-3.5 h-3.5" />
                             </button>
@@ -740,29 +776,29 @@ export const English7StudyView: React.FC = () => {
                       </ul>
                     </div>
 
-                    {/* Column 2: /ʒ/ */}
-                    <div className="p-4 rounded-2xl bg-violet-50 border border-violet-200 space-y-3">
+                    {/* Column 2: /ɔː/ */}
+                    <div className="p-4 rounded-2xl bg-orange-50 border border-orange-200 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-xl font-black text-violet-800 bg-white px-3 py-1 rounded-xl border border-violet-200">
-                          /ʒ/
+                        <span className="font-mono text-xl font-black text-orange-800 bg-white px-3 py-1 rounded-xl border border-orange-200">
+                          /ɔː/
                         </span>
-                        <span className="text-xs font-bold text-violet-700">Hữu thanh (thanh quản rung)</span>
+                        <span className="text-xs font-bold text-orange-700">Âm dài, môi tròn sâu</span>
                       </div>
-                      <p className="text-[11px] text-violet-900 font-medium">Hay gặp ở các từ có đuôi: "-sure", "-sion"</p>
+                      <p className="text-[11px] text-orange-900 font-medium">Hay gặp ở các chữ: "or", "au", "aw", "al"</p>
                       <ul className="space-y-2 text-xs">
                         {[
-                          { word: 'measure', ipa: '/ˈmeʒə/', vi: 'đo lường' },
-                          { word: 'pleasure', ipa: '/ˈpleʒə/', vi: 'niềm vui thích' },
-                          { word: 'television', ipa: '/ˈtelɪvɪʒn/', vi: 'ti-vi' },
-                          { word: 'decision', ipa: '/dɪˈsɪʒn/', vi: 'quyết định' },
-                          { word: 'usual', ipa: '/ˈjuːʒuəl/', vi: 'bình thường' }
+                          { word: 'pork', ipa: '/pɔːk/', vi: 'thịt lợn' },
+                          { word: 'fork', ipa: '/fɔːk/', vi: 'cái dĩa' },
+                          { word: 'sauce', ipa: '/sɔːs/', vi: 'nước sốt' },
+                          { word: 'water', ipa: '/ˈwɔːtə/', vi: 'nước' },
+                          { word: 'fall', ipa: '/fɔːl/', vi: 'rơi, mùa thu' }
                         ].map((item) => (
-                          <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-violet-100">
+                          <li key={item.word} className="flex items-center justify-between p-2 rounded-lg bg-white border border-orange-100">
                             <span className="font-bold text-slate-800">{item.word}</span>
                             <span className="font-mono text-slate-500">{item.ipa}</span>
                             <button
                               onClick={() => speakText(item.word)}
-                              className="w-7 h-7 rounded-lg bg-violet-100 hover:bg-violet-200 flex items-center justify-center text-violet-800"
+                              className="w-7 h-7 rounded-lg bg-orange-100 hover:bg-orange-200 flex items-center justify-center text-orange-800"
                             >
                               <Volume2 className="w-3.5 h-3.5" />
                             </button>
@@ -781,161 +817,99 @@ export const English7StudyView: React.FC = () => {
             <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs space-y-5">
               {selectedUnitNumber === 1 ? (
                 // UNIT 1 GRAMMAR
-                <>
-                  <div>
-                    <h3 className="text-base font-extrabold text-slate-900">
-                      Ngữ pháp trọng tâm Unit 1: Hobbies
-                    </h3>
-                    <p className="text-xs text-slate-600 mt-1">
-                      Thì Hiện tại đơn và các động từ chỉ cảm xúc yêu/ghét đi với danh động từ (V-ing).
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
-                    <h4 className="text-xs font-black text-indigo-900 uppercase tracking-wide">
-                      1. Thì Hiện tại đơn (The Present Simple Tense)
-                    </h4>
-                    <div className="text-xs space-y-1.5 text-slate-700">
-                      <p><strong>Khẳng định:</strong> S + V(s/es) + O</p>
-                      <p className="text-slate-500 italic">Ví dụ: He plays badminton every Sunday.</p>
-                      <p><strong>Phủ định:</strong> S + do not (don't) / does not (doesn't) + V-bare</p>
-                      <p><strong>Nghi vấn:</strong> Do / Does + S + V-bare?</p>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-2.5">
-                    <h4 className="text-xs font-black text-indigo-900 uppercase tracking-wide">
-                      2. Động từ chỉ cảm xúc yêu/ghét + V-ing
-                    </h4>
-                    <div className="text-xs space-y-1.5 text-slate-700">
-                      <p className="font-semibold text-indigo-800">
-                        like / love / enjoy / prefer / hate / dislike + V-ing
-                      </p>
-                      <p className="text-slate-600">Ví dụ: I <strong>enjoy doing</strong> origami. / She <strong>hates getting</strong> up early.</p>
-                    </div>
-                  </div>
-                </>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Ngữ pháp trọng tâm Unit 1: Hobbies
+                  </h3>
+                  <p className="text-xs text-slate-600 mt-1">Thì Hiện tại đơn & like/love + V-ing.</p>
+                </div>
               ) : selectedUnitNumber === 2 ? (
-                // UNIT 2 GRAMMAR: SIMPLE SENTENCES & ADVICE
+                // UNIT 2 GRAMMAR
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Ngữ pháp trọng tâm Unit 2: Healthy Living
+                  </h3>
+                  <p className="text-xs text-slate-600 mt-1">Câu đơn, liên từ and/but/or/so & lời khuyên should/shouldn't.</p>
+                </div>
+              ) : selectedUnitNumber === 3 ? (
+                // UNIT 3 GRAMMAR
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Ngữ pháp trọng tâm Unit 3: Community Service
+                  </h3>
+                  <p className="text-xs text-slate-600 mt-1">Thì Quá khứ đơn (The Past Simple Tense) & Động từ bất quy tắc.</p>
+                </div>
+              ) : selectedUnitNumber === 4 ? (
+                // UNIT 4 GRAMMAR
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Ngữ pháp trọng tâm Unit 4: Music and Arts
+                  </h3>
+                  <p className="text-xs text-slate-600 mt-1">Các cấu trúc so sánh: as...as, different from, the same as, too, either.</p>
+                </div>
+              ) : (
+                // UNIT 5 GRAMMAR: COUNTABLE/UNCOUNTABLE & QUANTIFIERS
                 <>
                   <div>
                     <h3 className="text-base font-extrabold text-slate-900">
-                      Ngữ pháp trọng tâm Unit 2: Healthy Living
+                      Ngữ pháp trọng tâm Unit 5: Danh từ đếm được, Không đếm được & Từ chỉ lượng
                     </h3>
                     <p className="text-xs text-slate-600 mt-1">
-                      Cấu trúc câu đơn (Simple Sentences), các liên từ kết hợp (and, but, or, so) và mẫu câu đưa ra lời khuyên sức khỏe (should/shouldn't, câu mệnh lệnh).
+                      Phân biệt danh từ đếm được và không đếm được, cách dùng Some/Any và các câu hỏi lượng How many/How much.
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
-                    <h4 className="text-xs font-black text-indigo-900 uppercase tracking-wide">
-                      1. Câu đơn (Simple Sentences) & Liên từ kết hợp (and, but, or, so)
+                  {/* 1. Countable vs Uncountable */}
+                  <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
+                    <h4 className="text-xs font-black text-amber-900 uppercase tracking-wide">
+                      1. Danh từ đếm được (Countable) & Không đếm được (Uncountable)
                     </h4>
-                    <div className="text-xs space-y-2 text-slate-700">
-                      <p>
-                        <strong>Câu đơn:</strong> Là câu chỉ chứa <em>một mệnh đề độc lập</em>.
-                      </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                        <div className="p-2.5 rounded-xl bg-white border border-slate-200">
-                          <span className="font-bold text-indigo-800">and (và)</span>: Thêm thông tin, bổ sung.
-                        </div>
-                        <div className="p-2.5 rounded-xl bg-white border border-slate-200">
-                          <span className="font-bold text-indigo-800">but (nhưng)</span>: Diễn tả sự tương phản.
-                        </div>
-                        <div className="p-2.5 rounded-xl bg-white border border-slate-200">
-                          <span className="font-bold text-indigo-800">or (hoặc/nếu không)</span>: Sự lựa chọn.
-                        </div>
-                        <div className="p-2.5 rounded-xl bg-white border border-slate-200">
-                          <span className="font-bold text-indigo-800">so (vì vậy/nên)</span>: Chỉ kết quả.
-                        </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      <div className="p-2.5 rounded-xl bg-white border border-amber-200 space-y-1">
+                        <span className="font-bold text-amber-800">Danh từ đếm được (Countable)</span>
+                        <p className="text-[11px] text-slate-600">Có dạng số ít và số nhiều (thêm -s/-es)</p>
+                        <p className="text-[11px] text-emerald-700 font-semibold">an apple → apples, an egg → eggs</p>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-white border border-amber-200 space-y-1">
+                        <span className="font-bold text-orange-800">Danh từ không đếm được (Uncountable)</span>
+                        <p className="text-[11px] text-slate-600">Chỉ chất lỏng, khối, bột, không thêm -s</p>
+                        <p className="text-[11px] text-rose-700 font-semibold">water, milk, beef, rice, sugar, broth</p>
                       </div>
                     </div>
                   </div>
-                </>
-              ) : selectedUnitNumber === 3 ? (
-                // UNIT 3 GRAMMAR: THE PAST SIMPLE TENSE
-                <>
-                  <div>
-                    <h3 className="text-base font-extrabold text-slate-900">
-                      Ngữ pháp trọng tâm Unit 3: Thì Quá khứ đơn (The Past Simple Tense)
-                    </h3>
-                    <p className="text-xs text-slate-600 mt-1">
-                      Dùng để diễn tả một hành động đã diễn ra và kết thúc hoàn toàn trong quá khứ. 
-                      Dấu hiệu nhận biết: <span className="font-semibold text-indigo-700">yesterday, last week/month/year, ... ago, in 2022</span>.
-                    </p>
-                  </div>
 
-                  <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-2">
-                    <h4 className="text-xs font-black text-indigo-900 uppercase tracking-wide">
-                      1. Động từ "To-be" ở Quá khứ đơn (Was / Were)
-                    </h4>
-                    <div className="text-xs space-y-1 text-slate-700">
-                      <p><strong>Khẳng định:</strong> S + was / were | <strong>Phủ định:</strong> S + wasn't / weren't</p>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-purple-50 border border-purple-200 space-y-2">
-                    <h4 className="text-xs font-black text-purple-900 uppercase tracking-wide">
-                      2. Động từ thường ở Quá khứ đơn
-                    </h4>
-                    <div className="text-xs space-y-1 text-slate-700">
-                      <p><strong>Khẳng định:</strong> S + V-ed / V2 | <strong>Phủ định:</strong> S + didn't + V-bare</p>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                // UNIT 4 GRAMMAR: COMPARISONS (as...as, different from, the same as, too, either)
-                <>
-                  <div>
-                    <h3 className="text-base font-extrabold text-slate-900">
-                      Ngữ pháp trọng tâm Unit 4: Các cấu trúc so sánh & Đồng tình
-                    </h3>
-                    <p className="text-xs text-slate-600 mt-1">
-                      Học sinh làm chủ cách so sánh hai vật/người về tính chất nghệ thuật, âm nhạc và cách đồng tình khẳng định (too) hay phủ định (either).
-                    </p>
-                  </div>
-
-                  {/* 1. as... as & not as... as */}
-                  <div className="p-4 rounded-2xl bg-pink-50 border border-pink-200 space-y-2">
-                    <h4 className="text-xs font-black text-pink-900 uppercase tracking-wide">
-                      1. So sánh ngang bằng: (not) as + adj + as
+                  {/* 2. Some & Any */}
+                  <div className="p-4 rounded-2xl bg-orange-50 border border-orange-200 space-y-2">
+                    <h4 className="text-xs font-black text-orange-900 uppercase tracking-wide">
+                      2. Từ chỉ số lượng: Some & Any
                     </h4>
                     <div className="text-xs space-y-1.5 text-slate-700">
-                      <p><strong>Ngang bằng (như nhau):</strong> S1 + be + <strong>as + adj + as</strong> + S2 / Noun</p>
-                      <p className="text-slate-500 italic">VD: Classical music is <strong>as interesting as</strong> pop music.</p>
-                      <p><strong>Không bằng (kém hơn):</strong> S1 + be not + <strong>as + adj + as</strong> + S2 / Noun</p>
-                      <p className="text-slate-500 italic">VD: The museum tickets are <strong>not as expensive as</strong> the concert tickets.</p>
+                      <p>
+                        <strong>SOME (một vài, một ít):</strong> Dùng trong câu <strong>khẳng định</strong> và câu <strong>mời/đề nghị lịch sự</strong> (Would you like some tea?).
+                      </p>
+                      <p className="text-slate-500 italic">VD: There is some milk in the fridge. / Would you like some bananas?</p>
+                      <p>
+                        <strong>ANY (chút nào, cái nào):</strong> Dùng trong câu <strong>phủ định</strong> và câu <strong>nghi vấn</strong>.
+                      </p>
+                      <p className="text-slate-500 italic">VD: We don't have any eggs left. / Do you have any mineral water?</p>
                     </div>
                   </div>
 
-                  {/* 2. different from & the same as */}
-                  <div className="p-4 rounded-2xl bg-violet-50 border border-violet-200 space-y-2">
-                    <h4 className="text-xs font-black text-violet-900 uppercase tracking-wide">
-                      2. So sánh khác nhau (different from) & Giống nhau (the same as)
-                    </h4>
-                    <div className="text-xs space-y-1.5 text-slate-700">
-                      <p><strong>Khác biệt:</strong> S1 + be + <strong>different from</strong> + S2 / Noun</p>
-                      <p className="text-slate-500 italic">VD: Traditional water puppetry is <strong>different from</strong> modern 3D cinema.</p>
-                      <p><strong>Giống hệt:</strong> S1 + be + <strong>the same as</strong> + S2 / Noun</p>
-                      <p className="text-slate-500 italic">VD: Her taste in music is <strong>the same as</strong> mine.</p>
-                    </div>
-                  </div>
-
-                  {/* 3. too & either */}
+                  {/* 3. How many & How much */}
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
                     <h4 className="text-xs font-black text-slate-900 uppercase tracking-wide">
-                      3. Thể hiện sự đồng tình ở cuối câu: too & either
+                      3. Mẫu câu hỏi lượng: How many & How much
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                       <div className="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1">
-                        <span className="font-bold text-emerald-700">too (cũng vậy)</span>
-                        <p className="text-[11px] text-slate-600">Đứng ở cuối câu <strong>khẳng định</strong></p>
-                        <p className="text-[11px] text-indigo-700 italic">VD: I like jazz, and my brother likes it, <strong>too</strong>.</p>
+                        <span className="font-bold text-indigo-700">How many + Plural Countable Noun?</span>
+                        <p className="text-[11px] text-slate-600">Hỏi số lượng đếm được</p>
+                        <p className="text-[11px] text-indigo-900 italic">How many eggs do you need?</p>
                       </div>
                       <div className="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1">
-                        <span className="font-bold text-rose-700">either (cũng không)</span>
-                        <p className="text-[11px] text-slate-600">Đứng ở cuối câu <strong>phủ định</strong></p>
-                        <p className="text-[11px] text-indigo-700 italic">VD: Mai doesn't like rock, and Lan doesn't, <strong>either</strong>.</p>
+                        <span className="font-bold text-purple-700">How much + Uncountable Noun / be?</span>
+                        <p className="text-[11px] text-slate-600">Hỏi lượng không đếm được hoặc giá tiền</p>
+                        <p className="text-[11px] text-purple-900 italic">How much water should I pour? / How much is it?</p>
                       </div>
                     </div>
                   </div>
@@ -960,8 +934,10 @@ export const English7StudyView: React.FC = () => {
                         : selectedUnitNumber === 2 
                         ? 'Phát âm /f/ /v/ (4)' 
                         : selectedUnitNumber === 3
-                        ? 'Phát âm /t/ /d/ & -ed (4)'
-                        : 'Phát âm /ʃ/ /ʒ/ (4)'
+                        ? 'Phát âm /t/ /d/ (4)'
+                        : selectedUnitNumber === 4
+                        ? 'Phát âm /ʃ/ /ʒ/ (4)'
+                        : 'Phát âm /ɒ/ /ɔː/ (4)'
                     },
                     { id: 'grammar', label: 'Ngữ pháp (7)' },
                     { id: 'reading', label: 'Đọc hiểu & Phản xạ (4)' }
