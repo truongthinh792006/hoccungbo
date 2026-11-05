@@ -1,4 +1,4 @@
-import { PracticeExercise, ExerciseDifficulty } from '../types/curriculum';
+import { PracticeExercise, ExerciseDifficulty, ExerciseOption } from '../types/curriculum';
 import { math7CurriculumLessons } from '../data/math7_curriculum';
 
 type ChapterExerciseModule = {
@@ -29,12 +29,73 @@ const lessonExercisesCache = new Map<string, PracticeExercise[]>();
 const loadedChapters = new Set<string>();
 
 /**
+ * Normalizes an exercise to ensure uniform structure whether options were defined as string[] or ExerciseOption[]
+ */
+export function normalizeExercise(ex: PracticeExercise): PracticeExercise {
+  const difficulty = (ex.difficulty || ex.level || 'co_ban') as ExerciseDifficulty;
+  const level = (ex.level || ex.difficulty || 'co_ban') as ExerciseDifficulty;
+
+  let options: ExerciseOption[] = [];
+  let correctAnswerId = ex.correctAnswerId || '';
+
+  if (Array.isArray(ex.options) && ex.options.length > 0) {
+    if (typeof ex.options[0] === 'string') {
+      const strOpts = ex.options as string[];
+      const cIdx = typeof ex.correctIndex === 'number' ? ex.correctIndex : 0;
+      options = strOpts.map((text, idx) => ({
+        id: `opt-${idx}`,
+        text,
+        isCorrect: idx === cIdx
+      }));
+      correctAnswerId = `opt-${cIdx}`;
+    } else {
+      options = ex.options as ExerciseOption[];
+      if (!correctAnswerId) {
+        const found = options.find(o => o.isCorrect);
+        correctAnswerId = found ? found.id : options[0]?.id || '';
+      }
+    }
+  }
+
+  const correctIndex = typeof ex.correctIndex === 'number' 
+    ? ex.correctIndex 
+    : options.findIndex(o => o.id === correctAnswerId);
+
+  return {
+    ...ex,
+    difficulty,
+    level,
+    options,
+    correctAnswerId,
+    correctIndex: correctIndex >= 0 ? correctIndex : 0
+  };
+}
+
+/**
  * Find the chapterId for a given lessonId from the master curriculum registry
  */
 export function getChapterIdForLesson(lessonId: string): string | null {
   const lesson = math7CurriculumLessons.find(l => l.id === lessonId);
-  return lesson ? lesson.chapterId : null;
+  if (lesson) return lesson.chapterId;
+
+  // Pattern matching fallbacks for lesson aliases
+  if (/12|13|14|15|16|ch4/i.test(lessonId)) {
+    return 'chuong_4_tam_giac_bang_nhau';
+  }
+  if (/1|2|3|4|ch1/i.test(lessonId)) {
+    return 'chuong_1_so_huu_ti';
+  }
+
+  return null;
 }
+
+const LESSON_ALIAS_MAP: Record<string, string[]> = {
+  'bai_12_tong_cac_goc_trong_mot_tam_giac': ['lesson-12', 'ch4_l12', '12'],
+  'bai_13_hai_tam_giac_bang_nhau_truong_hop_ccc': ['lesson-13', 'ch4_l13', '13'],
+  'bai_14_truong_hop_bang_nhau_cgc_gcg': ['lesson-14', 'ch4_l14', '14', 'bai_14_truong_hop_bang_nhau_thu_hai_cgc'],
+  'bai_15_cac_truong_hop_bang_nhau_tam_giac_vuong': ['lesson-15', 'ch4_l15', '15', 'bai_15_truong_hop_bang_nhau_thu_ba_gcg'],
+  'bai_16_tam_giac_can_duong_trung_truc': ['lesson-16', 'ch4_l16', '16']
+};
 
 /**
  * Asynchronously load exercises for a given lessonId
@@ -48,7 +109,6 @@ export async function getExercisesByLessonId(lessonId: string): Promise<Practice
   // 2. Identify the chapter
   const chapterId = getChapterIdForLesson(lessonId);
   if (!chapterId) {
-    // If not found, try fallback lookup
     return [];
   }
 
@@ -75,9 +135,10 @@ export async function getExercisesByLessonId(lessonId: string): Promise<Practice
       }
     }
 
-    // Populate cache for all lessons within this chapter
+    // Populate cache for all lessons within this chapter, normalizing each exercise
     const grouped = new Map<string, PracticeExercise[]>();
-    for (const ex of chapterList) {
+    for (const rawEx of chapterList) {
+      const ex = normalizeExercise(rawEx);
       if (!grouped.has(ex.lessonId)) {
         grouped.set(ex.lessonId, []);
       }
@@ -88,6 +149,16 @@ export async function getExercisesByLessonId(lessonId: string): Promise<Practice
       // Sort by order ascending
       exList.sort((a, b) => a.order - b.order);
       lessonExercisesCache.set(lId, exList);
+
+      // Register aliases
+      for (const [primaryId, aliases] of Object.entries(LESSON_ALIAS_MAP)) {
+        if (lId === primaryId || aliases.includes(lId)) {
+          lessonExercisesCache.set(primaryId, exList);
+          for (const alias of aliases) {
+            lessonExercisesCache.set(alias, exList);
+          }
+        }
+      }
     }
 
     loadedChapters.add(chapterId);
@@ -112,11 +183,12 @@ export function getExercisesSync(lessonId: string): PracticeExercise[] | null {
  * Calculate exercise difficulty statistics
  */
 export function getExerciseStats(exercises: PracticeExercise[]) {
+  const normalized = exercises.map(normalizeExercise);
   return {
-    total: exercises.length,
-    coBan: exercises.filter(e => e.difficulty === 'co_ban').length,
-    thongHieu: exercises.filter(e => e.difficulty === 'thong_hieu').length,
-    vanDung: exercises.filter(e => e.difficulty === 'van_dung').length
+    total: normalized.length,
+    coBan: normalized.filter(e => (e.difficulty || e.level) === 'co_ban').length,
+    thongHieu: normalized.filter(e => (e.difficulty || e.level) === 'thong_hieu').length,
+    vanDung: normalized.filter(e => (e.difficulty || e.level) === 'van_dung').length
   };
 }
 
@@ -127,6 +199,7 @@ export function filterExercises(
   exercises: PracticeExercise[],
   filter: ExerciseDifficulty | 'all'
 ): PracticeExercise[] {
-  if (filter === 'all') return exercises;
-  return exercises.filter(e => e.difficulty === filter);
+  const normalized = exercises.map(normalizeExercise);
+  if (filter === 'all') return normalized;
+  return normalized.filter(e => (e.difficulty || e.level) === filter);
 }

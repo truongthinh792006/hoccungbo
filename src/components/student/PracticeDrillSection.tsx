@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Math7Lesson, PracticeExercise, ExerciseDifficulty } from '../../types/curriculum';
+import { Math7Lesson, PracticeExercise, ExerciseDifficulty, ExerciseOption } from '../../types/curriculum';
 import { getExercisesByLessonId, getExerciseStats, filterExercises } from '../../services/exerciseService';
 import { MathText } from '../common/MathText';
 import { 
@@ -56,7 +56,8 @@ export const PracticeDrillSection: React.FC<PracticeDrillSectionProps> = ({ less
     const selected = selectedAnswers[ex.id];
     if (!selected) return;
 
-    const isCorrect = selected === ex.correctAnswerId;
+    const correctId = ex.correctAnswerId || (typeof ex.correctIndex === 'number' ? `opt-${ex.correctIndex}` : '');
+    const isCorrect = selected === correctId;
     setCheckedStatus(prev => ({ ...prev, [ex.id]: true }));
     if (isCorrect) {
       setSolvedCorrectly(prev => ({ ...prev, [ex.id]: true }));
@@ -212,16 +213,30 @@ export const PracticeDrillSection: React.FC<PracticeDrillSectionProps> = ({ less
         {filteredList.map(ex => {
           const selected = selectedAnswers[ex.id];
           const isChecked = checkedStatus[ex.id] || false;
-          const isCorrect = isChecked && selected === ex.correctAnswerId;
+
+          const normalizedOptions: ExerciseOption[] = ex.options.map((opt, idx) => {
+            if (typeof opt === 'string') {
+              return {
+                id: `opt-${idx}`,
+                text: opt,
+                isCorrect: idx === (ex.correctIndex ?? 0)
+              };
+            }
+            return opt;
+          });
+
+          const correctId = ex.correctAnswerId || `opt-${ex.correctIndex ?? 0}`;
+          const isCorrect = isChecked && selected === correctId;
           const isIncorrect = isChecked && !isCorrect;
           const isHintOpen = openHints[ex.id] || false;
           const isSolutionOpen = openSolutions[ex.id] || false;
 
+          const diffKey = (ex.difficulty || ex.level || 'co_ban') as ExerciseDifficulty;
           const difficultyBadge = {
             co_ban: { bg: 'bg-emerald-50 text-emerald-800 border-emerald-200', label: 'Cơ bản' },
             thong_hieu: { bg: 'bg-amber-50 text-amber-800 border-amber-200', label: 'Thông hiểu' },
             van_dung: { bg: 'bg-purple-50 text-purple-800 border-purple-200', label: 'Vận dụng' }
-          }[ex.difficulty];
+          }[diffKey];
 
           return (
             <div
@@ -272,14 +287,14 @@ export const PracticeDrillSection: React.FC<PracticeDrillSectionProps> = ({ less
 
               {/* Multiple Choice Options */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-9">
-                {ex.options.map(opt => {
+                {normalizedOptions.map(opt => {
                   const isSelected = selected === opt.id;
                   let optStyle = 'border-slate-200 bg-slate-50/60 hover:bg-slate-100 text-slate-800';
 
                   if (isSelected && !isChecked) {
                     optStyle = 'border-indigo-600 bg-indigo-50 text-indigo-900 ring-2 ring-indigo-500/20 font-semibold';
                   } else if (isChecked) {
-                    if (opt.id === ex.correctAnswerId) {
+                    if (opt.id === correctId) {
                       optStyle = 'border-emerald-500 bg-emerald-50 text-emerald-950 font-bold ring-2 ring-emerald-500/20';
                     } else if (isSelected && !opt.isCorrect) {
                       optStyle = 'border-rose-400 bg-rose-50 text-rose-900 line-through';
@@ -297,7 +312,7 @@ export const PracticeDrillSection: React.FC<PracticeDrillSectionProps> = ({ less
                       <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 mt-0.5 ${
                         isSelected 
                           ? isChecked 
-                            ? opt.id === ex.correctAnswerId ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-rose-500 bg-rose-500 text-white'
+                            ? opt.id === correctId ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-rose-500 bg-rose-500 text-white'
                             : 'border-indigo-600 bg-indigo-600 text-white'
                           : 'border-slate-300'
                       }`}>
@@ -389,7 +404,7 @@ export const PracticeDrillSection: React.FC<PracticeDrillSectionProps> = ({ less
                     <span className="text-[11px] font-bold text-slate-500 normal-case flex items-center gap-1">
                       <span>Đáp án đúng:</span>
                       <strong className="text-emerald-700 inline-flex items-center">
-                        <MathText text={ex.options.find(o => o.id === ex.correctAnswerId)?.text} />
+                        <MathText text={normalizedOptions.find(o => o.id === correctId)?.text} />
                       </strong>
                     </span>
                   </div>

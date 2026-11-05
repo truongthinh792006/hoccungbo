@@ -255,10 +255,12 @@ export interface PracticeExercise {
   lessonId: string;
   order: number;
   title: string;
-  difficulty: ExerciseDifficulty;
+  difficulty?: ExerciseDifficulty;
+  level?: ExerciseDifficulty;
   question: string;
-  options: ExerciseOption[];
-  correctAnswerId: string;
+  options: Array<ExerciseOption | string>;
+  correctAnswerId?: string;
+  correctIndex?: number;
   hint: string;
   solution: string;
   keyTakeaway?: string;
