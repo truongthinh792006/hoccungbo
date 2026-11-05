@@ -21,7 +21,7 @@ const CHAPTER_LOADERS: Record<string, () => Promise<ChapterExerciseModule>> = {
   chuong_6_ti_le_thuc: async () => ({ default: [] }),
   chuong_7_bieu_thuc_dai_so: async () => ({ default: [] }),
   chuong_8_bien_co_va_xac_suat: async () => ({ default: [] }),
-  chuong_9_quan_he_cac_yeu_to_tam_giac: async () => ({ default: [] })
+  chuong_9_quan_he_cac_yeu_to_tam_giac: () => import('../data/exercises/chapter9_exercises')
 };
 
 // In-memory cache to guarantee instant subsequent queries
@@ -79,6 +79,9 @@ export function getChapterIdForLesson(lessonId: string): string | null {
   if (lesson) return lesson.chapterId;
 
   // Pattern matching fallbacks for lesson aliases
+  if (/31|32|33|34|35|ch9/i.test(lessonId)) {
+    return 'chuong_9_quan_he_cac_yeu_to_tam_giac';
+  }
   if (/12|13|14|15|16|ch4/i.test(lessonId)) {
     return 'chuong_4_tam_giac_bang_nhau';
   }
@@ -94,7 +97,12 @@ const LESSON_ALIAS_MAP: Record<string, string[]> = {
   'bai_13_hai_tam_giac_bang_nhau_truong_hop_ccc': ['lesson-13', 'ch4_l13', '13'],
   'bai_14_truong_hop_bang_nhau_cgc_gcg': ['lesson-14', 'ch4_l14', '14', 'bai_14_truong_hop_bang_nhau_thu_hai_cgc'],
   'bai_15_cac_truong_hop_bang_nhau_tam_giac_vuong': ['lesson-15', 'ch4_l15', '15', 'bai_15_truong_hop_bang_nhau_thu_ba_gcg'],
-  'bai_16_tam_giac_can_duong_trung_truc': ['lesson-16', 'ch4_l16', '16']
+  'bai_16_tam_giac_can_duong_trung_truc': ['lesson-16', 'ch4_l16', '16'],
+  'bai_31_quan_he_giua_goc_va_canh_doi_dien': ['lesson-31', 'ch9_l31', '31', 'bai_31'],
+  'bai_32_quan_he_giua_duong_vuong_goc_va_duong_xien': ['lesson-32', 'ch9_l32', '32', 'bai_32'],
+  'bai_33_quan_he_giua_ba_canh_cua_tam_giac': ['lesson-33', 'ch9_l33', '33', 'bai_33'],
+  'bai_34_su_dong_quy_cua_ba_duong_trung_tuyen_phan_giac': ['lesson-34', 'ch9_l34', '34', 'bai_34'],
+  'bai_35_su_dong_quy_cua_ba_duong_trung_truc_duong_cao': ['lesson-35', 'ch9_l35', '35', 'bai_35']
 };
 
 /**
