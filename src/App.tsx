@@ -8,6 +8,7 @@ import { QuizSlidingPanel } from './components/student/QuizSlidingPanel';
 import { InstallAppPrompt } from './components/common/InstallAppPrompt';
 import { MistakeNotebookModal } from './components/student/MistakeNotebookModal';
 import { ExamModal } from './components/student/exam/ExamModal';
+import { MobileBottomNav } from './components/common/MobileBottomNav';
 
 function MainAppContent() {
   const { role, isExamModalOpen, closeExamModal } = useApp();
@@ -17,14 +18,17 @@ function MainAppContent() {
       {/* Dual-View Switcher Header */}
       <RoleSwitcher />
 
-      {/* Main Dual-View Screen */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Main Dual-View Screen with safe padding for mobile bottom nav */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 md:pb-8">
         {role === 'STUDENT' ? (
           <StudentStudyView />
         ) : (
           <ParentDashboardView />
         )}
       </main>
+
+      {/* Mobile Bottom Navigation Bar (Native App Style) */}
+      <MobileBottomNav />
 
       {/* Parental PIN Modal Gate */}
       <PinModal />

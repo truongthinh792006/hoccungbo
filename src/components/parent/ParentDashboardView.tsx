@@ -46,7 +46,9 @@ export const ParentDashboardView: React.FC = () => {
       <TodayLearningRecap />
 
       {/* 2. Three Dinner-table Questions for Parents with Concise Answers */}
-      <ConversationPrompts />
+      <div id="dinner-prompts-section" className="scroll-mt-6">
+        <ConversationPrompts />
+      </div>
 
       {/* 3. Điểm con cần lưu ý: Insight từ Sổ tay câu sai */}
       <MistakeInsightsCard />
@@ -55,7 +57,9 @@ export const ParentDashboardView: React.FC = () => {
       <ExamResultsParentCard />
 
       {/* 5. Family Reward Contract & Badges Hub */}
-      <FamilyRewardContractCard />
+      <div id="family-reward-section" className="scroll-mt-6">
+        <FamilyRewardContractCard />
+      </div>
 
       {/* 4. Hybrid BYOK Setting: Cài đặt Trợ lý AI (Gemini API) */}
       <AiKeySettingsCard />

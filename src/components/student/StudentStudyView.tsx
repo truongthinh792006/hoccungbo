@@ -70,10 +70,10 @@ export const StudentStudyView: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {/* Sổ tay câu sai & Phục thù */}
+            {/* Sổ tay câu sai & Phục thù (Desktop/Tablet) */}
             <button
               onClick={openMistakeNotebook}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+              className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                 activeMistakesCount > 0
                   ? 'bg-rose-50 hover:bg-rose-100 text-rose-800 border-rose-300 shadow-2xs'
                   : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'
@@ -89,10 +89,10 @@ export const StudentStudyView: React.FC = () => {
               )}
             </button>
 
-            {/* Phòng Thi Thử */}
+            {/* Phòng Thi Thử (Desktop/Tablet) */}
             <button
               onClick={openExamModal}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 shadow-2xs transition-all cursor-pointer"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 shadow-2xs transition-all cursor-pointer"
               title="Luyện thi giữa kì & cuối kì 45-60 phút"
             >
               <Trophy className="w-3.5 h-3.5 text-indigo-600" />
@@ -113,10 +113,10 @@ export const StudentStudyView: React.FC = () => {
               <span>{isBookmarkedToday ? 'Đã ghim hôm nay' : 'Ghim bài hôm nay'}</span>
             </button>
 
-            {/* Open Full Syllabus Drawer */}
+            {/* Open Full Syllabus Drawer (Desktop/Tablet) */}
             <button
               onClick={openSyllabus}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition-all"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition-all"
             >
               <ListOrdered className="w-3.5 h-3.5" />
               <span>Mục lục ({allLessons.length} bài)</span>

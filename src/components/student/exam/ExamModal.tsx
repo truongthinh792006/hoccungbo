@@ -250,54 +250,55 @@ export const ExamModal: React.FC<ExamModalProps> = ({ isOpen, onClose }) => {
   const isTimeCritical = secondsRemaining < 300; // Under 5 minutes
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white w-full max-w-5xl rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden flex flex-col max-h-[95vh] relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white w-full max-w-5xl h-[100dvh] sm:h-auto sm:max-h-[95vh] rounded-none sm:rounded-3xl shadow-2xl border-0 sm:border border-slate-200/90 overflow-hidden flex flex-col relative">
         
         {/* ==================================================================== */}
         {/* MODAL HEADER */}
         {/* ==================================================================== */}
-        <div className="px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center shadow-md shadow-amber-400/20 font-black">
+        <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center shadow-md shadow-amber-400/20 font-black shrink-0">
               <Trophy className="w-5 h-5 text-amber-900 fill-amber-900" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="font-extrabold text-base sm:text-lg tracking-tight">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <h2 className="font-extrabold text-sm sm:text-lg tracking-tight truncate">
                   Phòng Thi Thử Toán 7
                 </h2>
-                <span className="text-[10px] uppercase font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full">
-                  KNTT 2018
+                <span className="text-[9px] sm:text-[10px] uppercase font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 px-1.5 sm:px-2 py-0.5 rounded-full shrink-0">
+                  KNTT
                 </span>
               </div>
-              <p className="text-xs text-slate-300">
+              <p className="text-[11px] sm:text-xs text-slate-300 truncate">
                 {currentView === 'ACTIVE' 
-                  ? `${selectedConfig.title} • Thời gian còn lại: ${formatTime(secondsRemaining)}`
+                  ? `${selectedConfig.title} • Còn lại: ${formatTime(secondsRemaining)}`
                   : 'Luyện đề chuẩn cấu trúc thi giữa kì & cuối kì'}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Nav tabs when not active exam */}
             {currentView !== 'ACTIVE' && (
-              <div className="flex items-center bg-white/10 p-1 rounded-xl text-xs font-semibold mr-2">
+              <div className="flex items-center bg-white/10 p-0.5 sm:p-1 rounded-xl text-xs font-semibold mr-1 sm:mr-2">
                 <button
                   onClick={() => setCurrentView('CATALOG')}
-                  className={`px-3 py-1.5 rounded-lg transition-all ${
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all text-xs ${
                     currentView === 'CATALOG' ? 'bg-white text-slate-900 font-bold shadow-xs' : 'text-slate-300 hover:text-white'
                   }`}
                 >
-                  Chọn đề thi
+                  Chọn đề
                 </button>
                 <button
                   onClick={() => setCurrentView('HISTORY')}
-                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 ${
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all flex items-center gap-1 text-xs ${
                     currentView === 'HISTORY' ? 'bg-white text-slate-900 font-bold shadow-xs' : 'text-slate-300 hover:text-white'
                   }`}
                 >
                   <History className="w-3.5 h-3.5" />
-                  <span>Bảng vàng ({history.length})</span>
+                  <span className="hidden sm:inline">Bảng vàng ({history.length})</span>
+                  <span className="sm:hidden">Lịch sử</span>
                 </button>
               </div>
             )}
@@ -315,7 +316,7 @@ export const ExamModal: React.FC<ExamModalProps> = ({ isOpen, onClose }) => {
                   onClose();
                 }
               }}
-              className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
               title="Đóng phòng thi"
             >
               <X className="w-5 h-5" />
@@ -468,16 +469,49 @@ export const ExamModal: React.FC<ExamModalProps> = ({ isOpen, onClose }) => {
             </div>
 
             {/* Main Content: Question + Options + Palette */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
               {/* Left col: Question & Options (col-span-8) */}
-              <div className="lg:col-span-8 space-y-5">
+              <div className="lg:col-span-8 space-y-4 sm:space-y-5">
+                {/* Mobile Quick Question Scroller (Visible on mobile/tablet, hidden on desktop) */}
+                <div className="lg:hidden bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1.5 px-1">
+                    <span>Chọn câu nhanh ({answeredCount}/{questions.length}):</span>
+                    <span>Vuốt ngang ➔</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                    {questions.map((q, idx) => {
+                      const isCurrent = idx === currentQuestionIndex;
+                      const isAnswered = q.userSelectedOptionIndex !== undefined;
+                      const isFlagged = q.isFlagged;
+
+                      let btnStyle = 'bg-white text-slate-700 border-slate-200';
+                      if (isAnswered) btnStyle = 'bg-emerald-600 text-white border-emerald-600 font-bold';
+                      if (isFlagged) btnStyle = 'bg-amber-100 text-amber-900 border-amber-400 font-bold';
+                      if (isCurrent) btnStyle += ' ring-2 ring-indigo-500 font-black scale-105';
+
+                      return (
+                        <button
+                          key={q.id}
+                          onClick={() => setCurrentQuestionIndex(idx)}
+                          className={`w-8 h-8 rounded-xl border text-xs shrink-0 flex items-center justify-center transition-all cursor-pointer relative ${btnStyle}`}
+                        >
+                          <span>{idx + 1}</span>
+                          {isFlagged && (
+                            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber-500"></span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Question Box */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
+                <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-2.5 sm:space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                    <span className="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                       {activeQuestion.level === 'van_dung' ? 'Vận dụng' : activeQuestion.level === 'thong_hieu' ? 'Thông hiểu' : 'Cơ bản'}
                     </span>
-                    <span className="text-xs text-slate-400 font-medium">
+                    <span className="text-[11px] text-slate-400 font-medium">
                       {activeQuestion.tags?.join(' • ') || ''}
                     </span>
                   </div>
@@ -486,13 +520,13 @@ export const ExamModal: React.FC<ExamModalProps> = ({ isOpen, onClose }) => {
                     {activeQuestion.title}
                   </h3>
 
-                  <div className="text-slate-800 text-sm sm:text-base leading-relaxed bg-slate-50/70 p-4 rounded-xl border border-slate-100">
+                  <div className="text-slate-800 text-sm sm:text-base leading-relaxed bg-slate-50/80 p-3.5 sm:p-4 rounded-xl border border-slate-100 overflow-x-auto">
                     <MathText text={activeQuestion.question} />
                   </div>
                 </div>
 
-                {/* Choices (4 Options) */}
-                <div className="space-y-3">
+                {/* Choices (4 Options) with Mobile Touch Optimization */}
+                <div className="space-y-2.5 sm:space-y-3">
                   {activeQuestion.options.map((opt, oIdx) => {
                     const optText = typeof opt === 'string' ? opt : opt.text;
                     const isSelected = activeQuestion.userSelectedOptionIndex === oIdx;
@@ -502,7 +536,7 @@ export const ExamModal: React.FC<ExamModalProps> = ({ isOpen, onClose }) => {
                       <button
                         key={oIdx}
                         onClick={() => handleSelectOption(oIdx)}
-                        className={`w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center gap-3 cursor-pointer ${
+                        className={`w-full text-left p-3.5 sm:p-4 min-h-[52px] rounded-2xl border-2 transition-all flex items-center gap-3 cursor-pointer select-none touch-manipulation active:scale-[0.99] ${
                           isSelected
                             ? 'bg-indigo-50 border-indigo-600 text-indigo-950 font-bold shadow-xs ring-2 ring-indigo-500/20'
                             : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800'
@@ -518,7 +552,7 @@ export const ExamModal: React.FC<ExamModalProps> = ({ isOpen, onClose }) => {
                           {letter}
                         </span>
 
-                        <div className="flex-1 text-sm sm:text-base leading-snug">
+                        <div className="flex-1 text-xs sm:text-base leading-snug overflow-x-auto py-0.5">
                           <MathText text={optText} />
                         </div>
                       </button>

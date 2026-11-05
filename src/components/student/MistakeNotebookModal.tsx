@@ -90,13 +90,13 @@ export const MistakeNotebookModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 animate-fadeIn">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-0 sm:p-5 animate-fadeIn">
       <div 
-        className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] animate-scaleUp"
+        className="bg-white w-full max-w-4xl h-[100dvh] sm:h-auto sm:max-h-[92vh] rounded-none sm:rounded-3xl shadow-2xl border-0 sm:border border-slate-200 overflow-hidden flex flex-col animate-scaleUp"
         onClick={e => e.stopPropagation()}
       >
         {/* Header Bar */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-rose-600 via-rose-700 to-amber-700 p-5 sm:p-6 text-white shrink-0">
+        <div className="relative overflow-hidden bg-gradient-to-r from-rose-600 via-rose-700 to-amber-700 p-4 sm:p-6 text-white shrink-0">
           <div className="relative z-10 flex items-start justify-between gap-4">
             <div className="space-y-1.5">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold text-rose-100">
